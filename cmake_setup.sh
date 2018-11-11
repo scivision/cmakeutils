@@ -26,7 +26,7 @@ set -e # after prereqs
 cd $WD
 
 echo "installing cmake to $PREF"
-./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL=ON
+./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
 
 make -j -l 2
 make install
