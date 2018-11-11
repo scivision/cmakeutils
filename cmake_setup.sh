@@ -9,8 +9,8 @@
 # For Windows, simply use the .msi from  https://cmake.org/download/
 #
 # prereqs
-# CentOS, Cygwin:  gcc-c++ make ncurses-devel
-# Debian / Ubuntu: g++ make libncurses-dev
+# CentOS, Cygwin:  gcc-c++ make ncurses-devel openssl-devel
+# Debian / Ubuntu: g++ make libncurses-dev libssl-dev
 
 cver=3.13.0-rc3
 PREF=$HOME/.local
@@ -26,7 +26,7 @@ set -e # after prereqs
 cd $WD
 
 echo "installing cmake to $PREF"
-./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release 
+./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL=ON
 
 make -j -l 2
 make install
