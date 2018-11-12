@@ -1,4 +1,4 @@
-language: none
+language: sh
 group: travis_latest
 
 
@@ -12,6 +12,6 @@ os:
 - windows
 
 
-script:
-- cd $TRAVIS_BUILD_DIR/ssl/bin
-- cmake ..
+before_script: cd $TRAVIS_BUILD_DIR/ssl/bin
+
+script: cmake ..
