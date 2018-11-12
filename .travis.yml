@@ -1,0 +1,17 @@
+language: none
+group: travis_latest
+
+
+git:
+  depth: 3
+  quiet: true
+
+os:
+- osx
+- linux
+- windows
+
+
+script:
+- cd $TRAVIS_BUILD_DIR/ssl/bin
+- cmake ..
