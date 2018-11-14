@@ -29,7 +29,11 @@ to install the most recent CMake **without sudo**
 
 * Download with [SSL](./ssl)
 * Download and extract [ZIP](./zip)
-* Use [Octave from CMake](./octave)
+
+### GNU Octave
+
+[Octave from CMake](./octave) via our [FindOctave.cmake](./cmake/Modules/FindOctave.cmake) works well from CMake for unit tests, etc., at least for Octave &ge; 3.8.
+We didn't try older versions of Octave.
 
 
 ## CMake modules
