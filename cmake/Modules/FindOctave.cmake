@@ -8,8 +8,6 @@ FindOctave
 
 Finds GNU Octave and provides Octave tools, libraries and compilers to CMake.
 
-This only works with Octave >= 4.0 by design, since Octave < 4.0 is lacking too many features in general.
-
 This packages primary purposes are
 
 * find the Octave exectuable to be able to run unit tests on ``.m`` code
@@ -92,52 +90,57 @@ if(Octave_CONFIG_EXECUTABLE)
                   OUTPUT_VARIABLE Octave_OCT_LIB_DIR
                   OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  execute_process(COMMAND ${Octave_CONFIG_EXECUTABLE} -v
-                  OUTPUT_VARIABLE Octave_VERSION_STRING
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+  find_program(Octave_EXECUTABLE
+               NAMES octave
+               HINTS ${Octave_BIN_PATHS}
+              )
 
-  if(Octave_VERSION_STRING)
-    string(REGEX REPLACE "([0-9]+)\\..*" "\\1" Octave_MAJOR_VERSION ${Octave_VERSION_STRING})
-    string(REGEX REPLACE "[0-9]+\\.([0-9]+).*" "\\1" Octave_MINOR_VERSION ${Octave_VERSION_STRING})
-    string(REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_PATCH_VERSION ${Octave_VERSION_STRING})
-  endif()
-endif()
-
-
-find_program(Octave_EXECUTABLE
-             NAMES octave
-             HINTS ${Octave_BIN_PATHS}
-            )
-
-find_library(Octave_OCTINTERP_LIBRARY
+  find_library(Octave_OCTINTERP_LIBRARY
              NAMES octinterp liboctinterp
              HINTS ${Octave_LIBRARIES_PATHS}
             )
-find_library(Octave_OCTAVE_LIBRARY
-             NAMES octave liboctave
-             HINTS ${Octave_LIBRARIES_PATHS}
-            )
-find_library(Octave_CRUFT_LIBRARY
-             NAMES cruft libcruft
-             HINTS ${Octave_LIBRARIES_PATHS}
+  find_library(Octave_OCTAVE_LIBRARY
+               NAMES octave liboctave
+               HINTS ${Octave_LIBRARIES_PATHS}
+              )
+  find_library(Octave_CRUFT_LIBRARY
+               NAMES cruft libcruft
+               HINTS ${Octave_LIBRARIES_PATHS}
+              )
+
+  set(Octave_LIBRARIES ${Octave_OCTINTERP_LIBRARY})
+  list(APPEND Octave_LIBRARIES ${Octave_OCTAVE_LIBRARY})
+  if (Octave_CRUFT_LIBRARY)
+    list(APPEND Octave_LIBRARIES ${Octave_CRUFT_LIBRARY})
+  endif()
+
+  find_path(Octave_INCLUDE_DIR
+            NAMES mex.h
+            HINTS ${Octave_INCLUDE_PATHS}
             )
 
-set(Octave_LIBRARIES ${Octave_OCTINTERP_LIBRARY})
-list(APPEND Octave_LIBRARIES ${Octave_OCTAVE_LIBRARY})
-if (Octave_CRUFT_LIBRARY)
-  list(APPEND Octave_LIBRARIES ${Octave_CRUFT_LIBRARY})
+  set(Octave_INCLUDE_DIRS ${Octave_INCLUDE_DIR})
+else()
+  find_program(Octave_EXECUTABLE
+               NAMES octave
+               HINTS ${Octave_ROOT_DIR})
 endif()
 
-find_path(Octave_INCLUDE_DIR
-          NAMES mex.h
-          HINTS ${Octave_INCLUDE_PATHS}
-          )
 
-set(Octave_INCLUDE_DIRS ${Octave_INCLUDE_DIR})
+
+execute_process(COMMAND ${Octave_EXECUTABLE} -v
+                OUTPUT_VARIABLE Octave_VERSION_STRING
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+if(Octave_VERSION_STRING)
+  string(REGEX REPLACE "GNU Octave, version ([0-9])\\.[0-9]+\\.[0-9]+.*" "\\1" Octave_MAJOR_VERSION ${Octave_VERSION_STRING})
+  string(REGEX REPLACE "GNU Octave, version [0-9]\\.([0-9]+)\\.[0-9]+.*" "\\1" Octave_MINOR_VERSION ${Octave_VERSION_STRING})
+  string(REGEX REPLACE "GNU Octave, version [0-9]\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_PATCH_VERSION ${Octave_VERSION_STRING})
+endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Octave
-  REQUIRED_VARS Octave_EXECUTABLE Octave_ROOT_DIR
+  REQUIRED_VARS Octave_EXECUTABLE
   VERSION_VAR Octave_VERSION_STRING
   HANDLE_COMPONENTS)
 

@@ -16,4 +16,6 @@ if(Octave_FOUND)
   set_tests_properties(octave1 PROPERTIES
                        TIMEOUT 180
                       )
+                      
+  #message(${Octave_MAJOR_VERSION} ${Octave_MINOR_VERSION} ${Octave_PATCH_VERSION})
 endif()
