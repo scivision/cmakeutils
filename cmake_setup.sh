@@ -19,7 +19,7 @@ WD=/tmp
 set -e # after prereqs
 
 # 1. download
-[[ -d $WD/cmake-$cver ]] || curl https://cmake.org/files/v${cver:0:4}/cmake-$cver.tar.gz | tar -C /tmp  -xzf -
+[[ -d $WD/cmake-$cver ]] || curl https://cmake.org/files/v${cver:0:4}/cmake-$cver.tar.gz | tar -C $WD  -xzf -
 
 # 2. build
 (

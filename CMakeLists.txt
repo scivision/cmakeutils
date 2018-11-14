@@ -6,3 +6,4 @@ project(CMakeDemos
 
 add_subdirectory(ssl)
 add_subdirectory(zip)
+add_subdirectory(octave)

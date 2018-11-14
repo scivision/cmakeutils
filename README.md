@@ -29,6 +29,7 @@ to install the most recent CMake **without sudo**
 
 * Download with [SSL](./ssl)
 * Download and extract [ZIP](./zip)
+* Use [Octave from CMake](./octave)
 
 
 ## CMake modules
