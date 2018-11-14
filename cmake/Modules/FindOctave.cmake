@@ -8,6 +8,8 @@ FindOctave
 
 Finds GNU Octave and provides Octave tools, libraries and compilers to CMake.
 
+This only works with Octave >= 4.0 by design, since Octave < 4.0 is lacking too many features in general.
+
 This packages primary purposes are
 
 * find the Octave exectuable to be able to run unit tests on ``.m`` code
