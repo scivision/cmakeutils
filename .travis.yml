@@ -12,6 +12,6 @@ os:
 - windows
 
 
-before_script: cd $TRAVIS_BUILD_DIR/ssl/bin
+before_script: cd $TRAVIS_BUILD_DIR/bin
 
 script: cmake ..
