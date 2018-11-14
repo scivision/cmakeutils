@@ -4,8 +4,12 @@ project(SSLdemo
         #DESCRIPTION "Demonstrate that CMake SSL is installed and working"
         #HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 
-file(DOWNLOAD https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg ./github-mark.svg
+set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)
+
+if(NOT EXISTS ${OUTFN})
+  file(DOWNLOAD https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg ${OUTFN}
      TIMEOUT 15
      EXPECTED_HASH MD5=07883e93734b98cae0f7b9c55d287250
      TLS_VERIFY ON
      )
+endif()

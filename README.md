@@ -24,6 +24,11 @@ and then run
 [cmake_setup.sh](./cmake_setup.sh) 
 to install the most recent CMake **without sudo**
 
+## Examples
+
+* Download with [SSL](./ssl)
+* Download and extract [ZIP](./zip)
+
 
 ## CMake modules
 
