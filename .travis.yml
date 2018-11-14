@@ -11,6 +11,10 @@ os:
 - linux
 - windows
 
+addons:
+  apt:
+    packages:
+    - octave
 
 before_script: cd $TRAVIS_BUILD_DIR/bin
 

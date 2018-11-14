@@ -3,6 +3,7 @@ project(CMakeDemos
         LANGUAGES NONE)
         #DESCRIPTION "Demonstrate CMake usage"
         #HOMEPAGE_URL https://github.com/scivision/cmake-utils)
+enable_testing()
 
 add_subdirectory(ssl)
 add_subdirectory(zip)
