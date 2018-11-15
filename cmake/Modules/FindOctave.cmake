@@ -43,7 +43,7 @@ Result variables
   path to the liboctave
 ``Octave_CRUFT_LIBRARY``
   path to the libcruft
-``Octave_VERSION_STRING``
+``Octave_VERSION``
   Octave version string
 ``Octave_MAJOR_VERSION``
   major version
@@ -129,19 +129,21 @@ endif()
 
 
 execute_process(COMMAND ${Octave_EXECUTABLE} -v
-                OUTPUT_VARIABLE Octave_VERSION_STRING
+                OUTPUT_VARIABLE Octave_VERSION
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-if(Octave_VERSION_STRING)
-  string(REGEX REPLACE "GNU Octave, version ([0-9])\\.[0-9]+\\.[0-9]+.*" "\\1" Octave_MAJOR_VERSION ${Octave_VERSION_STRING})
-  string(REGEX REPLACE "GNU Octave, version [0-9]\\.([0-9]+)\\.[0-9]+.*" "\\1" Octave_MINOR_VERSION ${Octave_VERSION_STRING})
-  string(REGEX REPLACE "GNU Octave, version [0-9]\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_PATCH_VERSION ${Octave_VERSION_STRING})
+if(Octave_VERSION)
+  string(REGEX REPLACE "GNU Octave, version ([0-9])\\.[0-9]+\\.[0-9]+.*" "\\1" Octave_MAJOR_VERSION ${Octave_VERSION})
+  string(REGEX REPLACE "GNU Octave, version [0-9]\\.([0-9]+)\\.[0-9]+.*" "\\1" Octave_MINOR_VERSION ${Octave_VERSION})
+  string(REGEX REPLACE "GNU Octave, version [0-9]\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_PATCH_VERSION ${Octave_VERSION})
+
+  set(Octave_VERSION ${Octave_MAJOR_VERSION} "." ${Octave_MINOR_VERSION} "." ${Octave_PATCH_VERSION})
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Octave
   REQUIRED_VARS Octave_EXECUTABLE
-  VERSION_VAR Octave_VERSION_STRING
+  VERSION_VAR Octave_VERSION
   HANDLE_COMPONENTS)
 
 mark_as_advanced(
@@ -154,8 +156,9 @@ mark_as_advanced(
   Octave_INCLUDE_DIR
   Octave_INCLUDE_DIRS
   Octave_ROOT_DIR
-  Octave_VERSION_STRING
+  Octave_VERSION
   Octave_MAJOR_VERSION
   Octave_MINOR_VERSION
   Octave_PATCH_VERSION
 )
+

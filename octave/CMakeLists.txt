@@ -17,5 +17,6 @@ if(Octave_FOUND)
                        TIMEOUT 180
                       )
                       
-  #message(${Octave_MAJOR_VERSION} ${Octave_MINOR_VERSION} ${Octave_PATCH_VERSION})
+  message(${Octave_MAJOR_VERSION} "." ${Octave_MINOR_VERSION} "." ${Octave_PATCH_VERSION})
+  message(${Octave_VERSION})
 endif()
