@@ -137,7 +137,7 @@ if(Octave_VERSION)
   string(REGEX REPLACE "GNU Octave, version [0-9]\\.([0-9]+)\\.[0-9]+.*" "\\1" Octave_MINOR_VERSION ${Octave_VERSION})
   string(REGEX REPLACE "GNU Octave, version [0-9]\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_PATCH_VERSION ${Octave_VERSION})
 
-  set(Octave_VERSION ${Octave_MAJOR_VERSION} "." ${Octave_MINOR_VERSION} "." ${Octave_PATCH_VERSION})
+  set(Octave_VERSION ${Octave_MAJOR_VERSION}.${Octave_MINOR_VERSION}.${Octave_PATCH_VERSION})
 endif()
 
 include(FindPackageHandleStandardArgs)
