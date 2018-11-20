@@ -1,22 +1,31 @@
-language: sh
+language: cpp
 group: travis_latest
+dist: xenial
 
 git:
   depth: 3
   quiet: true
 
-os:
-- osx
-- linux
-- windows
+env: FC=gfortran
 
 addons:
   apt:
     packages:
+    - gfortran
     - octave
+    
+matrix:
+  include:
+  - os: linux
+  # - windows  # needs gfortran, straightforward to add but already on appveyor
+  #- os: osx  # save time
+  #  before_install:
+  #  - brew install gcc > /dev/null
+  #  - brew install octave > /dev/null
 
-before_script: cd $TRAVIS_BUILD_DIR/bin
-
-script: 
+install: 
+- cd bin
 - cmake ..
-- ctest --output-on-failure
+- cmake --build .
+
+script:  ctest --output-on-failure

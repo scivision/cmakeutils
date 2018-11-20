@@ -1,0 +1,26 @@
+image:
+- Visual Studio 2017
+- ubuntu1804
+
+clone_depth: 3
+
+environment:
+  MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
+
+build: off
+
+init:
+- sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends octave > /dev/null
+- cmd: set PATH=%MINGW_DIR%;%PATH%
+# - cmd: choco install octave.portable  # works great but disabled to save ten minutes
+
+install:
+- cd bin
+
+- sh: cmake ..
+- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
+
+- cmake --build .
+
+test_script: ctest --output-on-failure
+
