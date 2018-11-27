@@ -1,6 +1,5 @@
-# Distributed under the OSI-approved BSD 3-Clause License.
-# Copyright 2013, Julien Schueller
-# Copyright 2018, Michael Hirsch, Ph.D.
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
 
 #[=======================================================================[.rst:
 FindOctave
@@ -16,7 +15,7 @@ This packages primary purposes are
 Two components are supported:
 
 * ``Interpreter``: search for Octave interpreter
-* ``Development``: search for development artifacts (include directories and libraries).  Implies ``Interpreter``
+* ``Development``: search for development artifacts (include directories and libraries).
 
 If no ``COMPONENTS`` are specified, ``Interpreter`` is assumed.
 
@@ -64,10 +63,13 @@ Result variables
 
 cmake_policy(VERSION 3.3)
 
+unset(Octave_REQUIRED_VARS)
+unset(Octave_Development_FOUND)
+unset(Octave_Interpreter_FOUND)
+
 if(Development IN_LIST Octave_FIND_COMPONENTS)
   find_program(Octave_CONFIG_EXECUTABLE
-               NAMES octave-config
-               HINTS ${Octave_ROOT})
+               NAMES octave-config)
 
   if(Octave_CONFIG_EXECUTABLE)
 
@@ -80,18 +82,12 @@ if(Development IN_LIST Octave_FIND_COMPONENTS)
                     OUTPUT_VARIABLE Octave_INCLUDE_DIR
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(Octave_INCLUDE_DIRS ${Octave_INCLUDE_DIR})
+    list(APPEND Octave_REQUIRED_VARS ${Octave_INCLUDE_DIR})
 
     execute_process(COMMAND ${Octave_CONFIG_EXECUTABLE} -p OCTLIBDIR
                     OUTPUT_VARIABLE Octave_LIBRARY
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    find_program(Octave_EXECUTABLE
-                 NAMES octave
-                 PATHS ${Octave_BIN_PATHS}
-                 NO_DEFAULT_PATH
-                )
 
     find_library(Octave_INTERP_LIBRARY
                NAMES octinterp
@@ -103,26 +99,20 @@ if(Development IN_LIST Octave_FIND_COMPONENTS)
                  PATHS ${Octave_LIBRARY}
                  NO_DEFAULT_PATH
                 )
+    list(APPEND Octave_REQUIRED_VARS ${Octave_OCTAVE_LIBRARY} ${Octave_INTERP_LIBRARY})
 
-    set(Octave_LIBRARIES ${Octave_INTERP_LIBRARY} ${Octave_OCTAVE_LIBRARY})
-
-    if(NOT TARGET Octave::Octave)
-      add_library(Octave::Octave UNKNOWN IMPORTED)
-      set_target_properties(Octave::Octave PROPERTIES
-                            IMPORTED_LOCATION ${Octave_OCTAVE_LIBRARY}
-                            INTERFACE_INCLUDE_DIRECTORIES ${Octave_INCLUDE_DIR}
-                           )
-    endif()
-
-    if(Octave_OCTAVE_LIBRARY)
+    if(Octave_REQUIRED_VARS)
       set(Octave_Development_FOUND true)
     endif()
   endif(Octave_CONFIG_EXECUTABLE)
-else()
+endif()
+
+if(Interpreter IN_LIST Octave_FIND_COMPONENTS)
 
   find_program(Octave_EXECUTABLE
-               NAMES octave
-               HINTS ${Octave_ROOT})
+               NAMES octave)
+
+  list(APPEND Octave_REQUIRED_VARS ${Octave_EXECUTABLE})
 
 endif()
 
@@ -141,19 +131,38 @@ if(Octave_EXECUTABLE)
 
   set(Octave_Interpreter_FOUND true)
 
+endif(Octave_EXECUTABLE)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Octave
+  REQUIRED_VARS Octave_REQUIRED_VARS
+  VERSION_VAR Octave_VERSION
+  HANDLE_COMPONENTS)
+
+
+if(Octave_Development_FOUND)
+  set(Octave_LIBRARIES ${Octave_INTERP_LIBRARY} ${Octave_OCTAVE_LIBRARY})
+  set(Octave_INCLUDE_DIRS ${Octave_INCLUDE_DIR})
+
+  if(NOT TARGET Octave::Octave)
+    add_library(Octave::Octave UNKNOWN IMPORTED)
+    set_target_properties(Octave::Octave PROPERTIES
+                          IMPORTED_LOCATION ${Octave_OCTAVE_LIBRARY}
+                          INTERFACE_INCLUDE_DIRECTORIES ${Octave_INCLUDE_DIR}
+                         )
+  endif()
+
+endif()
+
+
+if(Octave_Interpreter_FOUND)
   if(NOT TARGET Octave::Interpreter)
     add_executable(Octave::Interpreter IMPORTED)
     set_target_properties(Octave::Interpreter PROPERTIES
                           IMPORTED_LOCATION ${Octave_EXECUTABLE}
                           VERSION ${Octave_VERSION})
   endif()
-endif(Octave_EXECUTABLE)
-
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Octave
-  REQUIRED_VARS Octave_EXECUTABLE
-  VERSION_VAR Octave_VERSION
-  HANDLE_COMPONENTS)
+endif()
 
 mark_as_advanced(
   Octave_INTERP_LIBRARY
