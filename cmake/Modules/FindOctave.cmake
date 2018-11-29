@@ -5,60 +5,46 @@
 FindOctave
 ----------
 
-Finds GNU Octave and provides Octave tools, libraries and compilers to CMake.
+Finds GNU Octave interpreter, libraries and compilers.
 
-This packages primary purposes are
+Imported targets
+^^^^^^^^^^^^^^^^
 
-* find the Octave exectuable to be able to run unit tests on ``.m`` code
-* to run specific commands in Octave
+This module defines the following :prop_tgt:`IMPORTED` targets:
 
-Two components are supported:
-
-* ``Interpreter``: search for Octave interpreter
-* ``Development``: search for development artifacts (include directories and libraries).
+``Octave::Interpreter``
+  Octave interpreter (the main program)
+``Octave::Development``
+  include directories and libraries
 
 If no ``COMPONENTS`` are specified, ``Interpreter`` is assumed.
 
-Module Input Variables
-^^^^^^^^^^^^^^^^^^^^^^
-
-Users or projects may set the following variables to configure the module
-behaviour:
-
-:variable:`Octave_ROOT`
-  the root of the Octave installation.
-
-Variables defined by the module
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Result variables
-""""""""""""""""
+Result Variables
+^^^^^^^^^^^^^^^^
 
 ``Octave_FOUND``
-  ``TRUE`` if the Octave installation is found, ``FALSE`` otherwise.
-``Octave_Interpreter_FOUND``
-  ``TRUE`` if the Octave interpreter is found, ``FALSE`` otherwise.
-``Octave_Development_FOUND``
-  ``TRUE`` if the Octave libraries are found, ``FALSE`` otherwise.
+  Octave interpreter and/or libraries were found
+``Octave_<component_FOUND``
+  Octave <component> specified was found
 
 ``Octave_EXECUTABLE``
   Octave interpreter
 ``Octave_INCLUDE_DIRS``
   include path for mex.h
 ``Octave_LIBRARIES``
-  octinterp, octave
+  octinterp, octave libraries
+
+
+Cache variables
+^^^^^^^^^^^^^^^
+
+The following cache variables may also be set:
+
 ``Octave_INTERP_LIBRARY``
   path to the library octinterp
 ``Octave_OCTAVE_LIBRARY``
-  path to the liboctave
-``Octave_VERSION``
-  Octave version string
-``Octave_VERSION_MAJOR``
-  major version
-``Octave_VERSION_MINOR``
-  minor version
-``Octave_VERSION_PATCH``
-  patch version
+  path to the liboctave library
+
 #]=======================================================================]
 
 cmake_policy(VERSION 3.3)
@@ -66,6 +52,7 @@ cmake_policy(VERSION 3.3)
 unset(Octave_REQUIRED_VARS)
 unset(Octave_Development_FOUND)
 unset(Octave_Interpreter_FOUND)
+set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME Interpreter)
 
 if(Development IN_LIST Octave_FIND_COMPONENTS)
   find_program(Octave_CONFIG_EXECUTABLE
@@ -85,18 +72,23 @@ if(Development IN_LIST Octave_FIND_COMPONENTS)
     list(APPEND Octave_REQUIRED_VARS ${Octave_INCLUDE_DIR})
 
     execute_process(COMMAND ${Octave_CONFIG_EXECUTABLE} -p OCTLIBDIR
-                    OUTPUT_VARIABLE Octave_LIBRARY
+                    OUTPUT_VARIABLE Octave_LIB1
+                    ERROR_QUIET
+                    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    execute_process(COMMAND ${Octave_CONFIG_EXECUTABLE} -p LIBDIR
+                    OUTPUT_VARIABLE Octave_LIB2
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
     find_library(Octave_INTERP_LIBRARY
                NAMES octinterp
-               PATHS ${Octave_LIBRARY}
+               PATHS ${Octave_LIB1} ${Octave_LIB2}
                NO_DEFAULT_PATH
               )
     find_library(Octave_OCTAVE_LIBRARY
                  NAMES octave
-                 PATHS ${Octave_LIBRARY}
+                 PATHS ${Octave_LIB1} ${Octave_LIB2}
                  NO_DEFAULT_PATH
                 )
     list(APPEND Octave_REQUIRED_VARS ${Octave_OCTAVE_LIBRARY} ${Octave_INTERP_LIBRARY})
@@ -165,12 +157,10 @@ if(Octave_Interpreter_FOUND)
 endif()
 
 mark_as_advanced(
+  Octave_CONFIG_EXECUTABLE
   Octave_INTERP_LIBRARY
   Octave_OCTAVE_LIBRARY
-  Octave_LIBRARIES
   Octave_INCLUDE_DIR
-  Octave_INCLUDE_DIRS
-  Octave_VERSION
   Octave_VERSION_MAJOR
   Octave_VERSION_MINOR
   Octave_VERSION_PATCH
