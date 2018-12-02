@@ -12,7 +12,7 @@
 # CentOS, Cygwin:  gcc-c++ make ncurses-devel openssl-devel
 # Debian / Ubuntu: g++ make libncurses-dev libssl-dev
 
-cver=3.13.0
+cver=3.13.1
 PREF=$HOME/.local
 WD=/tmp
 
