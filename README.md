@@ -12,25 +12,21 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 * Matlab / GNU Octave
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
-
-For those who need to download or upload files in any form, having SSL support is also important, as the vast majority of sites use HTTPS.
-[cmake_setup.sh](./cmake_setup.sh) compiles CMake from source with SSL.
+SSL support is also essential for any download/upload with CMake.
 
 ## Install CMake
 
 * MacOS: `brew install cmake`
 * [Windows](https://cmake.org/download/)
-
-### Linux
-
-Linux systems including Cygwin and Windows Subsystem for Linux require:
-
-* CentOS, Cygwin: `make gcc-c++ ncurses-devel openssl-devel`
-* Debian, Ubuntu: `make g++ libncurses-dev libssl-dev`
-
-and then run 
-[cmake_setup.sh](./cmake_setup.sh) 
-to install the most recent CMake **without sudo**
+* Linux: 
+  1. browse to https://cmake.org/download/
+  2. scroll down to "Binary Distributions"
+  3. download cmake-*-Linux-x86_64.sh
+  4. install CMake for Linux almost instantly by:
+    ```sh
+    ./cmake-*-Linux-x86_64.sh --prefix=$HOME/.local --exclude-subdir
+    ```
+    
 
 ## Examples
 

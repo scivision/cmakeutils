@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# NOTE: most Linux users can simply download and install almost instantly
+#   instead of this lengthly compilation:
+#  1. browse to https://cmake.org/download/
+#  2. scroll down to "Binary Distributions"
+#  3. download cmake-*-Linux-x86_64.sh
+#  4. install CMake for Linux almost instantly by:
+#    ./cmake-*-Linux-x86_64.sh --prefix=$HOME/.local --exclude-subdir
+# ------------------------------------------------------------------------
 # 
 # Does NOT use sudo
 #
