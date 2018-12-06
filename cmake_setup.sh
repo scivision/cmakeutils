@@ -1,54 +1,39 @@
 #!/bin/bash
-#
-# NOTE: most Linux users can simply download and install almost instantly
-#   instead of this lengthly compilation:
-#  1. browse to https://cmake.org/download/
-#  2. scroll down to "Binary Distributions"
-#  3. download cmake-*-Linux-x86_64.sh
-#  4. install CMake for Linux almost instantly by:
-#    ./cmake-*-Linux-x86_64.sh --prefix=$HOME/.local --exclude-subdir
-# ------------------------------------------------------------------------
-# 
+# download and install CMake binary
 # Does NOT use sudo
-#
-# Compiles and installs CMake on Linux (CentOS, Debian, Ubuntu)
-#
-# Alternatives: linuxbrew (Linux), Homebrew (Mac), Scoop (Windows)
-#
-# For Windows, simply use the .msi from  https://cmake.org/download/
-#
-# prereqs
-# CentOS, Cygwin:  gcc-c++ make ncurses-devel openssl-devel
-# Debian / Ubuntu: g++ make libncurses-dev libssl-dev
+# checks SHA256 checksum
 
-cver=3.13.1
+cver=$(<.cmake-version)
 PREF=$HOME/.local
 WD=/tmp
 
+#0. config
+
+url=https://github.com/Kitware/CMake/releases/download/
+stem=cmake-$cver-Linux-x86_64
+fn=$stem.tar.gz
+efn=$stem.sh
+cfn=cmake-$cver-SHA-256.txt
+
 set -e
 
-# 0. check prereqs
-[[ $(ldconfig -p | grep ssl) ]] || { echo "must have SSL development library installed"; exit 1; }
-
-
-# 1. download
-[[ -d $WD/cmake-$cver ]] || curl https://cmake.org/files/v${cver:0:4}/cmake-$cver.tar.gz | tar -C $WD  -xzf -
-
-# 2. build
 (
 cd $WD
+[[ -f $cfn ]] || curl -L $url/v$cver/$cfn -o $cfn
 
-echo "installing cmake to $PREF"
+csum=$(grep $fn $cfn | cut -f1 -d' ')
 
-./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
+[[ -f $fn ]] || curl -L $url/v$cver/$fn -o $fn
 
-make -j -l 2
+[[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum not match $fn"; exit 1; }
 
-mkdir -p $PREF
-
-make install
+tar -C $PREF -xvf $fn
 )
 
+
 echo "----------------------------------------------------"
-echo "please add $PREF/bin to your PATH (in ~/.bashrc)"
+echo "please add to your PATH (in ~/.bashrc):"
+echo
+echo 'export PATH='$PREF/$stem'/bin/:$PATH'
+echo
 echo "then reopen a new terminal to use CMake $cver"

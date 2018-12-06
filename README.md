@@ -18,14 +18,7 @@ SSL support is also essential for any download/upload with CMake.
 
 * MacOS: `brew install cmake`
 * [Windows](https://cmake.org/download/)
-* Linux: 
-  1. browse to https://cmake.org/download/
-  2. scroll down to "Binary Distributions"
-  3. download cmake-*-Linux-x86_64.sh
-  4. install CMake for Linux almost instantly by:
-    ```sh
-    ./cmake-*-Linux-x86_64.sh --prefix=$HOME/.local --exclude-subdir
-    ```
+* Linux: `./cmake_setup.sh` takes only a minute to install binary and includes `cmake-gui`.
     
 
 ## Examples
