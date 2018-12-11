@@ -28,7 +28,10 @@ fn=$stem.tar.gz
 set -e
 
 # 0. check prereqs
+if [[ $OSTYPE != cygwin ]];
+then
 [[ $(ldconfig -p | grep ssl) ]] || { echo "must have SSL development library installed"; exit 1; }
+fi
 
 
 # 1. download
