@@ -13,8 +13,8 @@
 # For Windows, simply use the .msi from  https://cmake.org/download/
 #
 # prereqs
-# CentOS, Cygwin:  gcc-c++ make ncurses-devel openssl-devel
-# Debian / Ubuntu: g++ make libncurses-dev libssl-dev
+# CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
+# Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
 
 url=https://github.com/Kitware/CMake/releases/download/
 cver=$(<.cmake-version)

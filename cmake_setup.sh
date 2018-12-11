@@ -3,6 +3,8 @@
 # Does NOT use sudo
 # checks SHA256 checksum
 
+[[ $OSTYPE == cygwin ]] && { echo "use Cygwin setup.exe or setup_compile.sh"; exit 1; }
+
 cver=$(<.cmake-version)
 PREF=$HOME/.local
 WD=/tmp
