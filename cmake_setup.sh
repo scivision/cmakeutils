@@ -3,7 +3,20 @@
 # Does NOT use sudo
 # checks SHA256 checksum
 
-[[ $OSTYPE == cygwin ]] && { echo "use Cygwin setup.exe or setup_compile.sh"; exit 1; }
+case $OSTYPE in
+cygwin*)
+  echo "install CMake by Cygwin setup.exe"
+  exit
+  ;;
+darwin*)
+  echo "please download cmake*.dmg from https://cmake.org/download/"
+  exit
+  ;;
+*bsd*)
+  echo "use setup_compile.sh to compile CMake from source"
+  exit
+  ;;
+esac
 
 cver=$(<.cmake-version)
 PREF=$HOME/.local
