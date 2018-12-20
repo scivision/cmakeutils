@@ -25,6 +25,7 @@ SSL support is also essential for any download/upload with CMake.
 
 * Download with [SSL](./ssl) using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html)
 * Download and extract [ZIP](./zip)
+* measure [system](./system) parameters with CMake. Note Cygwin reports really small RAM and zero virtual memory.
 
 ### GNU Octave
 
