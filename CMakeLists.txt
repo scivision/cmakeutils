@@ -7,7 +7,7 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
 
-add_subdirectory(ssl)
+add_subdirectory(fetchgit)
 add_subdirectory(zip)
 
 add_subdirectory(matlab)
