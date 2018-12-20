@@ -1,15 +1,34 @@
-cmake_minimum_required(VERSION 3.0)
-project(SSLdemo
-        LANGUAGES NONE)
-        #DESCRIPTION "Demonstrate that CMake SSL is installed and working"
-        #HOMEPAGE_URL https://github.com/scivision/cmake-utils)
+cmake_minimum_required(VERSION 3.11)
+project(FetchContent_Demo
+        LANGUAGES NONE
+        DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
+        #HOMEPAGE_URL https://github.com/scivision/cmake-utils) # 3.12
 
-set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)
+# --- sub-projects
+include(FetchContent)
 
-if(NOT EXISTS ${OUTFN})
-  file(DOWNLOAD https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg ${OUTFN}
-     TIMEOUT 15
-     EXPECTED_HASH MD5=07883e93734b98cae0f7b9c55d287250
-     TLS_VERIFY ON
-     )
+FetchContent_Declare(demo
+  GIT_REPOSITORY https://github.com/scivision/hellofortran.git
+  GIT_TAG 4e9ad82
+)
+
+# this if() statement is canonical usage of FetchContent, to avoid repeatedly doing same thing in different parts of same project.
+FetchContent_GetProperties(demo)
+if(NOT demo_POPULATED)
+  FetchContent_Populate(demo)
+  # builds under bin/_deps/demo-build/
+  add_subdirectory(${demo_SOURCE_DIR} ${demo_BINARY_DIR})
 endif()
+
+# -- data
+# This must be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
+# you will find the data files under bin/_deps/demodata-src/
+FetchContent_Declare(demodata
+  URL https://github.com/scivision/hellofortran/raw/master/octo.zip
+  URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
+)
+FetchContent_GetProperties(demodata)
+if(NOT demodata_POPULATED)
+  FetchContent_Populate(demodata)
+endif()
+

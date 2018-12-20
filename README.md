@@ -23,7 +23,7 @@ SSL support is also essential for any download/upload with CMake.
 
 ## Examples
 
-* Download with [SSL](./ssl)
+* Download with [SSL](./ssl) using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html)
 * Download and extract [ZIP](./zip)
 
 ### GNU Octave
