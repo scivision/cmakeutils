@@ -6,7 +6,7 @@ git:
   depth: 3
   quiet: true
 
-env: FC=gfortran
+env: FC=gfortran-6
 
 addons:
   apt:
@@ -28,6 +28,7 @@ matrix:
   - os: linux
   # - windows  # needs gfortran, straightforward to add but already on appveyor
   - os: osx
+    env: FC=gfortran
     before_install:
     - brew install gcc > /dev/null
     - brew install octave > /dev/null
