@@ -9,7 +9,7 @@ include(FetchContent)
 
 FetchContent_Declare(demo
   GIT_REPOSITORY https://github.com/scivision/hellofortran.git
-  GIT_TAG 4e9ad82
+  GIT_TAG 2b082ea
 )
 
 # this if() statement is canonical usage of FetchContent, to avoid repeatedly doing same thing in different parts of same project.

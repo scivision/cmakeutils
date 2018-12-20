@@ -2,18 +2,14 @@ cmake_minimum_required(VERSION 3.3)
 project(demoMatlab Fortran)
 enable_testing()
 
-get_directory_property(hasParent PARENT_DIRECTORY)
-if(NOT hasParent)
-  list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake/Modules/)
-endif()
-
 
 find_package(Matlab COMPONENTS MAIN_PROGRAM)
 
 if(Matlab_MAIN_PROGRAM_FOUND)
   add_test(NAME BasicMatlab
-           COMMAND ${Matlab_MAIN_PROGRAM} -nojvm -r "runtests('.')"
-           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    COMMAND ${Matlab_MAIN_PROGRAM} -nojvm -r "r=runtests(); exit(any([r.Failed]))"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  set_tests_properties(BasicMatlab PROPERTIES TIMEOUT 30)
 endif()
 
 
@@ -24,5 +20,6 @@ if(Matlab_ENG_LIBRARY_FOUND AND Matlab_MX_LIBRARY_FOUND)
   target_link_libraries(fengdemo PRIVATE ${Matlab_ENG_LIBRARY} ${Matlab_MX_LIBRARY})
 
   add_test(NAME MexFortran
-           COMMAND fengdemo)
+    COMMAND fengdemo)
+  set_tests_properties(MexFortran PROPERTIES TIMEOUT 30)
 endif()

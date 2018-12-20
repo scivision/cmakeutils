@@ -10,20 +10,29 @@ env: FC=gfortran
 
 addons:
   apt:
-    packages:
-    - gfortran
+    sources: ubuntu-toolchain-r-test
+    packages: 
+    - gfortran-6
     - octave
-    
+
+
+cache:
+  directories:
+  - $HOME/Library/Caches/Homebrew
+  
+before_cache:
+- brew cleanup
+
 matrix:
   include:
   - os: linux
   # - windows  # needs gfortran, straightforward to add but already on appveyor
-  #- os: osx  # save time
-  #  before_install:
-  #  - brew install gcc > /dev/null
-  #  - brew install octave > /dev/null
+  - os: osx
+    before_install:
+    - brew install gcc > /dev/null
+    - brew install octave > /dev/null
 
-install: 
+install:
 - cd bin
 - cmake ..
 - cmake --build .

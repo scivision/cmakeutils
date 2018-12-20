@@ -23,6 +23,7 @@ endif()
 if(Octave_Development_FOUND)
   add_executable(octdemo octdemo.cpp)
   target_link_libraries(octdemo PRIVATE Octave::Octave)
+  set_target_properties(octdemo PROPERTIES CXX_STANDARD 11)
   
   add_test(NAME DevOctave COMMAND octdemo)
 endif()
