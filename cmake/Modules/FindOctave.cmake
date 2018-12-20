@@ -14,7 +14,7 @@ This module defines the following :prop_tgt:`IMPORTED` targets:
 
 ``Octave::Interpreter``
   Octave interpreter (the main program)
-``Octave::Development``
+``Octave::Octave``
   include directories and libraries
 
 If no ``COMPONENTS`` are specified, ``Interpreter`` is assumed.
@@ -24,7 +24,7 @@ Result Variables
 
 ``Octave_FOUND``
   Octave interpreter and/or libraries were found
-``Octave_<component_FOUND``
+``Octave_<component>_FOUND``
   Octave <component> specified was found
 
 ``Octave_EXECUTABLE``

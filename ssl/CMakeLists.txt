@@ -21,8 +21,8 @@ if(NOT demo_POPULATED)
 endif()
 
 # -- data
-# This must be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
-# you will find the data files under bin/_deps/demodata-src/
+# This MUST be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
+# you will find the extracted data files under bin/_deps/demodata-src/
 FetchContent_Declare(demodata
   URL https://github.com/scivision/hellofortran/raw/master/octo.zip
   URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
