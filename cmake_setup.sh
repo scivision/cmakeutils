@@ -18,8 +18,9 @@ darwin*)
   ;;
 esac
 
+[[ -z $PREFIX ]] && PREFIX=$HOME/.local
+
 cver=$(<.cmake-version)
-PREF=$HOME/.local
 WD=/tmp
 
 #0. config
@@ -42,13 +43,13 @@ csum=$(grep $fn $cfn | cut -f1 -d' ')
 
 [[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum not match $fn"; exit 1; }
 
-tar -C $PREF -xvf $fn
+tar -C $PREFIX -xvf $fn
 )
 
 
 echo "----------------------------------------------------"
 echo "please add to your PATH (in ~/.bashrc):"
 echo
-echo 'export PATH='$PREF/$stem'/bin/:$PATH'
+echo 'export PATH='$PREFIX/$stem'/bin/:$PATH'
 echo
 echo "then reopen a new terminal to use CMake $cver"

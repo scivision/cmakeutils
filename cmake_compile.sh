@@ -16,9 +16,11 @@
 # CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
 # Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
 
+
+[[ -z $PREFIX ]] && PREFIX=$HOME/.local
+
 url=https://github.com/Kitware/CMake/releases/download/
 cver=$(<.cmake-version)
-PREF=$HOME/.local
 WD=/tmp
 
 stem=cmake-$cver
@@ -47,13 +49,13 @@ csum=$(grep $fn $cfn | cut -f1 -d' ')
 
 tar -xf $fn
 
-echo "installing cmake to $PREF"
+echo "installing cmake to $PREFIX"
 
-./cmake-$cver/bootstrap --prefix=$PREF --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
+./cmake-$cver/bootstrap --prefix=$PREFIX --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
 
 make -j -l 2
 
-mkdir -p $PREF
+mkdir -p $PREFIX
 
 make install
 )
@@ -61,6 +63,6 @@ make install
 echo "----------------------------------------------------"
 echo "please add to ~/.bashrc:"
 echo
-echo 'export PATH='$PREF'/bin/:$PATH'
+echo "export PATH='$PREFIX'/bin/:$PATH'"
 echo
 echo "then reopen a new terminal to use CMake $cver"

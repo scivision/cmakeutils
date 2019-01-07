@@ -20,6 +20,11 @@ SSL support is also essential for any download/upload with CMake.
 * [Windows](https://cmake.org/download/)
 * Linux: `./cmake_setup.sh` takes only a minute to install binary and includes `cmake-gui`.
     
+The top-level install directory for [cmake_setup.sh](./cmake_setup.sh) can be set as follows.
+Default is `$HOME/.local`:
+```sh
+PREFIX=$HOME/.local ./cmake_setup.sh
+```
 
 ## Examples
 
