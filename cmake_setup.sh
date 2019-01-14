@@ -43,7 +43,9 @@ csum=$(grep $fn $cfn | cut -f1 -d' ')
 
 [[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum not match $fn"; exit 1; }
 
-tar -C $PREFIX -xvf $fn
+echo "Installing CMake $cver to $PREFIX/$stem"
+
+tar -C $PREFIX -xf $fn
 )
 
 
