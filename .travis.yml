@@ -15,7 +15,6 @@ addons:
     - gfortran-6
     - octave
 
-
 cache:
   directories:
   - $HOME/Library/Caches/Homebrew
@@ -34,7 +33,7 @@ matrix:
     - brew install octave > /dev/null
 
 install:
-- cd bin
+- cd build
 - cmake ..
 - cmake --build .
 
