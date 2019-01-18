@@ -15,7 +15,7 @@ init:
 # - cmd: choco install octave.portable  # works great but disabled to save ten minutes
 
 install:
-- cd bin
+- cd build
 
 - sh: cmake ..
 - cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..

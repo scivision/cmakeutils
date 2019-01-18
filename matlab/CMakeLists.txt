@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(demoMatlab Fortran)
 enable_testing()
 
+set(FFLAGS -g -O0)
 
 find_package(Matlab COMPONENTS MAIN_PROGRAM)
 
@@ -18,6 +19,7 @@ if(Matlab_ENG_LIBRARY_FOUND AND Matlab_MX_LIBRARY_FOUND)
   add_executable(fengdemo fengdemo.F90)
   target_include_directories(fengdemo PRIVATE ${Matlab_INCLUDE_DIRS})
   target_link_libraries(fengdemo PRIVATE ${Matlab_ENG_LIBRARY} ${Matlab_MX_LIBRARY})
+  target_compile_options(fengdemo PRIVATE ${FFLAGS})
 
   add_test(NAME MexFortran
     COMMAND fengdemo)
