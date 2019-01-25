@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.7)
 project(demoOctave CXX)
 enable_testing()
 
-get_directory_property(hasParent PARENT_DIRECTORY)
-if(NOT hasParent)
+if(CMAKE_VERSION VERSION_LESS 3.14)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/../cmake/Modules/)
 endif()
 
@@ -12,7 +11,6 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
 endif()
 # --- GNU Octave ---
 find_package(Octave COMPONENTS Interpreter Development)
-
 
 if(Octave_Interpreter_FOUND)
   add_test(NAME BasicOctave

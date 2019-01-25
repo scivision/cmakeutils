@@ -2,13 +2,10 @@ cmake_minimum_required(VERSION 3.10)
 project(mpidemo Fortran)
 
 
-if(NOT hasParent)
-  find_package(MPI REQUIRED COMPONENTS Fortran)
-else()
-  find_package(MPI COMPONENTS Fortran)
-endif()
+find_package(MPI COMPONENTS Fortran)
 
 if(NOT MPI_Fortran_FOUND)
+  message(WARNING "MPI not found, skipping MPI tests.")
   return()
 endif()
 
