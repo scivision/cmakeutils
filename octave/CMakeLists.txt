@@ -14,8 +14,8 @@ find_package(Octave COMPONENTS Interpreter Development)
 
 if(Octave_Interpreter_FOUND)
   add_test(NAME BasicOctave
-           COMMAND Octave::Interpreter -q --eval "runtests('.')"
-           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+           COMMAND Octave::Interpreter -q --eval "runtests('${CMAKE_CURRENT_SOURCE_DIR}')"
+           )
 endif()
 
 if(Octave_Development_FOUND)
