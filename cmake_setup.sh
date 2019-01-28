@@ -3,6 +3,9 @@
 # Does NOT use sudo
 # checks SHA256 checksum
 
+set -e
+set -u
+
 case $OSTYPE in
 cygwin*)
   echo "install CMake by Cygwin setup.exe"
@@ -18,7 +21,9 @@ darwin*)
   ;;
 esac
 
-[[ -z $PREFIX ]] && PREFIX=$HOME/.local
+[[ -v ${PREFIX:-} ]] || PREFIX=$HOME/.local
+
+mkdir -p $PREFIX
 
 cver=$(<.cmake-version)
 WD=/tmp
@@ -31,10 +36,9 @@ fn=$stem.tar.gz
 efn=$stem.sh
 cfn=cmake-$cver-SHA-256.txt
 
-set -e
 
-(
-cd $WD
+(cd $WD
+
 [[ -f $cfn ]] || curl -L $url/v$cver/$cfn -o $cfn
 
 csum=$(grep $fn $cfn | cut -f1 -d' ')
