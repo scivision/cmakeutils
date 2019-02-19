@@ -3,7 +3,7 @@
 # NOTE: most Linux users can simply download and install almost instantly
 #   instead of this lengthly compilation with cmake_setup.sh
 # ------------------------------------------------------------------------
-# 
+#
 # Does NOT use sudo
 #
 # Compiles and installs CMake on Linux (CentOS, Debian, Ubuntu)
@@ -15,15 +15,22 @@
 # prereqs
 # CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
 # Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
+#
+# Git > 2.18 required, or specify CMake version at command line e.g.
+#
+# ./cmake_setup.sh v3.14.2
 
 
 [[ -z $PREFIX ]] && PREFIX=$HOME/.local
 
 url=https://github.com/Kitware/CMake/releases/download/
-cver=$(<.cmake-version)
+
+# git >= 2.18
+[[ $# -ne 1 ]] && cver=$(git ls-remote --tags --sort="v:refname" git://github.com/kitware/cmake.git | tail -n1 | sed 's/.*\///; s/\^{}//') || cver=$1
+
 WD=/tmp
 
-stem=cmake-$cver
+stem=cmake-${cver:1}
 cfn=$stem-SHA-256.txt
 fn=$stem.tar.gz
 
@@ -37,21 +44,21 @@ fi
 
 
 # 1. download
-[[ -f $WD/$fn ]] || curl -L $url/v$cver/$fn -o $WD/$fn
+[[ -f $WD/$fn ]] || curl -L $url/$cver/$fn -o $WD/$fn
 
 # 2. build
 (
 cd $WD
 
-[[ -f $cfn ]] || curl -L $url/v$cver/$cfn -o $cfn
+[[ -f $cfn ]] || curl -L $url/$cver/$cfn -o $cfn
 csum=$(grep $fn $cfn | cut -f1 -d' ')
-[[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum not match $fn"; exit 1; }
+[[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum does not match $fn"; exit 1; }
 
 tar -xf $fn
 
 echo "installing cmake to $PREFIX"
 
-./cmake-$cver/bootstrap --prefix=$PREFIX --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
+./cmake-${cver:1}/bootstrap --prefix=$PREFIX --parallel=2 -- -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_USE_OPENSSL:BOOL=ON
 
 make -j -l 2
 

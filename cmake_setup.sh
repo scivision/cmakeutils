@@ -2,6 +2,10 @@
 # download and install CMake binary
 # Does NOT use sudo
 # checks SHA256 checksum
+#
+# Git > 2.18 required, or specify CMake version at command line e.g.
+#
+# ./cmake_setup.sh v3.14.2
 
 set -e
 set -u
@@ -25,25 +29,27 @@ esac
 
 mkdir -p $PREFIX
 
-cver=$(<.cmake-version)
+# git >= 2.18
+[[ $# -ne 1 ]] && cver=$(git ls-remote --tags --sort="v:refname" git://github.com/kitware/cmake.git | tail -n1 | sed 's/.*\///; s/\^{}//') || cver=$1
+
 WD=/tmp
 
 #0. config
 
 url=https://github.com/Kitware/CMake/releases/download/
-stem=cmake-$cver-Linux-x86_64
+stem=cmake-${cver:1}-Linux-x86_64
 fn=$stem.tar.gz
 efn=$stem.sh
-cfn=cmake-$cver-SHA-256.txt
+cfn=cmake-${cver:1}-SHA-256.txt
 
 
 (cd $WD
 
-[[ -f $cfn ]] || curl -L $url/v$cver/$cfn -o $cfn
+[[ -f $cfn ]] || curl -L $url/$cver/$cfn -o $cfn
 
 csum=$(grep $fn $cfn | cut -f1 -d' ')
 
-[[ -f $fn ]] || curl -L $url/v$cver/$fn -o $fn
+[[ -f $fn ]] || curl -L $url/$cver/$fn -o $fn
 
 [[ $(sha256sum $fn | cut -f1 -d' ') == $csum ]] || { echo "checksum not match $fn"; exit 1; }
 
