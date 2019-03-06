@@ -85,6 +85,7 @@ if(LAPACK_FOUND)
     set_target_properties(Lapack::Lapack PROPERTIES
                           IMPORTED_LOCATION ${LAPACK_LIBRARY}
                          )
+  endif()
 endif()
 
 mark_as_advanced(LAPACK_LIBRARY BLAS_LIBRARY)
