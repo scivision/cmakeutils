@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
-project(lapack_demo C Fortran)
+project(lapack_demo C)
 
-# This is INWORK, for now targeting Intel MKL only.
+# This is INWORK, for now targeting Intel MKL only from GCC, Clang or ICPC.
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/Modules)
 

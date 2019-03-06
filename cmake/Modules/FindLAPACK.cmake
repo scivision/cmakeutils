@@ -19,6 +19,8 @@ Result Variables
 
 ``LAPACK_FOUND``
   Lapack libraries were found
+``LAPACK_<component>_FOUND``
+  LAPACK <component> specified was found
 ``LAPACK_LIBRARIES``
   Lapack library files (including BLAS
 ``LAPACK_INCLUDE_DIRS``
