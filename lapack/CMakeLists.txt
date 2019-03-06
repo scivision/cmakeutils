@@ -7,6 +7,10 @@ project(lapack_demo C)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/Modules)
 
+if(NOT DEFINED ENV{MKLROOT})
+  message(WARNING "MKLROOT environment variable not set")
+endif()
+
 find_package(LAPACK COMPONENTS IntelPar REQUIRED)
 
 add_executable(svd_c example_gesvd.c)
