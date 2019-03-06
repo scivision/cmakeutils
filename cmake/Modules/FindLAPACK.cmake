@@ -68,7 +68,7 @@ foreach(s ${_mkl_libs})
   list(APPEND LAPACK_LIB ${LAPACK_${s}_LIBRARY})
 endforeach()
 
-if(NOT BUILD_SHARED_LIBS AND NOT WINDOWS)
+if(NOT BUILD_SHARED_LIBS AND (UNIX AND NOT APPLE))
   set(LAPACK_LIB -Wl,--start-group ${LAPACK_LIB} -Wl,--end-group)
 endif()
 
