@@ -6,12 +6,27 @@
 FindLapack
 ----------
 
-Finds LAPAACK library. Works with Netlib Lapack and Intel MKL,
+Michael Hirsch, Ph.D. www.scivision.dev
+
+Let us know if there are more MKl/Lapack/compiler combination you want.
+Refer to https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
+
+Finds LAPACK library. Works with Netlib Lapack and Intel MKL,
 including for non-Intel compilers with Intel MKL.
 
 Why not the FindLapack.cmake built into CMake? It has a lot of old code for
 infrequently used Lapack libraries and is unreliable for me.
 
+
+Parameters
+^^^^^^^^^^
+
+COMPONENTS default to Netlib LAPACK, otherwise:
+
+``IntelPar``
+  Intel MKL 32-bit integer with Intel OpenMP for ICC, GCC and PGCC
+``IntelSeq``
+  Intel MKL 32-bit integer without threading for ICC, GCC, and PGCC
 
 
 Result Variables
@@ -34,7 +49,12 @@ cmake_policy(VERSION 3.3)
 function(mkl_libs)
 # https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor
 
-foreach(s ${ARGV})
+set(_mkl_libs ${ARGV})
+if(CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
+  list(INSERT _mkl_libs 0 mkl_gf_lp64)
+endif()
+
+foreach(s ${_mkl_libs})
   find_library(LAPACK_${s}_LIBRARY
            NAMES ${s}
            PATHS $ENV{MKLROOT}/lib
@@ -48,6 +68,10 @@ foreach(s ${ARGV})
   list(APPEND LAPACK_LIB ${LAPACK_${s}_LIBRARY})
 endforeach()
 
+if(NOT BUILD_SHARED_LIBS AND NOT WINDOWS)
+  set(LAPACK_LIB -Wl,--start-group ${LAPACK_LIB} -Wl,--end-group)
+endif()
+
 list(APPEND LAPACK_LIB pthread ${CMAKE_DL_LIBS} m)
 
 set(LAPACK_LIBRARY ${LAPACK_LIB} PARENT_SCOPE)
@@ -57,11 +81,13 @@ endfunction()
 
 if(IntelPar IN_LIST LAPACK_FIND_COMPONENTS)
   mkl_libs(mkl_intel_lp64 mkl_intel_thread mkl_core iomp5)
+
   if(LAPACK_LIBRARY)
     set(LAPACK_IntelPar_FOUND true)
   endif()
 elseif(IntelSeq IN_LIST LAPACK_FIND_COMPONENTS)
   mkl_libs(mkl_intel_lp64 mkl_sequential mkl_core)
+
   if(LAPACK_LIBRARY)
     set(LAPACK_IntelSeq_FOUND true)
   endif()
