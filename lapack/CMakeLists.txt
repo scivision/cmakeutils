@@ -3,6 +3,8 @@ project(lapack_demo C)
 
 # This is INWORK, for now targeting Intel MKL only from GCC, Clang, PGI or ICPC.
 
+# environment variable MKLROOT must be defined for MKL to be found, with any build system.
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/Modules)
 
 find_package(LAPACK COMPONENTS IntelPar REQUIRED)
