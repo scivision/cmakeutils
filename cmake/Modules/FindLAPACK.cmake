@@ -21,6 +21,8 @@ Result Variables
   Lapack libraries were found
 ``LAPACK_LIBRARIES``
   Lapack library files (including BLAS
+``LAPACK_INCLUDE_DIRS``
+  Lapack include directories (for C/C++)
 
 #]=======================================================================]
 
@@ -48,6 +50,7 @@ list(APPEND LAPACK_LIB pthread ${CMAKE_DL_LIBS} m)
 
 set(LAPACK_LIBRARY ${LAPACK_LIB} PARENT_SCOPE)
 set(BLAS_LIBRARY ${LAPACK_LIB} PARENT_SCOPE)
+set(LAPACK_INCLUDE_DIR $ENV{MKLROOT}/include PARENT_SCOPE)
 
 endfunction()
 
@@ -69,6 +72,8 @@ else()
 
   find_library(BLAS_LIBRARY
     NAMES refblas blas)
+
+  # set(LAPACK_INCLUDE_DIR)  # FIXME: for LapackE
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -79,13 +84,15 @@ find_package_handle_standard_args(
 
 if(LAPACK_FOUND)
   set(LAPACK_LIBRARIES ${LAPACK_LIBRARY} ${BLAS_LIBRARY})
+  set(LAPACK_INCLUDE_DIRS ${LAPACK_INCLUDE_DIR})
 
   if(NOT TARGET Lapack::Lapack)
     add_library(Lapack::Lapack UNKNOWN IMPORTED)
     set_target_properties(Lapack::Lapack PROPERTIES
+                          IMPORTED_LOCATION ${LAPACK_INCLUDE_DIR}}
                           IMPORTED_LOCATION ${LAPACK_LIBRARY}
                          )
   endif()
 endif()
 
-mark_as_advanced(LAPACK_LIBRARY BLAS_LIBRARY)
+mark_as_advanced(LAPACK_LIBRARY BLAS_LIBRARY LAPACK_INCLUDE_DIR)
