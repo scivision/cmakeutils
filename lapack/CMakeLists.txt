@@ -18,15 +18,10 @@ if(NOT BUILD_SHARED_LIBS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES .a .lib)
 endif()
 
-if(NOT DEFINED ENV{MKLROOT})
-  message(WARNING "MKLROOT environment variable must be set to use Intel MKL")
-endif()
-
-if(CMAKE_C_COMPILER_ID STREQUAL GNU)
-  find_package(LAPACK COMPONENTS GNUPar REQUIRED)
-elseif(CMAKE_C_COMPILER_ID STREQUAL Intel)
+if(DEFINED ENV{MKLROOT})
   find_package(LAPACK COMPONENTS IntelPar REQUIRED)
 else()
+  message(WARNING "MKLROOT environment variable must be set to use Intel MKL")
   find_package(LAPACK REQUIRED)  # netlib
 endif()
 
