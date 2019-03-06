@@ -51,22 +51,29 @@ endforeach()
 list(APPEND LAPACK_LIB pthread ${CMAKE_DL_LIBS} m)
 
 set(LAPACK_LIBRARY ${LAPACK_LIB} PARENT_SCOPE)
-set(BLAS_LIBRARY ${LAPACK_LIB} PARENT_SCOPE)
 set(LAPACK_INCLUDE_DIR $ENV{MKLROOT}/include PARENT_SCOPE)
 
 endfunction()
 
 if(IntelPar IN_LIST LAPACK_FIND_COMPONENTS)
   mkl_libs(mkl_intel_lp64 mkl_intel_thread mkl_core iomp5)
-
   if(LAPACK_LIBRARY)
     set(LAPACK_IntelPar_FOUND true)
   endif()
 elseif(IntelSeq IN_LIST LAPACK_FIND_COMPONENTS)
   mkl_libs(mkl_intel_lp64 mkl_sequential mkl_core)
-
   if(LAPACK_LIBRARY)
     set(LAPACK_IntelSeq_FOUND true)
+  endif()
+elseif(GNUPar IN_LIST LAPACK_FIND_COMPONENTS)
+  mkl_libs(mkl_gf_lp64 mkl_intel_thread mkl_core iomp5)
+  if(LAPACK_LIBRARY)
+    set(LAPACK_GNUPar_FOUND true)
+  endif()
+elseif(GNUSeq IN_LIST LAPACK_FIND_COMPONENTS)
+  mkl_libs(mkl_gf_lp64 mkl_sequential mkl_core)
+  if(LAPACK_LIBRARY)
+    set(LAPACK_GNUSeq_FOUND true)
   endif()
 else()
   find_library(LAPACK_LIBRARY
@@ -75,26 +82,21 @@ else()
   find_library(BLAS_LIBRARY
     NAMES refblas blas)
 
+  mark_as_advanced(BLAS_LIBRARY)
+
+  list(APPEND LAPACK_LIBRARY ${BLAS_LIBRARY})
   # set(LAPACK_INCLUDE_DIR)  # FIXME: for LapackE
 endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
   LAPACK
-  REQUIRED_VARS LAPACK_LIBRARY BLAS_LIBRARY
+  REQUIRED_VARS LAPACK_LIBRARY
   HANDLE_COMPONENTS)
 
 if(LAPACK_FOUND)
-  set(LAPACK_LIBRARIES ${LAPACK_LIBRARY} ${BLAS_LIBRARY})
+  set(LAPACK_LIBRARIES ${LAPACK_LIBRARY})
   set(LAPACK_INCLUDE_DIRS ${LAPACK_INCLUDE_DIR})
-
-  if(NOT TARGET Lapack::Lapack)
-    add_library(Lapack::Lapack UNKNOWN IMPORTED)
-    set_target_properties(Lapack::Lapack PROPERTIES
-                          IMPORTED_LOCATION ${LAPACK_INCLUDE_DIR}}
-                          IMPORTED_LOCATION ${LAPACK_LIBRARY}
-                         )
-  endif()
 endif()
 
-mark_as_advanced(LAPACK_LIBRARY BLAS_LIBRARY LAPACK_INCLUDE_DIR)
+mark_as_advanced(LAPACK_LIBRARY LAPACK_INCLUDE_DIR)
