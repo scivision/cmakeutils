@@ -14,7 +14,6 @@ addons:
     packages:
     - gfortran-6
     - octave
-    - liblapacke-dev
 
 cache:
   directories:
@@ -32,7 +31,6 @@ matrix:
     before_install:
     - brew install gcc > /dev/null
     - brew install octave > /dev/null
-    - brew install lapack > /dev/null
 
 install:
 - cd build
