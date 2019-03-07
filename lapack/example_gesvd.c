@@ -38,8 +38,11 @@ from http://www.netlib.org/lapack/explore-html/d5/df8/example___d_g_e_s_v__colma
 #include <stdio.h>
 #include <string.h>
 
+#if USEMKL == 1
 #include "mkl_lapacke.h"
-//#include "lapacke.h"
+#else
+#include "lapacke.h"
+#endif
 
 /* Main program */
 int main(int argc, char **argv) {

@@ -16,3 +16,5 @@ add_subdirectory(matlab)
 add_subdirectory(octave)
 
 add_subdirectory(system)
+
+add_subdirectory(lapack)
