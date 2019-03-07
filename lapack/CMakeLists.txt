@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
 project(lapack_demo C)
 
-# This targets Intel MKL from GCC, Clang, PGI or ICC.
-
-# environment variable MKLROOT must be defined for MKL to be found, with any build system.
+option(BUILD_SHARED_LIBS "static or shared libs")
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
   add_compile_options(-g -O0)
@@ -21,7 +19,6 @@ endif()
 if(DEFINED ENV{MKLROOT})
   find_package(LAPACK COMPONENTS IntelPar REQUIRED)
 else()
-  message(WARNING "MKLROOT environment variable must be set to use Intel MKL")
   find_package(LAPACK REQUIRED)  # netlib
 endif()
 
