@@ -16,14 +16,11 @@ SSL support is also essential for any download/upload with CMake.
 
 ## Install CMake
 
-* MacOS: `brew install cmake`
-* [Windows](https://cmake.org/download/)
-* Linux: `./cmake_setup.sh` takes only a minute to install binary and includes `cmake-gui`.
-    
-The top-level install directory for [cmake_setup.sh](./cmake_setup.sh) can be set as follows.
-Default is `$HOME/.local`:
+We have created the Python script [cmake_setup.py](./cmake_setup.py)
+takes only a minute to install binary and includes `cmake-gui`.
+It works for Linux, Mac, native Windows and Windows Subsystem for Linux.
 ```sh
-PREFIX=$HOME/.local ./cmake_setup.sh
+python cmake_setup.py
 ```
 
 ## Examples
