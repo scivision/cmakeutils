@@ -10,6 +10,8 @@ environment:
 build: off
 
 init:
+# keep the "apt update" line to avoid intermittent failures
+- sh: sudo apt update -y > /dev/null
 - sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends octave > /dev/null
 - cmd: set PATH=%MINGW_DIR%;%PATH%
 # - cmd: choco install octave.portable  # works great but disabled to save ten minutes
