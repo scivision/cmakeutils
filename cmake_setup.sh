@@ -5,7 +5,7 @@
 #
 # Git > 2.18 required, or specify CMake version at command line e.g.
 #
-# ./cmake_setup.sh v3.14.2
+# ./cmake_setup.sh v3.14.0
 
 set -e
 set -u
@@ -32,7 +32,7 @@ mkdir -p $PREFIX
 # git >= 2.18
 [[ $# -ne 1 ]] && cver=$(git ls-remote --tags --sort="v:refname" git://github.com/kitware/cmake.git | tail -n1 | sed 's/.*\///; s/\^{}//') || cver=$1
 
-WD=/tmp
+WD=~/Downloads
 
 #0. config
 
