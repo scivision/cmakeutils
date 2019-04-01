@@ -1,11 +1,14 @@
 [![Build Status](https://travis-ci.com/scivision/cmake-utils.svg?branch=master)](https://travis-ci.com/scivision/cmake-utils)
 [![Build status](https://ci.appveyor.com/api/projects/status/bg07qlioi71k3stx?svg=true)](https://ci.appveyor.com/project/scivision/cmake-utils)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
+[![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
+[![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
+
 
 # CMake Utils
 
 CMake is a powerful and easy to use build system for a wide variety of languages including:
- 
+
 * C / C++
 * modern object-oriented Fortran 2008 / 2018
 * Python
@@ -31,8 +34,8 @@ python cmake_setup.py
 
 ### GNU Octave
 
-[Octave from CMake](./octave) via our 
-[FindOctave.cmake](./cmake/Modules/FindOctave.cmake) 
+[Octave from CMake](./octave) via our
+[FindOctave.cmake](./cmake/Modules/FindOctave.cmake)
 works well from CMake for unit tests, liboctave, etc. for Octave &ge; 3.8.
 We didn't try older versions of Octave.
 
@@ -53,6 +56,6 @@ Will ask you to select a compiler, or simply return:
 
 ## CMake modules
 
-To avoid duplication, we have several scientific computing CMake modules in 
-[scivision/fortran-libs](https://github.com/scivision/fortran-libs/tree/master/cmake/Modules) 
+To avoid duplication, we have several scientific computing CMake modules in
+[scivision/fortran-libs](https://github.com/scivision/fortran-libs/tree/master/cmake/Modules)
 repo.
