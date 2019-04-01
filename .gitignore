@@ -2,6 +2,8 @@ __pycache__/
 .mypy_cache/
 bin/
 build/
+*.egg-info/
+dist/
 *.svg
 *.png
 CMakeCache.txt
