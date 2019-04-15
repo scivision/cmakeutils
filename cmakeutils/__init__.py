@@ -48,7 +48,7 @@ def install_cmake(cmake_version: str, outfile: Path,
         instpath.mkdir(parents=True, exist_ok=True)
         print('Installing CMake to', instpath)
         with tarfile.open(str(outfile)) as tf:
-            tf.extractall(instpath)
+            tf.extractall(str(instpath))
         print('add to ~/.bashrc:')
         print('export PATH={}:$PATH'.format(instpath/stem/'bin'))
     elif sys.platform == 'win32':
