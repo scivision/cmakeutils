@@ -31,7 +31,7 @@ matrix:
     install: pip install -e .[tests,cov]
     script:
     - flake8
-    - mypy . --ig
+    - mypy .
   # - windows  # needs gfortran, straightforward to add but already on appveyor
   - os: osx
     env: FC=gfortran

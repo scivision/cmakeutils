@@ -1,3 +1,4 @@
+.eggs/
 __pycache__/
 .mypy_cache/
 bin/

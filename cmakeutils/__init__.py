@@ -17,8 +17,8 @@ def url_retrieve(url: str, outfile: Path):
     R = requests.get(url, allow_redirects=True)
     if R.status_code != 200:
         raise ConnectionError('could not download {}   error {}'.format(url, R.status_code))
-    with outfile.open('wb') as f:
-        f.write(R.content)
+
+    outfile.write_bytes(R.content)
 
 
 def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
@@ -86,7 +86,7 @@ def latest_cmake_version() -> str:
     if not git:
         raise FileNotFoundError('Git was not found, is it installed?')
 
-    ret = subprocess.check_output(['git', '--version'], universal_newlines=True).split()[-1]
+    ret = subprocess.check_output(['git', '--version'], universal_newlines=True).split()[2]
     git_version = pkg_resources.parse_version(ret[:6])
     if git_version < pkg_resources.parse_version('2.18'):
         raise RuntimeError('Git >= 2.18 required for auto latest version--'
