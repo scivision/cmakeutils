@@ -39,7 +39,7 @@ def main():
     if not file_checksum(outfile, hashfile, 'sha256'):
         raise RuntimeError('File checksum did not match')
 
-    install_cmake(cmake_version, outfile, P.install_path, stem, p.quiet)
+    install_cmake(cmake_version, outfile, P.install_path, stem, P.quiet)
 
 
 if __name__ == '__main__':
