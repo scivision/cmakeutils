@@ -38,7 +38,8 @@ def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
 
 
 def install_cmake(cmake_version: str, outfile: Path,
-                  install_path: Path = None, stem: str = None):
+                  install_path: Path = None, stem: str = None,
+                  quiet: bool = False):
     if sys.platform == 'darwin':
         print('please install CMake {} from disk image {} or do\n brew install cmake'.format(cmake_version, outfile))
     elif sys.platform == 'linux':
@@ -50,9 +51,10 @@ def install_cmake(cmake_version: str, outfile: Path,
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(instpath))
         print('add to ~/.bashrc:')
-        print('export PATH={}:$PATH'.format(instpath/stem/'bin'))
+        print('export PATH={}:$PATH'.format(instpath/'cmake/bin'))
     elif sys.platform == 'win32':
-        subprocess.run(['msiexec', '/i', str(outfile)])
+        passive = '/passive' if quiet else ''
+        subprocess.run(['msiexec', passive, '/package', str(outfile)])
 
 
 def cmake_files(cmake_version: str, odir: Path) -> Tuple[Path, str, str]:
@@ -94,11 +96,11 @@ def latest_cmake_version() -> str:
 
     cmd = ['git', 'ls-remote', '--tags', '--sort=v:refname', 'git://github.com/kitware/cmake.git']
     lastrev = subprocess.check_output(cmd, universal_newlines=True).strip().split('\n')[-1]
-    pat = r'.*refs/tags/v(\w+\.\w+\.\w+)\^\{\}$'
+    pat = r'.*refs/tags/v(\w+\.\w+\.\w+.*)\^\{\}$'
 
     mat = re.match(pat, lastrev)
     if not mat:
-        raise ValueError('Could not determine latest CMake version. Please report this bug.')
+        raise ValueError('Could not determine latest CMake version. Please report this bug.  \nInput: \n {}'.format(lastrev))
 
     cmake_version = mat.group(1)
 

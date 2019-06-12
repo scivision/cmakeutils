@@ -16,6 +16,7 @@ def main():
     p.add_argument('version', help='request CMake version (default latest)', nargs='?')
     p.add_argument('-o', '--outdir', help='download directory', default='~/Downloads')
     p.add_argument('--install_path', help='Linux install path', default='~/.local')
+    p.add_argument('-q', '--quiet', help='non-interactive install', action='store_true')
     P = p.parse_args()
 
     odir = Path(P.outdir).expanduser()
@@ -38,7 +39,7 @@ def main():
     if not file_checksum(outfile, hashfile, 'sha256'):
         raise RuntimeError('File checksum did not match')
 
-    install_cmake(cmake_version, outfile, P.install_path, stem)
+    install_cmake(cmake_version, outfile, P.install_path, stem, p.quiet)
 
 
 if __name__ == '__main__':
