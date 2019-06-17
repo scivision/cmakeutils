@@ -11,18 +11,22 @@ build: off
 
 init:
 # keep the "apt update" line to avoid intermittent failures
-- sh: sudo apt update -y > /dev/null
-- sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends octave > /dev/null
+#- sh: sudo apt update -y > /dev/null
+#- sh: sudo apt-get install -yq --no-install-suggests --no-install-recommends octave > /dev/null
 - cmd: set PATH=%MINGW_DIR%;%PATH%
 # - cmd: choco install octave.portable  # works great but disabled to save ten minutes
 
 install:
+- pip install -e .[tests]
+
+- sh: cmake -B build
+- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -B build
+
+- cmake --build build --parallel
+
+test_script:
+- pytest -v
+
 - cd build
-
-- sh: cmake ..
-- cmd: cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
-
-- cmake --build .
-
-test_script: ctest --output-on-failure
+- ctest --parallel --output-on-failure
 

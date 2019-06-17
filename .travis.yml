@@ -15,13 +15,6 @@ addons:
     - gfortran-6
     - octave
 
-cache:
-  directories:
-  - $HOME/Library/Caches/Homebrew
-
-before_cache:
-- brew cleanup
-
 matrix:
   include:
   - os: linux
@@ -32,12 +25,13 @@ matrix:
     script:
     - flake8
     - mypy .
-  # - windows  # needs gfortran, straightforward to add but already on appveyor
-  - os: osx
-    env: FC=gfortran
-    before_install:
-    - brew install gcc > /dev/null
-    - brew install octave > /dev/null
+    - pytest -v
+# -os: windows  # needs gfortran, straightforward to add but already on appveyor
+#  - os: osx  # just saving CI time
+#    env: FC=gfortran
+#    before_install:
+#    - brew install gcc > /dev/null
+#    - brew install octave > /dev/null
 
 install:
 - cd build

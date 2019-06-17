@@ -7,6 +7,8 @@ Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 """
 from argparse import ArgumentParser
 from pathlib import Path
+import shutil
+import subprocess
 
 from cmakeutils import latest_cmake_version, cmake_files, HEAD, install_cmake, url_retrieve, file_checksum
 
@@ -17,12 +19,23 @@ def main():
     p.add_argument('-o', '--outdir', help='download directory', default='~/Downloads')
     p.add_argument('--install_path', help='Linux install path', default='~/.local')
     p.add_argument('-q', '--quiet', help='non-interactive install', action='store_true')
+    p.add_argument('--force', help='reinstall CMake even if the latest version is already installed', action='store_true')
     P = p.parse_args()
 
     odir = Path(P.outdir).expanduser()
     odir.mkdir(parents=True, exist_ok=True)
 
-    cmake_version = P.version if P.version is not None else latest_cmake_version()
+    if P.version:
+        get_version = P.version
+    else:
+        get_version = latest_cmake_version(P.force)
+
+    if not P.force:
+        cmake = shutil.which('cmake')
+        if cmake:
+            cmake_version = subprocess.check_output([cmake, '--version'], universal_newlines=True).split()[2]
+            if get_version == cmake_version:
+                raise SystemExit('You already have the latest CMake version {}'.format(get_version))
 
     outfile, url, stem = cmake_files(cmake_version, odir)
 # %% checksum
