@@ -1,6 +1,7 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
+
 [![Build Status](https://travis-ci.com/scivision/cmake-utils.svg?branch=master)](https://travis-ci.com/scivision/cmake-utils)
 [![Build status](https://ci.appveyor.com/api/projects/status/bg07qlioi71k3stx?svg=true)](https://ci.appveyor.com/project/scivision/cmake-utils)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
 [![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
 
@@ -15,16 +16,18 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 * Matlab / GNU Octave
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
-SSL support is also essential for any download/upload with CMake.
 
 ## Install CMake
 
-We have created the Python script [cmake_setup.py](./cmake_setup.py)
+The Python script
+[cmake_setup.py](./cmake_setup.py)
 takes only a minute to install binary and includes `cmake-gui`.
-It works for Linux, Mac, native Windows and Windows Subsystem for Linux.
+It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
 ```sh
 python cmake_setup.py
 ```
+
+Note: new projects should consider [Meson](http://www.mesonbuild.com) instead of or in additon to CMake.
 
 ## Examples
 
