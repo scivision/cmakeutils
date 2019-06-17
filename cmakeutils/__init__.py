@@ -83,18 +83,28 @@ def cmake_files(cmake_version: str, odir: Path) -> Tuple[Path, str, str]:
     return outfile, url, stem
 
 
+def check_git_version(min_version: str) -> bool:
+    """
+    checks that Git of a minimum required version is available
+    """
+    git = shutil.which('git')
+    if not git:
+        return False
+
+    ret = subprocess.check_output([git, '--version'], universal_newlines=True).split()[2]
+    git_version = pkg_resources.parse_version(ret[:6])
+    if git_version < pkg_resources.parse_version(min_version):
+        return False
+
+    return True
+
+
 def latest_cmake_version() -> str:
     """
     get latest CMake version
     """
 
-    git = shutil.which('git')
-    if not git:
-        raise FileNotFoundError('Git was not found, is it installed?')
-
-    ret = subprocess.check_output([git, '--version'], universal_newlines=True).split()[2]
-    git_version = pkg_resources.parse_version(ret[:6])
-    if git_version < pkg_resources.parse_version('2.18'):
+    if not check_git_version('2.18'):
         raise RuntimeError('Git >= 2.18 required for auto latest version--'
                            'try specifying version manually like:\n python cmake_setup.py 3.14.0')
 
