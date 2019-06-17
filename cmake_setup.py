@@ -10,7 +10,7 @@ from pathlib import Path
 import shutil
 import subprocess
 
-from cmakeutils import latest_cmake_version, cmake_files, HEAD, install_cmake, url_retrieve, file_checksum
+import cmakeutils as cm
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     if P.version:
         get_version = P.version
     else:
-        get_version = latest_cmake_version()
+        get_version = cm.latest_cmake_version()
 
     if not P.force:
         cmake = shutil.which('cmake')
@@ -43,22 +43,22 @@ def main():
         print('CMake {} is available'.format(get_version))
         return
 
-    outfile, url, stem = cmake_files(cmake_version, odir)
+    outfile, url, stem = cm.cmake_files(get_version, odir)
 # %% checksum
-    hashstem = 'cmake-{}-SHA-256.txt'.format(cmake_version)
-    hashurl = HEAD + 'v{}/{}'.format(cmake_version, hashstem)
+    hashstem = 'cmake-{}-SHA-256.txt'.format(get_version)
+    hashurl = cm.HEAD + 'v{}/{}'.format(get_version, hashstem)
     hashfile = odir / hashstem
 
     if not hashfile.is_file() or hashfile.stat().st_size == 0:
-        url_retrieve(hashurl, hashfile)
+        cm.url_retrieve(hashurl, hashfile)
 
     if not outfile.is_file() or outfile.stat().st_size < 1e6:
-        url_retrieve(url, outfile)
+        cm.url_retrieve(url, outfile)
 
-    if not file_checksum(outfile, hashfile, 'sha256'):
+    if not cm.file_checksum(outfile, hashfile, 'sha256'):
         raise ValueError('{} SHA256 checksum did not match {}'.format(outfile, hashfile))
 
-    install_cmake(cmake_version, outfile, P.install_path, stem, P.quiet)
+    cm.install_cmake(get_version, outfile, P.install_path, stem, P.quiet)
 
 
 if __name__ == '__main__':
