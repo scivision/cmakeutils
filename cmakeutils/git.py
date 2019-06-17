@@ -14,10 +14,7 @@ def check_git_version(min_version: str) -> bool:
 
     ret = subprocess.check_output([git, '--version'], universal_newlines=True).split()[2]
     git_version = pkg_resources.parse_version(ret[:6])
-    if git_version < pkg_resources.parse_version(min_version):
-        return False
-
-    return True
+    return git_version >= pkg_resources.parse_version(min_version)
 
 
 def latest_cmake_version() -> str:

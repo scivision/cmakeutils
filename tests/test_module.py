@@ -5,17 +5,22 @@ import sys
 
 import cmakeutils as cm
 
-VERSION = '3.14'  # just an existing version of CMake
+VERSION = '3.0'  # an old version of CMake
 
 
 @pytest.mark.skipif(not cm.check_git_version('2.18'), reason='Git < 2.18')
-def test_version():
+def test_available_version():
 
     vers = cm.latest_cmake_version()
     assert isinstance(vers, str)
 
     pvers = pkg_resources.parse_version(vers)
     assert pvers >= pkg_resources.parse_version(VERSION)
+
+
+def test_existing_version():
+
+    assert cm.check_cmake_version(VERSION)
 
 
 def test_files(tmp_path):
