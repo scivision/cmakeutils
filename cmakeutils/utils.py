@@ -81,9 +81,9 @@ def cli(P: Namespace):
     else:
         get_version = latest_cmake_version()
 
-    if not P.force and check_cmake_version(get_version):
-        print('You already have the latest CMake version {}'.format(get_version))
-        return
+        if not P.force and check_cmake_version(get_version):
+            print('You already have the latest CMake version {}'.format(get_version))
+            return
 
     if P.dryrun:
         print('CMake {} is available'.format(get_version))
