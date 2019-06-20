@@ -43,7 +43,10 @@ def install_cmake(cmake_version: str, outfile: Path,
         print('export PATH={}:$PATH'.format(instpath/stem/'bin'))
     elif sys.platform == 'win32':
         passive = '/passive' if quiet else ''
-        subprocess.run(['msiexec', passive, '/package', str(outfile)])
+        cmd = ['msiexec', passive, '/package', str(outfile)]
+        print(' '.join(cmd))
+        # without shell=True, install will fail
+        subprocess.run(' '.join(cmd), shell=True)
 
 
 def cmake_files(cmake_version: str, odir: Path) -> Tuple[Path, str, str]:
