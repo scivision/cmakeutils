@@ -27,7 +27,7 @@ mwPointer mxGetDoubles
 #else
 mwPointer mxGetPr
 #endif
-mwPointer :: ep, T, D 
+mwPointer :: ep, T, D
 mwSize, parameter :: M=1, N=10
 real(dp) ::  dist(N)
 integer :: engPutVariable, engEvalString, engClose
@@ -102,20 +102,12 @@ if (engEvalString(ep, 'ylabel(''Position (meters)'')') /= 0) error stop 'engEval
 
 ! read from console to make sure that we pause long enough to be able to see the plot
 
-print *, 'Type 0 <return> to Exit'
-print *, 'Type 1 <return> to continue'
+print *, 'Press <enter> key to continue'
 
 read(*,*) temp
-
-if (temp==0) then
-  if (engClose(ep) /= 0) error stop 'engClose failed'
-  stop 
-endif
 
 if (engEvalString(ep, 'close;') /= 0) error stop 'engEvalString failed'
 
 end subroutine plot
 
 end program
-
-

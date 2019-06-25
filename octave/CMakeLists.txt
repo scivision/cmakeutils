@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.7)
-project(demoOctave CXX)
+project(demoOctave LANGUAGES NONE)
 enable_testing()
 
 if(CMAKE_VERSION VERSION_LESS 3.14)
@@ -19,10 +19,15 @@ if(Octave_Interpreter_FOUND)
 endif()
 
 if(Octave_Development_FOUND)
-  add_executable(octdemo octdemo.cpp)
-  target_link_libraries(octdemo PRIVATE Octave::Octave)
-  set_target_properties(octdemo PROPERTIES CXX_STANDARD 11)
-  
-  add_test(NAME DevOctave COMMAND octdemo)
+  include(CheckLanguage)
+  check_language(CXX)
+  if(CMAKE_CXX_COMPILER)
+    enable_language(CXX)
+    add_executable(octdemo octdemo.cpp)
+    target_link_libraries(octdemo PRIVATE Octave::Octave)
+    set_target_properties(octdemo PROPERTIES CXX_STANDARD 11)
+
+    add_test(NAME DevOctave COMMAND octdemo)
+  endif()
 endif()
 

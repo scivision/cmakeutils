@@ -1,9 +1,18 @@
-cmake_minimum_required(VERSION 3.13.20190116)
-project(minimumFortran Fortran)
+cmake_minimum_required(VERSION 3.7)
+project(minimumFortran NONE)
 
-include(CheckFortranSourceCompiles)
-check_fortran_source_compiles("end" OKC SRC_EXT F90)
+include(CheckLanguage)
+check_language(Fortran)
+if(CMAKE_Fortran_COMPILER)
 
-include(CheckFortranSourceRuns)
-check_fortran_source_runs("end" OKR)
+  enable_language(Fortran)
 
+  include(CheckFortranSourceCompiles)
+  check_fortran_source_compiles("end" OK_Compile SRC_EXT F90)
+
+  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
+    include(CheckFortranSourceRuns)
+    check_fortran_source_runs("end" OK_Run)
+  endif()
+
+endif()

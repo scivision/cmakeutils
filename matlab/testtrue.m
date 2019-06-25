@@ -1,1 +1,2 @@
+%% always true
 assert(true)
