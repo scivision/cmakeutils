@@ -12,8 +12,6 @@ else()
   endif()
 endif()
 
-find_package(Matlab COMPONENTS ENG_LIBRARY MX_LIBRARY)
-
 if(Matlab_ENG_LIBRARY_FOUND AND Matlab_MX_LIBRARY_FOUND)
   add_executable(fengdemo fengdemo.F90)
   target_include_directories(fengdemo PRIVATE ${Matlab_INCLUDE_DIRS})
