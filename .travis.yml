@@ -1,4 +1,4 @@
-language: cpp
+language: python
 group: travis_latest
 dist: xenial
 
@@ -6,18 +6,30 @@ git:
   depth: 25
   quiet: true
 
-env: FC=gfortran-6
-
-addons:
-  apt:
-    sources: ubuntu-toolchain-r-test
-    packages:
-    - gfortran-6
-    - octave
-
 matrix:
   include:
   - os: linux
+    env: FC=gfortran-6
+    addons:
+      apt:
+        sources: ubuntu-toolchain-r-test
+        packages:
+        - gfortran-6
+        - octave
+  - os: linux
+    python: 3.5
+    install: pip install -e .[tests]
+    script:
+    - pytest -v
+  - os: linux
+    name: Integration install
+    python: 3.7
+    install:
+    - python setup.py install
+    - pip install $(basename $TRAVIS_REPO_SLUG)[tests]
+    script:
+    - cd $HOME
+    - python -m pytest $TRAVIS_BUILD_DIR/tests
   - os: linux
     language: python
     python: 3.7
@@ -26,6 +38,9 @@ matrix:
     - flake8
     - mypy .
     - pytest -v
+    after_success:
+    - pytest --cov
+    - coveralls
 # -os: windows  # needs gfortran, straightforward to add but already on appveyor
 #  - os: osx  # just saving CI time
 #    env: FC=gfortran

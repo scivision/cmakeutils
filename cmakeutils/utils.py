@@ -5,12 +5,14 @@ import sys
 import tarfile
 import pkg_resources
 import shutil
+import platform
 from argparse import Namespace
 
 from .git import latest_cmake_version
 from .io import url_retrieve, file_checksum
 
 HEAD = 'https://github.com/Kitware/CMake/releases/download/'
+PLATFORMS = ('amd64', 'x86_64', 'x64', 'i86pc')
 
 
 def check_cmake_version(min_version: str) -> bool:
@@ -32,6 +34,8 @@ def install_cmake(cmake_version: str, outfile: Path,
     if sys.platform == 'darwin':
         raise ValueError('please install CMake {} from disk image {} or do\n brew install cmake'.format(cmake_version, outfile))
     elif sys.platform == 'linux':
+        if platform.machine().lower() not in PLATFORMS:
+            raise ValueError('This method is for Linux 64-bit x86_64 systems')
         assert isinstance(install_path, (str, Path))
         assert isinstance(stem, str)
         instpath = Path(install_path).expanduser()
@@ -61,6 +65,8 @@ def cmake_files(cmake_version: str, odir: Path) -> Tuple[Path, str, str]:
         ofn = 'cmake-{}-Darwin-x86_64.dmg'.format(cmake_version)
         url = HEAD + 'v{}/{}'.format(cmake_version, ofn)
     elif sys.platform == 'linux':
+        if platform.machine().lower() not in PLATFORMS:
+            raise ValueError('This method is for Linux 64-bit x86_64 systems')
         stem = 'cmake-{}-Linux-x86_64'.format(cmake_version)
         ofn = '{}.tar.gz'.format(stem)
         url = HEAD + 'v{}/{}'.format(cmake_version, ofn)
