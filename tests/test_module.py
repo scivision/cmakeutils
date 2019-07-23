@@ -5,10 +5,10 @@ import sys
 
 import cmakeutils as cm
 
-VERSION = '3.0'  # an old version of CMake
+VERSION = "3.0"  # an old version of CMake
 
 
-@pytest.mark.skipif(not cm.check_git_version('2.18'), reason='Git < 2.18')
+@pytest.mark.skipif(not cm.check_git_version("2.18"), reason="Git < 2.18")
 def test_available_version():
 
     vers = cm.latest_cmake_version()
@@ -27,13 +27,13 @@ def test_files(tmp_path):
 
     path, file, stem = cm.cmake_files(VERSION, tmp_path)
 
-    if sys.platform == 'linux':
-        assert file.endswith('.tar.gz')
-    elif sys.platform == 'win32':
-        assert file.endswith('.msi')
+    if sys.platform == "linux":
+        assert file.endswith(".tar.gz")
+    elif sys.platform == "win32":
+        assert file.endswith(".msi")
     else:
-        pytest.skip('we did not have a test for {}'.format(sys.platform))
+        pytest.skip("we did not have a test for {}".format(sys.platform))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pytest.main([__file__])

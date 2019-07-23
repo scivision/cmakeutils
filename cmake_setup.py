@@ -12,16 +12,24 @@ import cmakeutils as cm
 
 def main():
     p = ArgumentParser()
-    p.add_argument('version', help='request CMake version (default latest)', nargs='?')
-    p.add_argument('-o', '--outdir', help='download directory', default='~/Downloads')
-    p.add_argument('--install_path', help='Linux install path', default='~/.local')
-    p.add_argument('-q', '--quiet', help='non-interactive install', action='store_true')
-    p.add_argument('-n', '--dryrun', help='just check version', action='store_true')
-    p.add_argument('--force', help='reinstall CMake even if the latest version is already installed', action='store_true')
+    p.add_argument("version", help="request CMake version (default latest)", nargs="?")
+    p.add_argument(
+        "-o", "--outdir", help="download archive directory", default="~/Downloads"
+    )
+    p.add_argument(
+        "--prefix", help="Linux install prefix to install under", default="~/.local"
+    )
+    p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
+    p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
+    p.add_argument(
+        "--force",
+        help="reinstall CMake even if the latest version is already installed",
+        action="store_true",
+    )
     P = p.parse_args()
 
     cm.cli(P)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

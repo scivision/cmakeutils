@@ -49,8 +49,8 @@ matrix:
 #    - brew install octave > /dev/null
 
 install:
-- cd build
+- cd $TRAVIS_BUILD_DIR/build
 - cmake ..
-- cmake --build .
+- cmake --build . --parallel
 
-script:  ctest --output-on-failure
+script:  ctest --parallel --output-on-failure
