@@ -3,7 +3,7 @@ import pytest
 import pkg_resources
 import sys
 
-import cmakeutils as cm
+import cmake_setup as cm
 
 VERSION = "3.0"  # an old version of CMake
 

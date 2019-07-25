@@ -6,6 +6,8 @@ git:
   depth: 25
   quiet: true
 
+python: 3.7
+
 matrix:
   include:
   - os: linux
@@ -17,27 +19,25 @@ matrix:
         - gfortran-6
         - octave
   - os: linux
-    python: 3.5
+    python: 3.6
     install: pip install -e .[tests]
     script:
-    - pytest -v
+    - pytest -r a -v
   - os: linux
     name: Integration install
-    python: 3.7
     install:
     - python setup.py install
     - pip install $(basename $TRAVIS_REPO_SLUG)[tests]
     script:
     - cd $HOME
-    - python -m pytest $TRAVIS_BUILD_DIR/tests
+    - python -m pytest $TRAVIS_BUILD_DIR
   - os: linux
     language: python
-    python: 3.7
     install: pip install -e .[tests,cov]
     script:
     - flake8
     - mypy .
-    - pytest -v
+    - pytest -r a -v
     after_success:
     - pytest --cov
     - coveralls

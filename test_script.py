@@ -2,7 +2,7 @@
 import pytest
 import subprocess
 
-import cmakeutils as cm
+import cmake_setup as cm
 
 VERSION = "3.14"  # just an existing version of CMake
 

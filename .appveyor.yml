@@ -30,8 +30,7 @@ install:
 - cmake --build build --parallel
 
 test_script:
-- pytest -v
+- pytest -r a -v
 
 - cd build
 - ctest --parallel --output-on-failure
-
