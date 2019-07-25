@@ -52,8 +52,7 @@ def install_cmake(
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(prefix))
         print(
-            "add to ~/.bashrc:\n\n"
-            "export PATH={}:$PATH".format(prefix / stem / "bin")
+            "add to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin")
         )
     elif sys.platform == "win32":
         passive = "/passive" if quiet else ""
