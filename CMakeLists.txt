@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.11)
 project(CMakeDemos
         LANGUAGES NONE)
         #DESCRIPTION "Demonstrate CMake usage"
@@ -7,7 +7,9 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
 
-add_subdirectory(fetchgit)
+add_subdirectory(fetchContent)
+add_subdirectory(externalProject)
+
 add_subdirectory(zip)
 
 add_subdirectory(mpi)

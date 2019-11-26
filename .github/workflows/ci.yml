@@ -19,11 +19,12 @@ jobs:
     - run: flake8
     - run: mypy .
     - run: pytest
-      working-directory: tests
     - run: mkdir build
     - run: cmake ..
       working-directory: build
-    - run: cmake --build build --parallel --output-on-failure
+    - run: cmake --build build --parallel
+    - run: ctest --output-on-failure
+      working-directory: build
 
   macos:
     runs-on: macos-latest
@@ -35,9 +36,10 @@ jobs:
     - run: brew install gcc
     - run: pip install .[tests]
     - run: pytest
-      working-directory: tests
     - run: cmake -B build
-    - run: cmake --build build --parallel --output-on-failure
+    - run: cmake --build build --parallel
+    - run: ctest --output-on-failure
+      working-directory: build
 
   windows:
     runs-on: windows-latest
@@ -48,6 +50,7 @@ jobs:
         python-version: '3.x'
     - run: pip install .[tests]
     - run: pytest
-      working-directory: tests
     - run: cmake -B build
-    - run: cmake --build build --parallel --output-on-failure
+    - run: cmake --build build --parallel
+    - run: ctest --output-on-failure
+      working-directory: build

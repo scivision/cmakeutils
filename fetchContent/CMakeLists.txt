@@ -31,4 +31,3 @@ FetchContent_GetProperties(demodata)
 if(NOT demodata_POPULATED)
   FetchContent_Populate(demodata)
 endif()
-
