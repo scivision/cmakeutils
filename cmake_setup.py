@@ -25,18 +25,12 @@ PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 def main():
     p = ArgumentParser()
     p.add_argument("version", help="request CMake version (default latest)", nargs="?")
-    p.add_argument(
-        "-o", "--outdir", help="download archive directory", default="~/Downloads"
-    )
-    p.add_argument(
-        "--prefix", help="Linux install prefix to install under", default="~/.local"
-    )
+    p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
+    p.add_argument("--prefix", help="Linux install prefix to install under", default="~/.local")
     p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
     p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
     p.add_argument(
-        "--force",
-        help="reinstall CMake even if the latest version is already installed",
-        action="store_true",
+        "--force", help="reinstall CMake even if the latest version is already installed", action="store_true",
     )
     P = p.parse_args()
 
@@ -51,9 +45,7 @@ def check_git_version(min_version: str) -> bool:
     if not git:
         return False
 
-    ret = subprocess.check_output([git, "--version"], universal_newlines=True).split()[
-        2
-    ]
+    ret = subprocess.check_output([git, "--version"], universal_newlines=True).split()[2]
     git_version = pkg_resources.parse_version(ret[:6])
     return git_version >= pkg_resources.parse_version(min_version)
 
@@ -65,8 +57,7 @@ def latest_cmake_version() -> str:
 
     if not check_git_version("2.18"):
         raise RuntimeError(
-            "Git >= 2.18 required for auto latest version--"
-            "try specifying version manually like:\n python cmake_setup.py 3.14.0"
+            "Git >= 2.18 required for auto latest version--" "try specifying version manually like:\n python cmake_setup.py 3.14.0"
         )
 
     cmd = [
@@ -76,18 +67,12 @@ def latest_cmake_version() -> str:
         "--sort=v:refname",
         "git://github.com/kitware/cmake.git",
     ]
-    lastrev = (
-        subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")[-1]
-    )
+    lastrev = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")[-1]
     pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)\^\{\}$"
 
     mat = re.match(pat, lastrev)
     if not mat:
-        raise ValueError(
-            "Could not determine latest CMake version. Please report this bug.  \nInput: \n {}".format(
-                lastrev
-            )
-        )
+        raise ValueError("Could not determine latest CMake version. Please report this bug.  \nInput: \n {}".format(lastrev))
 
     latest_version = mat.group(1)
 
@@ -122,9 +107,7 @@ def check_cmake_version(min_version: str) -> bool:
     if not cmake:
         return False
 
-    cmake_version = subprocess.check_output(
-        [cmake, "--version"], universal_newlines=True
-    ).split()[2]
+    cmake_version = subprocess.check_output([cmake, "--version"], universal_newlines=True).split()[2]
 
     pmin = pkg_resources.parse_version(min_version)
     pcmake = pkg_resources.parse_version(cmake_version)
@@ -133,18 +116,10 @@ def check_cmake_version(min_version: str) -> bool:
 
 
 def install_cmake(
-    cmake_version: str,
-    outfile: Path,
-    prefix: Path = None,
-    stem: str = None,
-    quiet: bool = False,
+    cmake_version: str, outfile: Path, prefix: Path = None, stem: str = None, quiet: bool = False,
 ):
     if sys.platform == "darwin":
-        raise ValueError(
-            "please install CMake {} from disk image {} or do\n brew install cmake".format(
-                cmake_version, outfile
-            )
-        )
+        raise ValueError("please install CMake {} from disk image {} or do\n brew install cmake".format(cmake_version, outfile))
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
@@ -153,9 +128,7 @@ def install_cmake(
         print("Installing CMake to", prefix)
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(prefix))
-        print(
-            "add to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin")
-        )
+        print("add to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin"))
     elif sys.platform == "win32":
         passive = "/passive" if quiet else ""
         cmd = ["msiexec", passive, "/package", str(outfile)]
@@ -222,9 +195,7 @@ def cli(P: Namespace):
         url_retrieve(url, outfile)
 
     if not file_checksum(outfile, hashfile, "sha256"):
-        raise ValueError(
-            "{} SHA256 checksum did not match {}".format(outfile, hashfile)
-        )
+        raise ValueError("{} SHA256 checksum did not match {}".format(outfile, hashfile))
 
     install_cmake(get_version, outfile, P.prefix, stem, P.quiet)
 

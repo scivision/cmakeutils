@@ -1,10 +1,9 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
 
-[![Build Status](https://travis-ci.com/scivision/cmakeutils.svg?branch=master)](https://travis-ci.com/scivision/cmakeutils)
-[![Build status](https://ci.appveyor.com/api/projects/status/bg07qlioi71k3stx?svg=true)](https://ci.appveyor.com/project/scivision/cmakeutils)
+[![Actions Status](https://github.com/scivision/cmake-utils/workflows/ci_python/badge.svg)](https://github.com/scivision/cmake-utils/actions)
+
 [![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
 [![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
-
 
 # CMake Utils
 
@@ -51,6 +50,7 @@ We didn't try older versions of Octave.
 One-time setup: if you've never used `mex` before, you must setup the C++ compiler.
 It doesn't hurt to do this again if you're not sure.
 From Matlab:
+
 ```matlab
 mex -setup -client engine C++
 ```
@@ -58,8 +58,6 @@ mex -setup -client engine C++
 Will ask you to select a compiler, or simply return:
 
 > ENGINE configured to use 'g++' for C++ language compilation.
-
-
 
 ## CMake modules
 

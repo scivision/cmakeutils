@@ -1,0 +1,53 @@
+name: ci_python
+
+on: [push, pull_request]
+
+jobs:
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: prereq install
+      run: |
+        sudo apt update -yq > /dev/null
+        sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran octave > /dev/null
+    - run: pip install .[tests,lint]
+    - run: flake8
+    - run: mypy .
+    - run: pytest
+      working-directory: tests
+    - run: mkdir build
+    - run: cmake ..
+      working-directory: build
+    - run: cmake --build build --parallel --output-on-failure
+
+  macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - run: brew install gcc
+    - run: pip install .[tests]
+    - run: pytest
+      working-directory: tests
+    - run: cmake -B build
+    - run: cmake --build build --parallel --output-on-failure
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - run: pip install .[tests]
+    - run: pytest
+      working-directory: tests
+    - run: cmake -B build
+    - run: cmake --build build --parallel --output-on-failure
