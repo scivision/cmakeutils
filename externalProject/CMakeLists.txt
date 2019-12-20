@@ -11,21 +11,26 @@ ExternalProject_Add(Demo_proj
   INSTALL_COMMAND ""  # this disables the install step for the external project
 )
 
-set(_prefix lib)
-set(_suffix .a)
-if(MSVC OR (WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL Intel)))
-  set(_prefix)
-  set(_suffix .lib)
-endif()
+
 
 ExternalProject_Get_Property(Demo_proj BINARY_DIR)
 set(Demo_BINARY_DIR ${BINARY_DIR})
-add_library(times_two STATIC IMPORTED)
-set_target_properties(times_two PROPERTIES IMPORTED_LOCATION ${Demo_BINARY_DIR}/${_prefix}times_two${_suffix})
+
+# ------- target_link_directories() is easier and more robust than this
+# set(_prefix lib)
+# set(_suffix .a)
+# if(MSVC OR (WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL Intel)))
+#   set(_prefix)
+#   set(_suffix .lib)
+# endif()
+# add_library(times_two STATIC IMPORTED)
+# set_target_properties(times_two PROPERTIES IMPORTED_LOCATION ${Demo_BINARY_DIR}/${_prefix}times_two${_suffix})
+# -------
 
 add_executable(useext use_ext.c)
 add_dependencies(useext Demo_proj)
 target_link_libraries(useext PRIVATE times_two)
+target_link_directories(useext PRIVATE ${Demo_BINARY_DIR})
 # set_target_properties(useext PROPERTIES Fortran_MODULE_DIRECTORY ${BINARY_DIR})
 add_test(NAME ExternalSubmodule COMMAND useext)
 

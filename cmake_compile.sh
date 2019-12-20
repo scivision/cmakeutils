@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # NOTE: most Linux users can simply download and install almost instantly
-#   instead of this lengthly compilation with cmake_setup.sh
+#   instead of this lengthly compilation with cmake_setup.py
 # ------------------------------------------------------------------------
 #
 # Does NOT use sudo
