@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(CMakeDemos
         LANGUAGES NONE
+        VERSION 1.5.0
         DESCRIPTION "Demonstrate CMake usage"
         HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 enable_testing()
