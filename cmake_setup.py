@@ -128,7 +128,7 @@ def install_cmake(
         print("Installing CMake to", prefix)
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(prefix))
-        print("add to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin"))
+        print("\n\nadd to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin"))
     elif sys.platform == "win32":
         passive = "/passive" if quiet else ""
         cmd = ["msiexec", passive, "/package", str(outfile)]

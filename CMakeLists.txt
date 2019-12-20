@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.13)
 project(CMakeDemos
-        LANGUAGES NONE)
-        #DESCRIPTION "Demonstrate CMake usage"
-        #HOMEPAGE_URL https://github.com/scivision/cmake-utils)
+        LANGUAGES NONE
+        DESCRIPTION "Demonstrate CMake usage"
+        HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)

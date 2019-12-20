@@ -1,4 +1,6 @@
 name: ci_python
+env:
+  cmake_version: '3.16.2'
 
 on: [push, pull_request]
 
@@ -19,11 +21,13 @@ jobs:
     - run: flake8
     - run: mypy .
     - run: pytest
-    - run: mkdir build
-    - run: cmake ..
-      working-directory: build
-    - run: cmake --build build --parallel
-    - run: ctest --output-on-failure
+    - run: cmake_setup ${cmake_version} --prefix ${HOME}/.local
+    - name: CMake configure
+      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/cmake -B build
+    - name: CMake build
+      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/cmake --build build --parallel
+    - name: CTest
+      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/ctest --output-on-failure
       working-directory: build
 
   macos:

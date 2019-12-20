@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.11)
 project(FetchContent_Demo
         LANGUAGES NONE
         DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
-        #HOMEPAGE_URL https://github.com/scivision/cmake-utils) # 3.12
 
 # --- sub-projects
 include(FetchContent)
