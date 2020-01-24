@@ -1,11 +1,11 @@
+# CMake Utils
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
 
 [![Actions Status](https://github.com/scivision/cmake-utils/workflows/ci_python/badge.svg)](https://github.com/scivision/cmake-utils/actions)
 
 [![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
 [![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
-
-# CMake Utils
 
 CMake is a powerful and easy to use build system for a wide variety of languages including:
 
@@ -29,8 +29,25 @@ python cmake_setup.py
 
 Note: new projects should consider
 [Meson](http://www.mesonbuild.com)
-instead of or in additon to CMake.
+instead of or in addition to CMake.
 Meson can use CMake projects as subprojects (external projects).
+
+## Build CMake
+
+If you need to or desire to build CMake from source, this can be using an older version of CMake, or without CMake using the "bootstrap" method.
+The bootstrap method is only for Unix-like systems, while the CMake-based build can also be used on Windows.
+
+```sh
+python cmake_compile.py
+```
+
+This downloads the latest CMake release source and builds from scratch.
+
+Requirements:
+
+* SSL library
+* C++ compiler
+* GNU Make or Ninja
 
 ## Examples
 

@@ -28,7 +28,7 @@ url=https://github.com/Kitware/CMake/releases/download/
 # git >= 2.18
 [[ $# -ne 1 ]] && cver=$(git ls-remote --tags --sort="v:refname" git://github.com/kitware/cmake.git | tail -n1 | sed 's/.*\///; s/\^{}//') || cver=$1
 
-WD=/tmp
+WD=build
 
 stem=cmake-${cver:1}
 cfn=$stem-SHA-256.txt
