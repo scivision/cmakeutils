@@ -1,4 +1,5 @@
 # Example of using CMake ExternalProject
+# notice how this is much more complicated than FetchContent
 cmake_minimum_required(VERSION 3.14)
 project(parentExtProj LANGUAGES Fortran)
 enable_testing()
@@ -12,6 +13,8 @@ ExternalProject_Add(child_proj
 )
 
 ExternalProject_Get_Property(child_proj BINARY_DIR)
+
+file(MAKE_DIRECTORY ${BINARY_DIR}/include)  # avoid race condition
 
 add_library(timestwo STATIC IMPORTED GLOBAL)
 set_target_properties(timestwo PROPERTIES

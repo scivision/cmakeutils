@@ -13,6 +13,7 @@ FetchContent_Declare(child
 
 FetchContent_MakeAvailable(child)
 
+# -- main project
 add_executable(test_timestwo_fc test_timestwo.f90)
 target_link_libraries(test_timestwo_fc times_two)
 
