@@ -1,8 +1,14 @@
 # Example of using CMake ExternalProject
 # notice how this is much more complicated than FetchContent
+# Ninja generator may not work with this on Windows, and BYPRODUCTS doesn't help
 cmake_minimum_required(VERSION 3.14)
 project(parentExtProj LANGUAGES Fortran)
 enable_testing()
+
+if(WIN32 AND CMAKE_GENERATOR STREQUAL "Ninja")
+  message(STATUS "CMake ExternalProject and Ninja on Windows may not work")
+  return()
+endif()
 
 include(ExternalProject)
 
@@ -22,6 +28,6 @@ set_target_properties(timestwo PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${BINARY_DIR}/include)
 
 add_executable(test_timestwo test_timestwo.f90)
-target_link_libraries(test_timestwo timestwo)
 add_dependencies(test_timestwo child_proj)
+target_link_libraries(test_timestwo timestwo)
 add_test(NAME ExternalSubmodule COMMAND test_timestwo)
