@@ -10,7 +10,8 @@
 #
 # Alternatives: linuxbrew (Linux), Homebrew (Mac), Scoop (Windows)
 #
-# For Windows, simply use the .msi from  https://cmake.org/download/
+# Windows:use the .msi from  https://cmake.org/download/
+#  If you need to compile on Windows, suggest MSYS2.
 #
 # prereqs
 # CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
@@ -35,7 +36,7 @@ try:
     import psutil
     free = psutil.virtual_memory().free
     if free > 4e9:
-        Njobs = "4"
+        Njobs = ""
     elif free > 2e9:
         Njobs = "2"
 except ImportError:
@@ -108,10 +109,12 @@ def bootstrap(build_root: Path):
     if not cmake_bootstrap.is_file():
         raise FileNotFoundError(cmake_bootstrap)
 
+    N = Njobs if Njobs else "4"
+
     print('running CMake bootstrap', cmake_bootstrap)
     subprocess.check_call([str(cmake_bootstrap),
                            f'--prefix={prefix}',
-                           '--parallel={Njobs}',
+                           f'--parallel={N}',
                            '--',
                            '-DCMAKE_BUILD_TYPE:STRING=Release',
                            '-DCMAKE_USE_OPENSSL:BOOL=ON'], cwd=build_root)
@@ -123,7 +126,12 @@ def bootstrap(build_root: Path):
 prefix.mkdir(parents=True, exist_ok=True)
 
 if shutil.which('cmake'):
-    subprocess.check_call(['cmake', '.'], cwd=build_root)
+    subprocess.check_call(['cmake', '.',
+                           f'-DCMAKE_INSTALL_PREFIX={prefix}',
+                           '-DCMAKE_BUILD_TYPE:STRING=Release',
+                           '-DCMAKE_USE_OPENSSL:BOOL=ON'], cwd=build_root)
+    # --parallel is CMake >= 3.12, probably too new to require for now.
+    # Ninja will build in parallel even without --parallel
     subprocess.check_call(['cmake', '--build', str(build_root)])
     subprocess.check_call(['cmake', '--build', str(build_root), '--target', 'install'])
 else:
