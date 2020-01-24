@@ -1,45 +1,24 @@
 # Example of using CMake ExternalProject
-cmake_minimum_required(VERSION 3.13)
-project(demoExtProj LANGUAGES C)
+cmake_minimum_required(VERSION 3.14)
+project(parentExtProj LANGUAGES Fortran)
 enable_testing()
 
 include(ExternalProject)
 
-ExternalProject_Add(Demo_proj
+ExternalProject_Add(child_proj
   GIT_REPOSITORY https://github.com/scivision/cmake-externalproject
   GIT_TAG master  # it's much better to use a specific Git revision or Git tag for reproducability
   INSTALL_COMMAND ""  # this disables the install step for the external project
 )
 
+ExternalProject_Get_Property(child_proj BINARY_DIR)
 
+add_library(timestwo STATIC IMPORTED GLOBAL)
+set_target_properties(timestwo PROPERTIES
+  IMPORTED_LOCATION ${BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
+  INTERFACE_INCLUDE_DIRECTORIES ${BINARY_DIR}/include)
 
-ExternalProject_Get_Property(Demo_proj BINARY_DIR)
-set(Demo_BINARY_DIR ${BINARY_DIR})
-
-# ------- target_link_directories() is easier and more robust than this
-# set(_prefix lib)
-# set(_suffix .a)
-# if(MSVC OR (WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL Intel)))
-#   set(_prefix)
-#   set(_suffix .lib)
-# endif()
-# add_library(times_two STATIC IMPORTED)
-# set_target_properties(times_two PROPERTIES IMPORTED_LOCATION ${Demo_BINARY_DIR}/${_prefix}times_two${_suffix})
-# -------
-
-add_executable(useext use_ext.c)
-add_dependencies(useext Demo_proj)
-target_link_libraries(useext PRIVATE times_two)
-target_link_directories(useext PRIVATE ${Demo_BINARY_DIR})
-# set_target_properties(useext PROPERTIES Fortran_MODULE_DIRECTORY ${BINARY_DIR})
-add_test(NAME ExternalSubmodule COMMAND useext)
-
-# NOTES:
-#
-# * target_link_directories() is easier than cross-platform specifying the full path
-# https://cmake.org/cmake/help/latest/command/target_link_directories.html
-#
-# * add_dependencies() makes external project always update and build first
-#
-# * In the other project called by ExternalProject, I made all the targets have
-#   set_target_properties(... PROPERTIES Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR})
+add_executable(test_timestwo test_timestwo.f90)
+target_link_libraries(test_timestwo timestwo)
+add_dependencies(test_timestwo child_proj)
+add_test(NAME ExternalSubmodule COMMAND test_timestwo)

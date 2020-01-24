@@ -1,32 +1,27 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 project(FetchContent_Demo
-        LANGUAGES NONE
+        LANGUAGES Fortran
         DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
 
 # --- sub-projects
 include(FetchContent)
 
-FetchContent_Declare(demo
-  GIT_REPOSITORY https://github.com/scivision/hellofortran.git
-  GIT_TAG 267e898
+FetchContent_Declare(child
+  GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
+  GIT_TAG master
 )
 
-# this if() statement is canonical usage of FetchContent, to avoid repeatedly doing same thing in different parts of same project.
-FetchContent_GetProperties(demo)
-if(NOT demo_POPULATED)
-  FetchContent_Populate(demo)
-  # builds under bin/_deps/demo-build/
-  add_subdirectory(${demo_SOURCE_DIR} ${demo_BINARY_DIR})
-endif()
+FetchContent_MakeAvailable(child)
+
+add_executable(test_timestwo_fc test_timestwo.f90)
+target_link_libraries(test_timestwo_fc times_two)
+
 
 # -- data
 # This MUST be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
 # you will find the extracted data files under bin/_deps/demodata-src/
 FetchContent_Declare(demodata
-  URL https://github.com/scivision/hellofortran/raw/master/octo.zip
+  URL https://github.com/scivision/cmake-fetchcontent/raw/master/octo.zip
   URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
 )
-FetchContent_GetProperties(demodata)
-if(NOT demodata_POPULATED)
-  FetchContent_Populate(demodata)
-endif()
+FetchContent_MakeAvailable(demodata)
