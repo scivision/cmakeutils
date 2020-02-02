@@ -1,13 +1,12 @@
-function(matlab_fortran timeout libenv)
 # https://www.mathworks.com/support/requirements/supported-compilers.html
 if(WIN32 OR APPLE)
-# on Windows and MacOS, only the Intel compiler is supported through at least R2019a
   if(NOT CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
+    message(STATUS "SKIP: on Windows and MacOS, only the Intel compiler is supported")
     return()
   endif()
 else()
-# On Linux, only Gfortran is supported through at least R2019a
   if(NOT CMAKE_Fortran_COMPILER_ID STREQUAL GNU)
+    message(STATUS "SKIP: On Linux, only Gfortran is supported")
     return()
   endif()
 endif()
@@ -17,10 +16,8 @@ if(Matlab_ENG_LIBRARY_FOUND AND Matlab_MX_LIBRARY_FOUND)
   target_include_directories(fengdemo PRIVATE ${Matlab_INCLUDE_DIRS})
   target_link_libraries(fengdemo PRIVATE ${Matlab_LIBRARIES})
 
-  add_test(NAME MexFortran COMMAND fengdemo)
+  add_test(NAME MexFortran COMMAND $<TARGET_FILE:fengdemo>)
   set_tests_properties(MexFortran PROPERTIES
     TIMEOUT ${timeout}
-    ENVIRONMENT ${libenv})
+    ENVIRONMENT "${libenv}")
 endif()
-
-endfunction()
