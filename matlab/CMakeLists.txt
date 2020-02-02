@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.13)
-project(demoMatlab LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.14)
+project(demoMatlab LANGUAGES CXX Fortran)
 enable_testing()
 
 set(timeout 60)
@@ -27,10 +27,4 @@ endif()
 
 include(matlab_include.cmake)
 include(matlab_cpp.cmake)
-
-include(CheckLanguage)
-check_language(Fortran)
-if(CMAKE_Fortran_COMPILER)
-  enable_language(Fortran)
-  include(matlab_fortran.cmake)
-endif(CMAKE_Fortran_COMPILER)
+include(matlab_fortran.cmake)

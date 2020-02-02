@@ -1,12 +1,12 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.14)
 project(CMakeDemos
-        LANGUAGES NONE
-        VERSION 1.5.0
+        LANGUAGES CXX Fortran
+        VERSION 1.6.0
         DESCRIPTION "Demonstrate CMake usage"
         HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 enable_testing()
 
-list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules/)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
 add_subdirectory(fetchContent)
 add_subdirectory(externalProject)

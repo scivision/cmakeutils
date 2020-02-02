@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(FetchContent_Demo
         LANGUAGES Fortran
         DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
-
+enable_testing(()
+)
 # --- sub-projects
 include(FetchContent)
 
@@ -16,7 +17,7 @@ FetchContent_MakeAvailable(child)
 # -- main project
 add_executable(test_timestwo_fc test_timestwo.f90)
 target_link_libraries(test_timestwo_fc times_two)
-
+add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 
 # -- data
 # This MUST be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
