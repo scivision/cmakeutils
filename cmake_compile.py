@@ -16,6 +16,7 @@
 # prereqs
 # CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
 # Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
+# Cygwin: setup-x86_64.exe -P gcc-g++ make ncurses-devel libssl-devel
 #
 # Git > 2.18 required, or specify CMake version at command line e.g.
 #
