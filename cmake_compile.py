@@ -1,26 +1,28 @@
 #!/usr/bin/env python3
-#
-# NOTE: most Linux users can simply download and install almost instantly
-#   instead of this lengthly compilation with cmake_setup.py
-# ------------------------------------------------------------------------
-#
-# Does NOT use sudo
-#
-# Compiles and installs CMake on Linux (CentOS, Debian, Ubuntu)
-#
-# Alternatives: linuxbrew (Linux), Homebrew (Mac), Scoop (Windows)
-#
-# Windows:use the .msi from  https://cmake.org/download/
-#  If you need to compile on Windows, suggest MSYS2.
-#
-# prereqs
-# CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
-# Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
-# Cygwin: setup-x86_64.exe -P gcc-g++ make ncurses-devel libssl-devel
-#
-# Git > 2.18 required, or specify CMake version at command line e.g.
-#
-# python cmake_compile.sh v3.16.3
+"""
+NOTE: most Linux users can simply download and install almost instantly
+  instead of this lengthly compilation with cmake_setup.py
+
+---
+
+Does NOT use sudo
+
+Compiles and installs CMake on Linux (CentOS, Debian, Ubuntu)
+
+Alternatives: linuxbrew (Linux), Homebrew (Mac), Scoop (Windows)
+
+Windows:use the .msi from  https://cmake.org/download/
+ If you need to compile on Windows, suggest MSYS2.
+
+prereqs
+CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
+Debian / Ubuntu: apt install g++ make libncurses-dev libssl-dev unzip
+Cygwin: setup-x86_64.exe -P gcc-g++ make libncurses-devel libssl-devel
+
+Git > 2.18 required, or specify CMake version at command line e.g.
+
+python cmake_compile.sh v3.16.3
+"""
 
 import argparse
 import os
@@ -120,7 +122,7 @@ def bootstrap(build_root: Path):
                            '-DCMAKE_BUILD_TYPE:STRING=Release',
                            '-DCMAKE_USE_OPENSSL:BOOL=ON'], cwd=build_root)
 
-    subprocess.check_call(['make', '-j', Njobs, '-l', '2'], cwd=build_root)
+    subprocess.check_call(['make', '-j', Njobs], cwd=build_root)
     subprocess.check_call(['make', 'install'], cwd=build_root)
 
 
