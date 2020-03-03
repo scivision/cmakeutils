@@ -21,7 +21,7 @@ Cygwin: setup-x86_64.exe -P gcc-g++ make libncurses-devel libssl-devel
 
 Git > 2.18 required, or specify CMake version at command line e.g.
 
-python cmake_compile.sh v3.16.3
+python cmake_compile.sh v3.16.4
 """
 
 import argparse

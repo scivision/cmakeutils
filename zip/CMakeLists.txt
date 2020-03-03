@@ -13,7 +13,7 @@ if(NOT EXISTS ${OUTFN})
          SHOW_PROGRESS
          EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923)
   endif()
-  
+
   execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${ZIPFN}
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endif()
@@ -22,5 +22,5 @@ endif()
 file(MD5 ${OUTFN} CHKSUM)
 
 if(NOT ${CHKSUM} STREQUAL 07883e93734b98cae0f7b9c55d287250)
-  message(FATAL_ERROR "MD5 checksum did not match ${OUTFN}")
+  message(WARNING "MD5 checksum did not match ${OUTFN}")
 endif()

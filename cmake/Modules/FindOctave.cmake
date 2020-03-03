@@ -100,7 +100,8 @@ endif()
 if(Interpreter IN_LIST Octave_FIND_COMPONENTS)
 
   find_program(Octave_EXECUTABLE
-               NAMES octave)
+               NAMES octave
+               HINTS ENV OCTAVE_EXECUTABLE)
 
   list(APPEND Octave_REQUIRED_VARS ${Octave_EXECUTABLE})
 

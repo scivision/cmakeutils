@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(CMakeDemos
-        LANGUAGES CXX Fortran
+        LANGUAGES C CXX Fortran
         VERSION 1.6.0
         DESCRIPTION "Demonstrate CMake usage"
         HOMEPAGE_URL https://github.com/scivision/cmake-utils)
@@ -16,7 +16,6 @@ add_subdirectory(zip)
 add_subdirectory(mpi)
 add_subdirectory(openmp)
 
-add_subdirectory(fortran)
 add_subdirectory(matlab)
 add_subdirectory(octave)
 

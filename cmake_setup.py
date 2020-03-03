@@ -57,7 +57,7 @@ def latest_cmake_version() -> str:
 
     if not check_git_version("2.18"):
         raise RuntimeError(
-            "Git >= 2.18 required for auto latest version--" "try specifying version manually like:\n python cmake_setup.py 3.14.0"
+            "Git >= 2.18 required for auto latest version--try specifying version manually like:\n python cmake_setup.py 3.16.4"
         )
 
     cmd = [

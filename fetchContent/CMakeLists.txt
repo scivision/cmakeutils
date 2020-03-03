@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 project(FetchContent_Demo
         LANGUAGES Fortran
         DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
-enable_testing(()
-)
+enable_testing()
 # --- sub-projects
 include(FetchContent)
 
