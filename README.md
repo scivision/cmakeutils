@@ -16,7 +16,7 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
 
-## Install CMake
+## Install CMake binary
 
 The Python script
 [cmake_setup.py](./cmake_setup.py)
@@ -34,8 +34,13 @@ Meson can use CMake projects as subprojects (external projects).
 
 ## Build CMake
 
-If you need to or desire to build CMake from source, this can be using an older version of CMake, or without CMake using the "bootstrap" method.
+CMake can be builts from source using either:
+
+* older version of CMake,
+* without CMake using the "bootstrap" method
+
 The bootstrap method is only for Unix-like systems, while the CMake-based build can also be used on Windows.
+Any platform for which Kitware doesn't distribute binaries use this script, including IBM Power and ARM.
 
 ```sh
 python cmake_compile.py

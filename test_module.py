@@ -32,7 +32,7 @@ def test_files(tmp_path):
     elif sys.platform == "win32":
         assert file.endswith(".msi")
     else:
-        pytest.skip("we did not have a test for {}".format(sys.platform))
+        pytest.skip(f"we do not have a test for {sys.platform}")
 
 
 if __name__ == "__main__":

@@ -93,7 +93,7 @@ if not cmake_sig.is_file():
 
 print('checking SHA256 signature')
 if not file_checksum(cmake_archive, cmake_sig, "sha256"):
-    raise ValueError("{} SHA256 checksum did not match {}".format(cmake_archive, cmake_sig))
+    raise ValueError(f"{cmake_archive} SHA256 checksum did not match {cmake_sig}")
 
 if not build_root.is_dir():
     print('extracting CMake source')
