@@ -1,12 +1,13 @@
 name: ci_python
 env:
-  cmake_version: '3.16.5'
+  cmake_version: '3.17.0'
   CI: true
 
 on:
   push:
     paths:
       - "**.cmake"
+      - "**.py"
       - "**/CMakeLists.txt"
       - ".github/workflows/ci.yml"
   pull_request:
