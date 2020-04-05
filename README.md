@@ -1,9 +1,7 @@
 # CMake Utils
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
-
-[![Actions Status](https://github.com/scivision/cmake-utils/workflows/ci_python/badge.svg)](https://github.com/scivision/cmake-utils/actions)
-
+![Actions Status](https://github.com/scivision/cmake-utils/workflows/ci_python/badge.svg)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
 [![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
 
@@ -27,10 +25,11 @@ It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
 python cmake_setup.py
 ```
 
-Note: new projects should consider
-[Meson](http://www.mesonbuild.com)
-instead of or in addition to CMake.
-Meson can use CMake projects as subprojects (external projects).
+Ninja is strongly recommended in general for use with CMake on Windows, Mac and Linux:
+
+```sh
+python ninja_setup.py
+```
 
 ## Build CMake
 
@@ -80,9 +79,3 @@ mex -setup -client engine C++
 Will ask you to select a compiler, or simply return:
 
 > ENGINE configured to use 'g++' for C++ language compilation.
-
-## CMake modules
-
-To avoid duplication, we have several scientific computing CMake modules in
-[scivision/fortran-libs](https://github.com/scivision/fortran-libs/tree/master/cmake/Modules)
-repo.

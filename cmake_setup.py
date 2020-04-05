@@ -24,7 +24,7 @@ PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 def main():
     p = ArgumentParser()
-    p.add_argument("version", help="request CMake version (default latest)", nargs="?")
+    p.add_argument("version", help="request version (default latest)", nargs="?")
     p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
     p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
     p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
@@ -50,29 +50,28 @@ def check_git_version(min_version: str) -> bool:
     return git_version >= pkg_resources.parse_version(min_version)
 
 
-def latest_cmake_version() -> str:
+def get_latest_version(repo: str, tail: str = "") -> str:
     """
-    get latest CMake version
+    get latest version using Git
     """
 
     if not check_git_version("2.18"):
         raise RuntimeError(
-            "Git >= 2.18 required for auto latest version--try specifying version manually like:\n python cmake_setup.py 3.16.4"
+            "Git >= 2.18 required for auto latest version--try specifying version manually."
         )
 
     cmd = [
         "git",
         "ls-remote",
         "--tags",
-        "--sort=v:refname",
-        "git://github.com/kitware/cmake.git",
+        "--sort=v:refname", repo
     ]
     lastrev = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")[-1]
-    pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)\^\{\}$"
+    pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)" + tail
 
     mat = re.match(pat, lastrev)
     if not mat:
-        raise ValueError("Could not determine latest CMake version. Please report this bug.  \nInput: \n {}".format(lastrev))
+        raise ValueError("Could not determine latest version. Please report this bug.  \nInput: \n {}".format(lastrev))
 
     latest_version = mat.group(1)
 
@@ -128,7 +127,14 @@ def install_cmake(
         print("Installing CMake to", prefix)
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(prefix))
-        print("\n\nadd to ~/.bashrc:\n\n export PATH={}:$PATH".format(prefix / stem / "bin"))
+
+        stanza = f"export PATH={prefix / stem}/bin:$PATH"
+        for cfn in ('~/.bashrc', '~/.profile'):
+            cfn = Path(cfn).expanduser()
+            if cfn.is_file():
+                print(f"\n\n add to", cfn, stanza)
+                break
+
     elif sys.platform == "win32":
         passive = "/passive" if quiet else ""
         cmd = ["msiexec", passive, "/package", str(outfile)]
@@ -172,7 +178,7 @@ def cli(P: Namespace):
     if P.version:
         get_version = P.version
     else:
-        get_version = latest_cmake_version()
+        get_version = get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
 
         if not P.force and check_cmake_version(get_version):
             print("You already have the latest CMake version {}".format(get_version))
