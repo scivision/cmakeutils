@@ -129,8 +129,8 @@ def install_cmake(
             tf.extractall(str(prefix))
 
         stanza = f"export PATH={prefix / stem}/bin:$PATH"
-        for cfn in ('~/.bashrc', '~/.profile'):
-            cfn = Path(cfn).expanduser()
+        for c in ('~/.bashrc', '~/.profile'):
+            cfn = Path(c).expanduser()
             if cfn.is_file():
                 print(f"\n\n add to", cfn, stanza)
                 break

@@ -67,8 +67,8 @@ def install_ninja(outfile: Path, prefix: Path = None):
 
     if sys.platform in ("darwin", "linux"):
         stanza = f"export PATH={prefix}:$PATH"
-        for cfn in ("~/.bashrc", "~/.profile"):
-            cfn = Path(cfn).expanduser()
+        for c in ("~/.bashrc", "~/.profile"):
+            cfn = Path(c).expanduser()
             if cfn.is_file():
                 print(f"\n add to", cfn, "\n\n", stanza)
                 break

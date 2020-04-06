@@ -32,7 +32,7 @@ import tarfile
 import shutil
 import urllib.request
 from pathlib import Path
-from cmake_setup import latest_cmake_version, file_checksum
+from cmake_setup import get_latest_version, file_checksum
 
 # RAM is a problem for parallel build, so make a guess at number of parallel jobs
 Njobs = "1"
@@ -60,7 +60,7 @@ prefix = Path(p.prefix).expanduser()
 # get latest CMake version if not specified
 version = p.version
 if version is None:
-    version = latest_cmake_version()
+    version = get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
 
 WD = Path("build")
 WD.mkdir(exist_ok=True)

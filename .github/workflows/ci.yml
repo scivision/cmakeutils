@@ -1,7 +1,9 @@
 name: ci_python
 env:
   cmake_version: '3.17.0'
+  ninja_version: '1.10.0'
   CI: true
+  CMAKE_GENERATOR: Ninja
 
 on:
   push:
@@ -31,15 +33,26 @@ jobs:
     - run: mypy .
     - run: pytest
 
-    - run: python cmake_setup.py ${cmake_version} --prefix ${HOME}/.local
+    - name: Install CMake
+      run: |
+        python cmake_setup.py ${cmake_version} --prefix ${HOME}/.local
+        echo "::add-path::${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin"
+
+    - name: Install Ninja
+      run: |
+        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        echo "::add-path::${HOME}/.local/bin"
 
     - name: CMake configure
-      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/cmake -B build
+      run: |
+        cmake --version
+        cmake -B build
+
     - name: CMake build
-      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/cmake --build build --parallel
+      run: cmake --build build --parallel
 
     - name: CTest
-      run: ${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin/ctest --output-on-failure
+      run: ctest --output-on-failure
       working-directory: build
 
   macos:
@@ -49,9 +62,14 @@ jobs:
     - uses: actions/setup-python@v1
       with:
         python-version: '3.x'
-    - run: brew install gcc
+
     - run: pip install .[tests]
     - run: pytest
+
+    - name: Install Ninja
+      run: |
+        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        echo "::add-path::${HOME}/.local/bin"
 
     - run: cmake -B build
     - run: cmake --build build --parallel
@@ -70,8 +88,12 @@ jobs:
     - run: pip install .[tests]
     - run: pytest
 
-    - run: cinst -y ninja
-    - run: cmake -B build -G Ninja
+    - name: Install Ninja
+      run: |
+        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        echo "::add-path::${HOME}/.local/bin"
+
+    - run: cmake -B build
 
     - run: cmake --build build --parallel
 
