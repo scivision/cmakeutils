@@ -1,3 +1,4 @@
+.vscode/
 *.zip
 .eggs/
 __pycache__/
