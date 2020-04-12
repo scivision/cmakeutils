@@ -9,5 +9,5 @@ if(NOT OpenMP_FOUND)
 endif()
 
 add_executable(omp_c openmp_hello.c)
-target_link_libraries(omp_c PRIVATE OpenMP::OpenMP_C)
+target_link_libraries(omp_c OpenMP::OpenMP_C)
 add_test(NAME OpenMP COMMAND omp_c)

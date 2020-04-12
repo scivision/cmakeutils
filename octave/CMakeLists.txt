@@ -18,9 +18,9 @@ endif()
 find_package(Octave COMPONENTS Development)
 if(Octave_Development_FOUND)
   add_executable(octdemo octdemo.cpp)
-  target_link_libraries(octdemo PRIVATE Octave::Octave)
-  set_target_properties(octdemo PROPERTIES CXX_STANDARD 11)
+  target_link_libraries(octdemo Octave::Octave)
+  target_compile_features(octdemo PROPERTIES cxx_std_17)
+
   add_test(NAME DevOctave COMMAND octdemo)
   set_tests_properties(BasicOctave PROPERTIES TIMEOUT 10)
 endif()
-

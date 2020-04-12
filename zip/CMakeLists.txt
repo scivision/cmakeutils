@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.14)
 project(ZIPdemo
-  LANGUAGES NONE)
+  LANGUAGES NONE
+  DESCRIPTION "Demonstrate downloading and extracting a ZIP file"
+  HOMEPAGE_URL https://github.com/scivision/cmakeutils)
 
 set(ZIPFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.zip)
 set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)

@@ -1,3 +1,4 @@
+program test_timestwo
 use multiplier, only : timestwo
 implicit none
 

@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main (int argc, char *argv[])
+int main (void)
 {
 int nthreads, tid;
 
@@ -35,4 +35,5 @@ int nthreads, tid;
     }
 
   }  /* All threads join master thread and disband */
+  return 0;
 }
