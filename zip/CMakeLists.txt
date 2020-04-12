@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(ZIPdemo
-        LANGUAGES NONE)
-        #DESCRIPTION "Demonstrate downloading and extracting a ZIP file"
-        #HOMEPAGE_URL https://github.com/scivision/cmake-utils)
+  LANGUAGES NONE)
 
 set(ZIPFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.zip)
 set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)
@@ -12,11 +10,12 @@ if(NOT EXISTS ${OUTFN})
     file(DOWNLOAD https://zenodo.org/record/1486184/files/github-mark.zip?download=1 ${ZIPFN}
          SHOW_PROGRESS
          EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923)
-  endif()
+  endif(NOT EXISTS ${ZIPFN})
 
+  # this is OS-agnostic
   execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${ZIPFN}
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif()
+endif(NOT EXISTS ${OUTFN})
 
 # -- check extracted (or any other) file
 file(MD5 ${OUTFN} CHKSUM)
