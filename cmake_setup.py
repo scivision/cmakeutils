@@ -132,7 +132,7 @@ def install_cmake(
         for c in ('~/.bashrc', '~/.profile'):
             cfn = Path(c).expanduser()
             if cfn.is_file():
-                print(f"\n\n add to", cfn, stanza)
+                print("\n\n add to", cfn, stanza)
                 break
 
     elif sys.platform == "win32":

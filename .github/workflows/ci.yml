@@ -1,6 +1,6 @@
 name: ci_python
 env:
-  cmake_version: '3.17.1'
+  cmake_version: '3.17.2'
   ninja_version: '1.10.0'
   CI: true
   CMAKE_GENERATOR: Ninja
@@ -12,7 +12,6 @@ on:
       - "**.py"
       - "**/CMakeLists.txt"
       - ".github/workflows/ci.yml"
-  pull_request:
 
 
 jobs:
@@ -27,7 +26,7 @@ jobs:
     - name: prereq install
       run: |
         sudo apt update -yq > /dev/null
-        sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran octave
+        sudo apt-get install -yq --no-install-suggests --no-install-recommends octave
     - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .

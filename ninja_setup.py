@@ -70,7 +70,7 @@ def install_ninja(outfile: Path, prefix: Path = None):
         for c in ("~/.bashrc", "~/.profile"):
             cfn = Path(c).expanduser()
             if cfn.is_file():
-                print(f"\n add to", cfn, "\n\n", stanza)
+                print("\n add to", cfn, "\n\n", stanza)
                 break
     else:
         print("add to PATH environment variable:")
