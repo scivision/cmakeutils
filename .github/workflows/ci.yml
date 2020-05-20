@@ -46,6 +46,8 @@ jobs:
       run: |
         cmake --version
         cmake -B build
+      env:
+        FC: gfortran-9
 
     - name: CMake build
       run: cmake --build build --parallel
