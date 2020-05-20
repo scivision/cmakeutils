@@ -26,7 +26,7 @@ jobs:
     - name: prereq install
       run: |
         sudo apt update -yq > /dev/null
-        sudo apt-get install -yq --no-install-suggests --no-install-recommends octave
+        sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran octave
     - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .
@@ -46,8 +46,6 @@ jobs:
       run: |
         cmake --version
         cmake -B build
-      env:
-        FC: gfortran-9
 
     - name: CMake build
       run: cmake --build build --parallel
