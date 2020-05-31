@@ -23,6 +23,7 @@ def main():
     p = ArgumentParser()
     p.add_argument("version", help="request version (default latest)", nargs="?")
     p.add_argument("--prefix", help="Path prefix to install under", default="~/.local/bin")
+    p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
     P = p.parse_args()
 
     cli(P)
@@ -33,6 +34,10 @@ def cli(P: Namespace):
     outfile = Path(ninja_files[sys.platform])
 
     version = P.version if P.version else get_latest_version("git://github.com/ninja-build/ninja.git")
+
+    if P.dryrun:
+        print(f"Ninja {version} is available")
+        return
 
     url = f"{HEAD}/v{version}/{outfile}"
     url_retrieve(url, outfile)

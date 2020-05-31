@@ -71,7 +71,7 @@ def get_latest_version(repo: str, tail: str = "") -> str:
 
     mat = re.match(pat, lastrev)
     if not mat:
-        raise ValueError("Could not determine latest version. Please report this bug.  \nInput: \n {}".format(lastrev))
+        raise ValueError(f"Could not determine latest version. Please report this bug.  \nInput: \n {lastrev}")
 
     latest_version = mat.group(1)
 
@@ -118,7 +118,7 @@ def install_cmake(
     cmake_version: str, outfile: Path, prefix: Path = None, stem: str = None, quiet: bool = False,
 ):
     if sys.platform == "darwin":
-        raise ValueError("please install CMake {} from disk image {} or do\n brew install cmake".format(cmake_version, outfile))
+        raise ValueError(f"please install CMake {cmake_version} from disk image {outfile} or do\n brew install cmake")
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
@@ -152,19 +152,19 @@ def cmake_files(cmake_version: str, odir: Path) -> typing.Tuple[Path, str, str]:
     if sys.platform == "cygwin":
         raise ValueError("use Cygwin setup.exe to install CMake, or manual compile")
     elif sys.platform == "darwin":
-        ofn = "cmake-{}-Darwin-x86_64.dmg".format(cmake_version)
-        url = HEAD + "v{}/{}".format(cmake_version, ofn)
+        ofn = f"cmake-{cmake_version}-Darwin-x86_64.dmg"
+        url = HEAD + f"v{cmake_version}/{ofn}"
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
-        stem = "cmake-{}-Linux-x86_64".format(cmake_version)
-        ofn = "{}.tar.gz".format(stem)
-        url = HEAD + "v{}/{}".format(cmake_version, ofn)
+        stem = f"cmake-{cmake_version}-Linux-x86_64"
+        ofn = f"{stem}.tar.gz"
+        url = HEAD + f"v{cmake_version}/{ofn}"
     elif sys.platform == "win32":
-        ofn = "cmake-{}-win64-x64.msi".format(cmake_version)
-        url = HEAD + "v{}/{}".format(cmake_version, ofn)
+        ofn = f"cmake-{cmake_version}-win64-x64.msi"
+        url = HEAD + f"v{cmake_version}/{ofn}"
     else:
-        raise ValueError("unknown platform {}".format(sys.platform))
+        raise ValueError(f"unknown platform {sys.platform}")
 
     outfile = odir / ofn
 
@@ -181,17 +181,17 @@ def cli(P: Namespace):
         get_version = get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
 
         if not P.force and check_cmake_version(get_version):
-            print("You already have the latest CMake version {}".format(get_version))
+            print(f"You already have the latest CMake version {get_version}")
             return
 
     if P.dryrun:
-        print("CMake {} is available".format(get_version))
+        print(f"CMake {get_version} is available")
         return
 
     outfile, url, stem = cmake_files(get_version, odir)
     # %% checksum
-    hashstem = "cmake-{}-SHA-256.txt".format(get_version)
-    hashurl = HEAD + "v{}/{}".format(get_version, hashstem)
+    hashstem = f"cmake-{get_version}-SHA-256.txt"
+    hashurl = HEAD + f"v{get_version}/{hashstem}"
     hashfile = odir / hashstem
 
     if not hashfile.is_file() or hashfile.stat().st_size == 0:
@@ -201,7 +201,7 @@ def cli(P: Namespace):
         url_retrieve(url, outfile)
 
     if not file_checksum(outfile, hashfile, "sha256"):
-        raise ValueError("{} SHA256 checksum did not match {}".format(outfile, hashfile))
+        raise ValueError(f"{outfile} SHA256 checksum did not match {hashfile}")
 
     install_cmake(get_version, outfile, P.prefix, stem, P.quiet)
 
