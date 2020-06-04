@@ -12,6 +12,8 @@ import sys
 import os
 import stat
 import urllib.request
+import subprocess
+import pkg_resources
 
 from cmake_setup import get_latest_version
 
@@ -33,7 +35,13 @@ def cli(P: Namespace):
 
     outfile = Path(ninja_files[sys.platform])
 
-    version = P.version if P.version else get_latest_version("git://github.com/ninja-build/ninja.git")
+    if P.version:
+        version = P.version
+    else:
+        version = get_latest_version("git://github.com/ninja-build/ninja.git")
+        if check_ninja_version(version):
+            print(f"You already have latest Ninja {version}")
+            return
 
     if P.dryrun:
         print(f"Ninja {version} is available")
@@ -43,6 +51,15 @@ def cli(P: Namespace):
     url_retrieve(url, outfile)
 
     install_ninja(outfile, P.prefix)
+
+
+def check_ninja_version(min_version: str) -> bool:
+
+    proc = subprocess.run(["ninja", "--version"], stdout=subprocess.PIPE, universal_newlines=True)
+    if proc.returncode != 0:
+        return False
+
+    return pkg_resources.parse_version(proc.stdout) >= pkg_resources.parse_version(min_version)
 
 
 def url_retrieve(url: str, outfile: Path):
