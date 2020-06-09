@@ -12,6 +12,7 @@ import subprocess
 import re
 import sys
 import typing
+import shutil
 import urllib.request
 import hashlib
 import platform
@@ -40,8 +41,11 @@ def check_git_version(min_version: str) -> bool:
     """
     checks that Git of a minimum required version is available
     """
+    git = shutil.which("git")
+    if not git:
+        return False
 
-    ret = subprocess.check_output(["git", "--version"], universal_newlines=True).split()[2]
+    ret = subprocess.check_output([git, "--version"], universal_newlines=True).split()[2]
     git_version = pkg_resources.parse_version(ret[:6])
     return git_version >= pkg_resources.parse_version(min_version)
 
@@ -91,11 +95,13 @@ def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
 
 
 def check_cmake_version(min_version: str) -> bool:
-    proc = subprocess.run(["cmake", "--version"], stdout=subprocess.PIPE, universal_newlines=True)
-    if proc.returncode != 0:
+    cmake = shutil.which("cmake")
+    if not cmake:
         return False
 
-    return pkg_resources.parse_version(proc.stdout.split()[2]) >= pkg_resources.parse_version(min_version)
+    cmake_version = subprocess.check_output([cmake, "--version"], universal_newlines=True).split()[2]
+
+    return pkg_resources.parse_version(cmake_version) >= pkg_resources.parse_version(min_version)
 
 
 def install_cmake(

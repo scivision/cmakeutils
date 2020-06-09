@@ -10,6 +10,7 @@ from argparse import ArgumentParser, Namespace
 import zipfile
 import sys
 import os
+import shutil
 import stat
 import urllib.request
 import subprocess
@@ -54,12 +55,13 @@ def cli(P: Namespace):
 
 
 def check_ninja_version(min_version: str) -> bool:
-
-    proc = subprocess.run(["ninja", "--version"], stdout=subprocess.PIPE, universal_newlines=True)
-    if proc.returncode != 0:
+    ninja = shutil.which("ninja")
+    if not ninja:
         return False
 
-    return pkg_resources.parse_version(proc.stdout) >= pkg_resources.parse_version(min_version)
+    ret = subprocess.check_output([ninja, "--version"], universal_newlines=True)
+
+    return pkg_resources.parse_version(ret) >= pkg_resources.parse_version(min_version)
 
 
 def url_retrieve(url: str, outfile: Path):
