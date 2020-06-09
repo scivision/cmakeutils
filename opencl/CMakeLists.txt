@@ -8,6 +8,21 @@ if(NOT OpenCL_FOUND)
   return()
 endif()
 
+set(CMAKE_REQUIRED_INCLUDES ${OpenCL_INCLUDE_DIRS})
+set(CMAKE_REQUIRED_LIBRARIES ${OpenCL_LIBRARIES})
+include(CheckCXXSourceCompiles)
+if(APPLE)
+  check_cxx_source_compiles("#include <OpenCL/cl.hpp>
+  int main(void){ return 0; }" opencl_ok)
+else()
+  check_cxx_source_compiles("#include <CL/cl.hpp>
+  int main(void){ return 0; }" opencl_ok)
+endif()
+
+if(NOT opencl_ok)
+  message(STATUS "SKIP: OpenCL")
+endif()
+
 add_executable(opencl_hello hello2.cxx)
 target_link_libraries(opencl_hello OpenCL::OpenCL)
 target_compile_features(opencl_hello PRIVATE cxx_std_11)

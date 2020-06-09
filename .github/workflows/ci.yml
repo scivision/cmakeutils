@@ -1,4 +1,4 @@
-name: ci_python
+name: ci
 env:
   cmake_version: '3.17.3'
   ninja_version: '1.10.0'
