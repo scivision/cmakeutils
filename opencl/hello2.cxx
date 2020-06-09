@@ -4,8 +4,11 @@
 #include <string>
 
 #define __CL_ENABLE_EXCEPTIONS
+#ifdef __APPLE__
+#include <OpenCL/cl.hpp>
+#else
 #include <CL/cl.hpp>
-
+#endif
 // Compute c = a + b.
 static const char source[] =
     "#if defined(cl_khr_fp64)\n"
