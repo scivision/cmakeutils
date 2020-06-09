@@ -21,6 +21,7 @@ endif()
 
 if(NOT opencl_ok)
   message(STATUS "SKIP: OpenCL")
+  return()
 endif()
 
 add_executable(opencl_hello hello2.cxx)

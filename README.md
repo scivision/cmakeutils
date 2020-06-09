@@ -2,9 +2,12 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/cmakeutils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/cmakeutils/context:python)
-![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci/badge.svg)
 [![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
 [![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
+
+![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci_linux/badge.svg)
+![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci_mac/badge.svg)
+![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci_windows/badge.svg)
 
 CMake is a powerful and easy to use build system for a wide variety of languages including:
 

@@ -1,4 +1,4 @@
-name: ci
+name: ci_linux
 env:
   cmake_version: '3.17.3'
   ninja_version: '1.10.0'
@@ -10,7 +10,7 @@ on:
       - "**.cmake"
       - "**.py"
       - "**/CMakeLists.txt"
-      - ".github/workflows/ci.yml"
+      - ".github/workflows/ci_linux.yml"
 
 
 jobs:
@@ -51,49 +51,4 @@ jobs:
 
     - name: CTest
       run: ctest --output-on-failure
-      working-directory: build
-
-  macos:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install .[tests]
-    - run: pytest
-
-    - name: Install Ninja
-      run: |
-        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
-        echo "::add-path::${HOME}/.local/bin"
-
-    - run: cmake -B build
-    - run: cmake --build build --parallel
-
-    - run: ctest --output-on-failure
-      working-directory: build
-
-  windows:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install .[tests]
-    - run: pytest
-
-    - name: Install Ninja
-      run: |
-        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
-        echo "::add-path::${HOME}/.local/bin"
-
-    - run: cmake -B build
-
-    - run: cmake --build build --parallel
-
-    - run: ctest --output-on-failure
       working-directory: build

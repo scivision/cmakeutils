@@ -1,0 +1,37 @@
+name: ci_windows
+env:
+  ninja_version: '1.10.0'
+  CMAKE_GENERATOR: Ninja
+
+on:
+  push:
+    paths:
+      - "**.cmake"
+      - "**.py"
+      - "**/CMakeLists.txt"
+      - ".github/workflows/ci_windows.yml"
+
+jobs:
+
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - run: pip install .[tests]
+    - run: pytest
+
+    - name: Install Ninja
+      run: |
+        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        echo "::add-path::${HOME}/.local/bin"
+
+    - run: cmake -B build
+
+    - run: cmake --build build --parallel
+
+    - run: ctest --output-on-failure
+      working-directory: build
