@@ -15,6 +15,7 @@ add_subdirectory(zip)
 
 add_subdirectory(mpi)
 add_subdirectory(openmp)
+add_subdirectory(opencl)
 
 add_subdirectory(matlab)
 add_subdirectory(octave)

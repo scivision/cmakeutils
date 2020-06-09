@@ -1,8 +1,7 @@
 name: ci_python
 env:
-  cmake_version: '3.17.2'
+  cmake_version: '3.17.3'
   ninja_version: '1.10.0'
-  CI: true
   CMAKE_GENERATOR: Ninja
 
 on:
@@ -20,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
     - name: prereq install
@@ -58,7 +57,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
@@ -80,7 +79,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
