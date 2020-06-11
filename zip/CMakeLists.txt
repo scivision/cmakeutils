@@ -15,8 +15,12 @@ if(NOT EXISTS ${OUTFN})
   endif(NOT EXISTS ${ZIPFN})
 
   # this is OS-agnostic
-  execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${ZIPFN}
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  if(CMAKE_VERSION VERSION_LESS 3.18)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${ZIPFN}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  else()
+    file(ARCHIVE_EXTRACT INPUT ${ZIPFN} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  endif()
 endif(NOT EXISTS ${OUTFN})
 
 # -- check extracted (or any other) file
