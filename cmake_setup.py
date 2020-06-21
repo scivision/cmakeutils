@@ -6,12 +6,12 @@ for Linux, Mac and Windows
 Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 """
 from pathlib import Path
-from argparse import ArgumentParser, Namespace
+import argparse
 import pkg_resources
 import subprocess
 import re
 import sys
-import typing
+import typing as T
 import shutil
 import urllib.request
 import hashlib
@@ -20,21 +20,6 @@ import tarfile
 
 HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
-
-
-def main():
-    p = ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?")
-    p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
-    p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
-    p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
-    p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
-    p.add_argument(
-        "--force", help="reinstall CMake even if the latest version is already installed", action="store_true",
-    )
-    P = p.parse_args()
-
-    cli(P)
 
 
 def check_git_version(min_version: str) -> bool:
@@ -105,10 +90,14 @@ def check_cmake_version(min_version: str) -> bool:
 
 
 def install_cmake(
-    cmake_version: str, outfile: Path, prefix: Path = None, stem: str = None, quiet: bool = False,
+    cmake_version: str, outfile: Path, prefix: Path = None, quiet: bool = False,
 ):
     if sys.platform == "darwin":
-        raise ValueError(f"please install CMake {cmake_version} from disk image {outfile} or do\n brew install cmake")
+        brew = shutil.which("brew")
+        if brew:
+            subprocess.check_call(["brew", "install", "cmake"])
+        else:
+            raise SystemExit("CMake on MacOS and other dev tasks are easily done via Homebrew \n https://brew.sh")
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
@@ -118,7 +107,7 @@ def install_cmake(
         with tarfile.open(str(outfile)) as tf:
             tf.extractall(str(prefix))
 
-        stanza = f"export PATH={prefix / stem}/bin:$PATH"
+        stanza = f"export PATH={prefix / outfile.stem}/bin:$PATH"
         for c in ("~/.bashrc", "~/.profile"):
             cfn = Path(c).expanduser()
             if cfn.is_file():
@@ -133,7 +122,7 @@ def install_cmake(
         subprocess.run(" ".join(cmd), shell=True)
 
 
-def cmake_files(cmake_version: str, odir: Path) -> typing.Tuple[Path, str, str]:
+def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
     """
     this relies on the per-OS naming scheme used by Kitware in their GitHub Releases
     """
@@ -158,12 +147,42 @@ def cmake_files(cmake_version: str, odir: Path) -> typing.Tuple[Path, str, str]:
 
     outfile = odir / ofn
 
-    return outfile, url, stem
+    return outfile, url
 
 
-def cli(P: Namespace):
-    odir = Path(P.outdir).expanduser()
-    odir.mkdir(parents=True, exist_ok=True)
+def download_cmake(outdir: Path, get_version: str) -> Path:
+
+    outdir = Path(outdir).expanduser()
+    outdir.mkdir(parents=True, exist_ok=True)
+    outfile, url = cmake_files(get_version, outdir)
+    # %% checksum
+    hashstem = f"cmake-{get_version}-SHA-256.txt"
+    hashurl = HEAD + f"v{get_version}/{hashstem}"
+    hashfile = outdir / hashstem
+
+    if not hashfile.is_file() or hashfile.stat().st_size == 0:
+        url_retrieve(hashurl, hashfile)
+
+    if not outfile.is_file() or outfile.stat().st_size < 1e6:
+        url_retrieve(url, outfile)
+
+    if not file_checksum(outfile, hashfile, "sha256"):
+        raise ValueError(f"{outfile} SHA256 checksum did not match {hashfile}")
+
+    return outfile
+
+
+def cli():
+    p = argparse.ArgumentParser()
+    p.add_argument("version", help="request version (default latest)", nargs="?")
+    p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
+    p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
+    p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
+    p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
+    p.add_argument(
+        "--force", help="reinstall CMake even if the latest version is already installed", action="store_true",
+    )
+    P = p.parse_args()
 
     if P.version:
         get_version = P.version
@@ -178,23 +197,13 @@ def cli(P: Namespace):
         print(f"CMake {get_version} is available")
         return
 
-    outfile, url, stem = cmake_files(get_version, odir)
-    # %% checksum
-    hashstem = f"cmake-{get_version}-SHA-256.txt"
-    hashurl = HEAD + f"v{get_version}/{hashstem}"
-    hashfile = odir / hashstem
+    if sys.platform != "darwin":
+        outfile = download_cmake(P.outdir, get_version)
+    else:
+        outfile = None
 
-    if not hashfile.is_file() or hashfile.stat().st_size == 0:
-        url_retrieve(hashurl, hashfile)
-
-    if not outfile.is_file() or outfile.stat().st_size < 1e6:
-        url_retrieve(url, outfile)
-
-    if not file_checksum(outfile, hashfile, "sha256"):
-        raise ValueError(f"{outfile} SHA256 checksum did not match {hashfile}")
-
-    install_cmake(get_version, outfile, P.prefix, stem, P.quiet)
+    install_cmake(get_version, outfile, P.prefix, P.quiet)
 
 
 if __name__ == "__main__":
-    main()
+    cli()

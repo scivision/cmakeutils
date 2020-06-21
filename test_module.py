@@ -23,16 +23,15 @@ def test_existing_version():
     assert cm.check_cmake_version(VERSION)
 
 
+@pytest.mark.skipif(sys.platform not in ("linux", "win32"), reason="only downloads for Windows and Linux")
 def test_files(tmp_path):
 
-    path, file, stem = cm.cmake_files(VERSION, tmp_path)
+    path, file = cm.cmake_files(VERSION, tmp_path)
 
     if sys.platform == "linux":
         assert file.endswith(".tar.gz")
     elif sys.platform == "win32":
         assert file.endswith(".msi")
-    else:
-        pytest.skip(f"we do not have a test for {sys.platform}")
 
 
 if __name__ == "__main__":
