@@ -37,7 +37,7 @@ def test_files(tmp_path):
     if sys.platform == "linux":
         assert file.endswith(".tar.gz")
     elif sys.platform == "win32":
-        assert file.endswith(".msi")
+        assert file.endswith(".zip")
 
 
 if __name__ == "__main__":

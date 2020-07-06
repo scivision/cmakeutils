@@ -18,6 +18,7 @@ import urllib.request
 import hashlib
 import platform
 import tarfile
+import zipfile
 
 HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
@@ -103,6 +104,7 @@ def check_cmake_version(min_version: str) -> bool:
 def install_cmake(
     cmake_version: str, outfile: Path, prefix: Path = None, quiet: bool = False,
 ):
+
     if sys.platform == "darwin":
         brew = shutil.which("brew")
         if brew:
@@ -112,25 +114,34 @@ def install_cmake(
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
-        prefix = Path(prefix).expanduser().resolve()
-        prefix.mkdir(parents=True, exist_ok=True)
-        print("Installing CMake to", prefix)
-        with tarfile.open(str(outfile)) as tf:
-            tf.extractall(str(prefix))
 
-        stanza = f"export PATH={prefix / outfile.stem}/bin:$PATH"
+    prefix = Path(prefix).expanduser().resolve()
+    prefix.mkdir(parents=True, exist_ok=True)
+    print("Installing CMake to", prefix)
+
+    if outfile.suffix == ".gz":
+        with tarfile.open(outfile) as t:
+            t.extractall(str(prefix))
+        stem = outfile.name.split(".tar.gz")[0]
+        # .stem doesn't work as intended for multiple suffixes:  Path("foo.tar.gz").stem == "foo.tar"
+    elif outfile.suffix == ".zip":
+        with zipfile.ZipFile(outfile) as z:
+            z.extractall(str(prefix))
+        stem = outfile.stem
+    else:
+        raise ValueError(f"Unsure how to extract {outfile}")
+
+    if sys.platform == "linux":
+        stanza = f"export PATH={prefix / stem}/bin:$PATH"
         for c in ("~/.bashrc", "~/.profile"):
             cfn = Path(c).expanduser()
             if cfn.is_file():
                 print("\n\n add to", cfn, stanza)
                 break
-
     elif sys.platform == "win32":
-        passive = "/passive" if quiet else ""
-        cmd = ["msiexec", passive, "/package", str(outfile)]
-        print(" ".join(cmd))
-        # without shell=True, install will fail
-        subprocess.run(" ".join(cmd), shell=True)
+        print(f"add to PATH: {prefix / stem}/bin")
+    else:
+        raise ValueError(f"Unsure how to install CMake for {sys.platform}")
 
 
 def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
@@ -138,27 +149,22 @@ def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
     this relies on the per-OS naming scheme used by Kitware in their GitHub Releases
     """
 
-    stem = ""
     if sys.platform == "cygwin":
         raise ValueError("use Cygwin setup.exe to install CMake, or manual compile")
     elif sys.platform == "darwin":
-        ofn = f"cmake-{cmake_version}-Darwin-x86_64.dmg"
-        url = HEAD + f"v{cmake_version}/{ofn}"
+        tail = "Darwin-x86_64.dmg"
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
-        stem = f"cmake-{cmake_version}-Linux-x86_64"
-        ofn = f"{stem}.tar.gz"
-        url = HEAD + f"v{cmake_version}/{ofn}"
+        tail = "Linux-x86_64.tar.gz"
     elif sys.platform == "win32":
-        ofn = f"cmake-{cmake_version}-win64-x64.msi"
-        url = HEAD + f"v{cmake_version}/{ofn}"
+        tail = "win64-x64.zip"
     else:
         raise ValueError(f"unknown platform {sys.platform}")
 
-    outfile = odir / ofn
+    ofn = f"cmake-{cmake_version}-{tail}"
 
-    return outfile, url
+    return odir / ofn, HEAD + f"v{cmake_version}/{ofn}"
 
 
 def download_cmake(outdir: Path, get_version: str) -> Path:
