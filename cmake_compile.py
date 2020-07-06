@@ -58,9 +58,7 @@ p = p.parse_args()
 prefix = Path(p.prefix).expanduser()
 
 # get latest CMake version if not specified
-version = p.version
-if version is None:
-    version = get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
+version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=p.version)
 
 WD = Path("build")
 WD.mkdir(exist_ok=True)

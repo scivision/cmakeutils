@@ -35,7 +35,7 @@ def check_git_version(min_version: str) -> bool:
     return git_version >= pkg_resources.parse_version(min_version)
 
 
-def get_latest_version(repo: str, tail: str = "") -> str:
+def get_latest_version(repo: str, *, tail: str = "", request: str = None) -> str:
     """
     get latest version using Git
     """
@@ -44,16 +44,21 @@ def get_latest_version(repo: str, tail: str = "") -> str:
         raise RuntimeError("Git >= 2.18 required for auto latest version--try specifying version manually.")
 
     cmd = ["git", "ls-remote", "--tags", "--sort=v:refname", repo]
-    lastrev = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")[-1]
+    revs = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")
     pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)" + tail
 
-    mat = re.match(pat, lastrev)
-    if not mat:
-        raise ValueError(f"Could not determine latest version. Please report this bug.  \nInput: \n {lastrev}")
+    versions = []
+    for v in revs:
+        mat = re.match(pat, v)
+        if mat:
+            versions.append(mat.group(1))
 
-    latest_version = mat.group(1)
+    if request:
+        if request in versions:
+            return request
+        raise ValueError(f"version {request} is not available. Available versions: {versions}")
 
-    return latest_version
+    return versions[-1]
 
 
 def url_retrieve(url: str, outfile: Path):
@@ -179,19 +184,13 @@ def cli():
     p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
     p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
     p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
-    p.add_argument(
-        "--force", help="reinstall CMake even if the latest version is already installed", action="store_true",
-    )
     P = p.parse_args()
 
-    if P.version:
-        get_version = P.version
-    else:
-        get_version = get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
+    get_version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=P.version)
 
-        if not P.force and check_cmake_version(get_version):
-            print(f"You already have the latest CMake {get_version}")
-            return
+    if not P.version and check_cmake_version(get_version):
+        print(f"You already have the latest CMake {get_version}")
+        return
 
     if P.dryrun:
         print(f"CMake {get_version} is available")

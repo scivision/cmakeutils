@@ -11,8 +11,14 @@ VERSION = "3.0"  # an old version of CMake
 @pytest.mark.skipif(not cm.check_git_version("2.18"), reason="Git < 2.18")
 def test_available_version():
 
-    vers = cm.get_latest_version("git://github.com/kitware/cmake.git", r"\^\{\}$")
+    with pytest.raises(ValueError):
+        cm.get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request="nope")
+
+    vers = cm.get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$")
     assert isinstance(vers, str)
+
+    vers = cm.get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request="3.17.3")
+    assert vers == "3.17.3"
 
     pvers = pkg_resources.parse_version(vers)
     assert pvers >= pkg_resources.parse_version(VERSION)

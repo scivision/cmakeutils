@@ -36,10 +36,9 @@ def cli(P: Namespace):
 
     outfile = Path(ninja_files[sys.platform])
 
-    if P.version:
-        version = P.version
-    else:
-        version = get_latest_version("git://github.com/ninja-build/ninja.git")
+    version = get_latest_version("git://github.com/ninja-build/ninja.git", request=P.version)
+
+    if not P.version:
         if check_ninja_version(version):
             print(f"You already have latest Ninja {version}")
             return
