@@ -8,6 +8,7 @@ Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 from pathlib import Path
 import argparse
 import pkg_resources
+import logging
 import subprocess
 import re
 import sys
@@ -41,6 +42,11 @@ def get_latest_version(repo: str, *, tail: str = "", request: str = None) -> str
     """
 
     if not check_git_version("2.18"):
+        if request:
+            logging.warning(
+                f"Git >= 2.18 is required to verify available versions. You may get HTTP error if version {request} not available."
+            )
+            return request
         raise RuntimeError("Git >= 2.18 required for auto latest version--try specifying version manually.")
 
     cmd = ["git", "ls-remote", "--tags", "--sort=v:refname", repo]
