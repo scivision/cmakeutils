@@ -9,10 +9,10 @@ Does NOT use sudo
 
 Compiles and installs CMake.
 
-Alternatives: Homebrew (MacOS / Linux), Scoop (Windows)
+Alternative: use binary downloads from:
 
-Windows:use the .msi from  https://cmake.org/download/
- If you need to compile on Windows, suggest MSYS2.
+* pip install cmake
+* https://cmake.org/download/
 
 prereqs
 CentOS:    yum install gcc-c++ make ncurses-devel openssl-devel unzip
@@ -21,9 +21,10 @@ Cygwin: setup-x86_64.exe -P gcc-g++ make libncurses-devel libssl-devel
 
 Git > 2.18 required, or specify CMake version at command line e.g.
 
-python cmake_compile.py v3.17.3
+python cmake_compile.py v3.18.1
 """
 
+import tempfile
 import argparse
 import os
 import sys
@@ -60,11 +61,11 @@ prefix = Path(p.prefix).expanduser()
 # get latest CMake version if not specified
 version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=p.version)
 
-WD = Path("build")
+WD = Path(tempfile.gettempdir())
 WD.mkdir(exist_ok=True)
 
 stem = f"cmake-{version}"
-build_root = (WD / stem).resolve(strict=False)
+src_root = (WD / stem).resolve(strict=False)
 cfn = f"{stem}-SHA-256.txt"
 fn = f"{stem}.tar.gz"
 
@@ -90,7 +91,7 @@ print("checking SHA256 signature")
 if not file_checksum(cmake_archive, cmake_sig, "sha256"):
     raise ValueError(f"{cmake_archive} SHA256 checksum did not match {cmake_sig}")
 
-if not build_root.is_dir():
+if not src_root.is_dir():
     print("extracting CMake source")
     with tarfile.open(str(cmake_archive)) as tf:
         tf.extractall(str(WD))
@@ -100,10 +101,10 @@ print("installing cmake:", prefix)
 # CMake or bootstrap
 
 
-def bootstrap(build_root: Path):
+def bootstrap(src_root: Path):
     if os.name == "nt":
         raise RuntimeError("CMake bootstrap is for Unix-like systems only")
-    cmake_bootstrap = build_root / "bootstrap"
+    cmake_bootstrap = src_root / "bootstrap"
     if not cmake_bootstrap.is_file():
         raise FileNotFoundError(cmake_bootstrap)
 
@@ -117,28 +118,36 @@ def bootstrap(build_root: Path):
             "-DCMAKE_BUILD_TYPE:STRING=Release",
             "-DCMAKE_USE_OPENSSL:BOOL=ON",
         ],
-        cwd=build_root,
+        cwd=src_root,
     )
 
-    subprocess.check_call(["make", "-j", Njobs], cwd=build_root)
+    subprocess.check_call(["make", "-j", Njobs], cwd=src_root)
 
     print("installing cmake:", prefix)
-    subprocess.check_call(["make", "install"], cwd=build_root)
+    subprocess.check_call(["make", "install"], cwd=src_root)
 
 
 prefix.mkdir(parents=True, exist_ok=True)
 
 if shutil.which("cmake"):
+    build_root = src_root / "build"
     subprocess.check_call(
-        ["cmake", ".", f"-DCMAKE_INSTALL_PREFIX={prefix}", "-DCMAKE_BUILD_TYPE:STRING=Release", "-DCMAKE_USE_OPENSSL:BOOL=ON"],
-        cwd=build_root,
+        [
+            "cmake",
+            "-S",
+            str(src_root),
+            "-B",
+            str(build_root),
+            f"-DCMAKE_INSTALL_PREFIX={prefix}",
+            "-DCMAKE_BUILD_TYPE:STRING=Release",
+            "-DCMAKE_USE_OPENSSL:BOOL=ON",
+        ]
     )
-    # --parallel is CMake >= 3.12, probably too new to require for now.
-    # Ninja will build in parallel even without --parallel
-    subprocess.check_call(["cmake", "--build", str(build_root), "--", "-j", Njobs])
+
+    subprocess.check_call(["cmake", "--build", str(build_root), "--parallel"])
 
     print("installing cmake:", prefix)
-    subprocess.check_call(["cmake", "--build", str(build_root), "--target", "install"])
+    subprocess.check_call(["cmake", "--install", str(build_root)])
 else:
     bootstrap(build_root)
 

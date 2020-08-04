@@ -110,7 +110,7 @@ def install_cmake(
         if brew:
             subprocess.check_call(["brew", "install", "cmake"])
         else:
-            raise SystemExit("CMake on MacOS and other dev tasks are easily done via Homebrew \n https://brew.sh")
+            subprocess.check_call(["pip", "install", "cmake"])
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
