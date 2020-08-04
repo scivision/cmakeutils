@@ -7,8 +7,6 @@ Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 """
 from pathlib import Path
 import argparse
-import pkg_resources
-import logging
 import subprocess
 import re
 import sys
@@ -24,33 +22,16 @@ HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
-def check_git_version(min_version: str) -> bool:
-    """
-    checks that Git of a minimum required version is available
-    """
-    git = shutil.which("git")
-    if not git:
-        return False
-
-    ret = subprocess.check_output([git, "--version"], universal_newlines=True).split()[2]
-    git_version = pkg_resources.parse_version(ret[:6])
-    return git_version >= pkg_resources.parse_version(min_version)
-
-
 def get_latest_version(repo: str, *, tail: str = "", request: str = None) -> str:
     """
     get latest version using Git
     """
 
-    if not check_git_version("2.18"):
-        if request:
-            logging.warning(
-                f"Git >= 2.18 is required to verify available versions. You may get HTTP error if version {request} not available."
-            )
-            return request
-        raise RuntimeError("Git >= 2.18 required for auto latest version--try specifying version manually.")
+    git = shutil.which("git")
+    if not git:
+        raise FileNotFoundError("Git required to download CMake")
 
-    cmd = ["git", "ls-remote", "--tags", "--sort=v:refname", repo]
+    cmd = [git, "ls-remote", "--tags", "--sort=v:refname", repo]
     revs = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")
     pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)" + tail
 
@@ -89,16 +70,6 @@ def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
                     return True
 
     return False
-
-
-def check_cmake_version(min_version: str) -> bool:
-    cmake = shutil.which("cmake")
-    if not cmake:
-        return False
-
-    cmake_version = subprocess.check_output([cmake, "--version"], universal_newlines=True).split()[2]
-
-    return pkg_resources.parse_version(cmake_version) >= pkg_resources.parse_version(min_version)
 
 
 def install_cmake(
@@ -189,7 +160,24 @@ def download_cmake(outdir: Path, get_version: str) -> Path:
     return outfile
 
 
-def cli():
+def check_cmake_version(min_version: str) -> bool:
+    cmake = shutil.which("cmake")
+    if not cmake:
+        return False
+
+    cmake_version = subprocess.check_output([cmake, "--version"], universal_newlines=True).split()[2]
+
+    try:
+        import pkg_resources
+
+        return pkg_resources.parse_version(cmake_version) >= pkg_resources.parse_version(min_version)
+    except ImportError:
+        print(f"CMake {cmake_version} already installed.")
+
+    return None
+
+
+def main():
     p = argparse.ArgumentParser()
     p.add_argument("version", help="request version (default latest)", nargs="?")
     p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
@@ -217,4 +205,4 @@ def cli():
 
 
 if __name__ == "__main__":
-    cli()
+    main()

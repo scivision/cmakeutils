@@ -16,7 +16,7 @@ import urllib.request
 import subprocess
 import pkg_resources
 
-from cmake_setup import get_latest_version
+from .cmake_setup import get_latest_version
 
 HEAD = "https://github.com/ninja-build/ninja/releases/download"
 ninja_files = {"win32": "ninja-win.zip", "darwin": "ninja-mac.zip", "linux": "ninja-linux.zip"}

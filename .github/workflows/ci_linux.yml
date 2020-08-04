@@ -1,8 +1,9 @@
 name: ci_linux
 env:
-  cmake_version: '3.17.3'
-  ninja_version: '1.10.0'
+  cmake_version: '3.18.1'
   CMAKE_GENERATOR: Ninja
+  FC: gfortran-9
+  CC: gcc-9
 
 on:
   push:
@@ -22,10 +23,7 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: prereq install
-      run: |
-        sudo apt update -yq > /dev/null
-        sudo apt-get install -yq --no-install-suggests --no-install-recommends gfortran octave
+
     - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .
@@ -33,12 +31,12 @@ jobs:
 
     - name: Install CMake
       run: |
-        python cmake_setup.py ${cmake_version} --prefix ${HOME}/.local
+        cmake_setup ${cmake_version} --prefix ${HOME}/.local
         echo "::add-path::${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin"
 
     - name: Install Ninja
       run: |
-        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        ninja_setup --prefix ${HOME}/.local/bin
         echo "::add-path::${HOME}/.local/bin"
 
     - name: CMake configure

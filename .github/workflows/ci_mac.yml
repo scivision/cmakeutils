@@ -1,7 +1,8 @@
 name: ci_mac
 env:
-  ninja_version: '1.10.0'
   CMAKE_GENERATOR: Ninja
+  FC: gfortran-9
+  CC: gcc-9
 
 on:
   push:
@@ -26,10 +27,11 @@ jobs:
 
     - name: Install Ninja
       run: |
-        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        ninja_setup --prefix ${HOME}/.local/bin
         echo "::add-path::${HOME}/.local/bin"
 
     - run: cmake -B build
+
     - run: cmake --build build --parallel
 
     - run: ctest --output-on-failure

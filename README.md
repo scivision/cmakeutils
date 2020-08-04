@@ -18,21 +18,30 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
 
-## Install CMake binary
+```sh
+pip install cmakeutils
+```
 
-The Python script
-[cmake_setup.py](./cmake_setup.py)
-takes only a minute to install binary and includes `cmake-gui`.
-It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
+or
 
 ```sh
-python cmake_setup.py
+git clone https://github.com/scivision/cmakeutils
+pip install -e cmakeutils
 ```
+
+## Install CMake binary
+
+```sh
+cmake_setup
+```
+
+takes only a minute to install binary and includes `cmake-gui`.
+It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
 
 Ninja is strongly recommended in general for use with CMake on Windows, Mac and Linux:
 
 ```sh
-python ninja_setup.py
+ninja_setup
 ```
 
 ## Build CMake
@@ -46,7 +55,7 @@ The bootstrap method is only for Unix-like systems, while the CMake-based build 
 Any platform for which Kitware doesn't distribute binaries use this script, including IBM Power and ARM.
 
 ```sh
-python cmake_compile.py
+cmake_compile
 ```
 
 This downloads the latest CMake release source and builds from scratch.

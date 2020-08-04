@@ -1,6 +1,5 @@
 name: ci_windows
 env:
-  ninja_version: '1.10.0'
   CMAKE_GENERATOR: Ninja
 
 on:
@@ -26,7 +25,7 @@ jobs:
 
     - name: Install Ninja
       run: |
-        python ninja_setup.py ${ninja_version} --prefix ${HOME}/.local/bin
+        ninja_setup --prefix ${HOME}/.local/bin
         echo "::add-path::${HOME}/.local/bin"
 
     - run: cmake -B build

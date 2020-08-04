@@ -1,14 +1,12 @@
-#!/usr/bin/env python
 import pytest
 import pkg_resources
 import sys
 
-import cmake_setup as cm
+import cmakeutils.cmake_setup as cm
 
 VERSION = "3.0"  # an old version of CMake
 
 
-@pytest.mark.skipif(not cm.check_git_version("2.18"), reason="Git < 2.18")
 def test_available_version():
 
     with pytest.raises(ValueError):
@@ -38,7 +36,3 @@ def test_files(tmp_path):
         assert file.endswith(".tar.gz")
     elif sys.platform == "win32":
         assert file.endswith(".zip")
-
-
-if __name__ == "__main__":
-    pytest.main([__file__])
