@@ -55,21 +55,9 @@ url_stem = "https://github.com/Kitware/CMake/releases/download"
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("version", nargs="?")
-    p.add_argument("-prefix", default="~/.local")
+    p.add_argument("-prefix", help="where to install CMake")
+    p.add_argument("-workdir", help="use existing source code path")
     p = p.parse_args()
-
-    prefix = Path(p.prefix).expanduser()
-
-    # get latest CMake version if not specified
-    version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=p.version)
-
-    WD = Path(tempfile.gettempdir())
-    WD.mkdir(exist_ok=True)
-
-    stem = f"cmake-{version}"
-    src_root = (WD / stem).resolve(strict=False)
-    cfn = f"{stem}-SHA-256.txt"
-    fn = f"{stem}.tar.gz"
 
     # 0. check prereqs
     if subprocess.run(
@@ -78,14 +66,103 @@ def main():
         print("WARNING: SSL development library needed for typical CMake use", file=sys.stderr)
 
     # 1. download
-    cmake_archive = WD / fn
+    if p.workdir:
+        src_root = Path(p.workdir).expanduser()
+    else:
+        # get latest CMake version if not specified
+        version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=p.version)
+
+        src_root = download_and_extract(tempfile.gettempdir(), version)
+
+    prefix = None
+    if p.prefix:
+        prefix = Path(p.prefix).expanduser()
+        print("installing cmake:", prefix)
+        prefix.mkdir(parents=True, exist_ok=True)
+
+    if shutil.which("cmake"):
+        cmake_build(src_root, prefix)
+    else:
+        bootstrap(src_root, prefix)
+
+    print("\n----------------------------------------------------")
+    if prefix:
+        print(f"please add to your system PATH:  {prefix}/bin/")
+        print("\nreopen a new terminal to use CMake", version)
+    else:
+        print(f"CMake built under {src_root}")
+        print("To install CMake, rerun using cmake_compile -prefix option set to desired install path.")
+
+
+def cmake_build(src_root: Path, prefix: Path):
+
+    build_root = src_root / "build"
+
+    opts = [
+        "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DCMAKE_USE_OPENSSL:BOOL=ON",
+    ]
+    if prefix:
+        opts.append(f"-DCMAKE_INSTALL_PREFIX={prefix}")
+
+    subprocess.check_call(["cmake", "-S", str(src_root), "-B", str(build_root)] + opts)
+
+    subprocess.check_call(["cmake", "--build", str(build_root), "--parallel", Njobs])
+
+    if prefix:
+        print("installing cmake:", prefix)
+        subprocess.check_call(["cmake", "--install", str(build_root)])
+
+
+def bootstrap(src_root: Path, prefix: Path):
+    """ cmake Unix bootstrap """
+
+    if os.name == "nt":
+        raise RuntimeError("CMake bootstrap is for Unix-like systems only")
+
+    cmake_bootstrap = src_root / "bootstrap"
+    if not cmake_bootstrap.is_file():
+        raise FileNotFoundError(cmake_bootstrap)
+
+    opts = [
+        f"--parallel={Njobs}",
+        "--",
+        "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DCMAKE_USE_OPENSSL:BOOL=ON",
+    ]
+
+    if prefix:
+        opts.append(f"--prefix={prefix}")
+
+    print("running CMake bootstrap", cmake_bootstrap)
+    subprocess.check_call(
+        [str(cmake_bootstrap)] + opts, cwd=src_root,
+    )
+
+    subprocess.check_call(["make", "-j", Njobs], cwd=src_root)
+
+    if prefix:
+        print("installing cmake:", prefix)
+        subprocess.check_call(["make", "install"], cwd=src_root)
+
+
+def download_and_extract(workdir: Path, version: str) -> Path:
+
+    workdir = Path(workdir)
+    workdir.mkdir(exist_ok=True)
+    stem = f"cmake-{version}"
+    src_root = (workdir / stem).resolve(strict=False)
+    cfn = f"{stem}-SHA-256.txt"
+    fn = f"{stem}.tar.gz"
+
+    cmake_archive = workdir / fn
     url = f"{url_stem}/v{version}/{fn}"
     if not cmake_archive.is_file():
         print("downloading", url)
         urllib.request.urlretrieve(url, cmake_archive)
 
     # 2. build
-    cmake_sig = WD / cfn
+    cmake_sig = workdir / cfn
     url_sig = f"{url_stem}/v{version}/{cfn}"
     if not cmake_sig.is_file():
         print("downloading", url_sig)
@@ -98,64 +175,9 @@ def main():
     if not src_root.is_dir():
         print("extracting CMake source")
         with tarfile.open(str(cmake_archive)) as tf:
-            tf.extractall(str(WD))
+            tf.extractall(str(workdir))
 
-    print("installing cmake:", prefix)
-
-    # CMake or bootstrap
-
-    def bootstrap(src_root: Path):
-        if os.name == "nt":
-            raise RuntimeError("CMake bootstrap is for Unix-like systems only")
-        cmake_bootstrap = src_root / "bootstrap"
-        if not cmake_bootstrap.is_file():
-            raise FileNotFoundError(cmake_bootstrap)
-
-        print("running CMake bootstrap", cmake_bootstrap)
-        subprocess.check_call(
-            [
-                str(cmake_bootstrap),
-                f"--prefix={prefix}",
-                f"--parallel={Njobs}",
-                "--",
-                "-DCMAKE_BUILD_TYPE:STRING=Release",
-                "-DCMAKE_USE_OPENSSL:BOOL=ON",
-            ],
-            cwd=src_root,
-        )
-
-        subprocess.check_call(["make", "-j", Njobs], cwd=src_root)
-
-        print("installing cmake:", prefix)
-        subprocess.check_call(["make", "install"], cwd=src_root)
-
-    prefix.mkdir(parents=True, exist_ok=True)
-
-    if shutil.which("cmake"):
-        build_root = src_root / "build"
-        subprocess.check_call(
-            [
-                "cmake",
-                "-S",
-                str(src_root),
-                "-B",
-                str(build_root),
-                f"-DCMAKE_INSTALL_PREFIX={prefix}",
-                "-DCMAKE_BUILD_TYPE:STRING=Release",
-                "-DCMAKE_USE_OPENSSL:BOOL=ON",
-            ]
-        )
-
-        subprocess.check_call(["cmake", "--build", str(build_root), "--parallel", Njobs])
-
-        print("installing cmake:", prefix)
-        subprocess.check_call(["cmake", "--install", str(build_root)])
-    else:
-        bootstrap(build_root)
-
-    print("\n----------------------------------------------------")
-    print(f"please add to your system PATH:  {prefix}/bin/")
-    print("\nreopen a new terminal to use CMake", version)
+    return src_root
 
 
 if __name__ == "__main__":
