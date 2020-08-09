@@ -43,7 +43,7 @@ try:
 
     free = psutil.virtual_memory().free
     if free > 4e9:
-        Njobs = "4"
+        Njobs = ""
     elif free > 2e9:
         Njobs = "2"
 except ImportError:
@@ -107,7 +107,10 @@ def cmake_build(src_root: Path, prefix: Path):
 
     subprocess.check_call(["cmake", "-S", str(src_root), "-B", str(build_root)] + opts)
 
-    subprocess.check_call(["cmake", "--build", str(build_root), "--parallel", Njobs])
+    popts = ["--parallel"]
+    if Njobs:
+        popts.append(Njobs)
+    subprocess.check_call(["cmake", "--build", str(build_root)] + popts)
 
     if prefix:
         print("installing cmake:", prefix)
@@ -125,7 +128,6 @@ def bootstrap(src_root: Path, prefix: Path):
         raise FileNotFoundError(cmake_bootstrap)
 
     opts = [
-        f"--parallel={Njobs}",
         "--",
         "-DCMAKE_BUILD_TYPE:STRING=Release",
         "-DCMAKE_USE_OPENSSL:BOOL=ON",
@@ -133,13 +135,19 @@ def bootstrap(src_root: Path, prefix: Path):
 
     if prefix:
         opts.append(f"--prefix={prefix}")
+    if Njobs:
+        opts.append(f"--parallel={Njobs}")
 
     print("running CMake bootstrap", cmake_bootstrap)
     subprocess.check_call(
         [str(cmake_bootstrap)] + opts, cwd=src_root,
     )
 
-    subprocess.check_call(["make", "-j", Njobs], cwd=src_root)
+    popts = ["-j"]
+    if Njobs:
+        popts.append(Njobs)
+
+    subprocess.check_call(["make"] + popts, cwd=src_root)
 
     if prefix:
         print("installing cmake:", prefix)
