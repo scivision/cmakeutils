@@ -15,11 +15,13 @@ import stat
 import urllib.request
 import subprocess
 import pkg_resources
+import platform
 
 from .cmake_setup import get_latest_version
 
 HEAD = "https://github.com/ninja-build/ninja/releases/download"
 ninja_files = {"win32": "ninja-win.zip", "darwin": "ninja-mac.zip", "linux": "ninja-linux.zip"}
+PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
 def main():
@@ -89,8 +91,10 @@ def install_ninja(outfile: Path, prefix: Path = None):
     os.chmod(prefix / member, stat.S_IRWXU)
 
     if sys.platform in ("darwin", "linux"):
+        if platform.machine().lower() not in PLATFORMS:
+            raise ValueError("This method is for Linux 64-bit x86_64 systems")
         stanza = f"export PATH={prefix}:$PATH"
-        for c in ("~/.bashrc", "~/.profile"):
+        for c in ("~/.bashrc", "~/.zshrc", "~/.profile"):
             cfn = Path(c).expanduser()
             if cfn.is_file():
                 print("\n add to", cfn, "\n\n", stanza)
