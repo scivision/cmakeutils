@@ -1,6 +1,7 @@
 name: ci_linux
+
 env:
-  cmake_version: '3.18.1'
+  cmake_version: '3.18.3'
   CMAKE_GENERATOR: Ninja
   FC: gfortran-9
   CC: gcc-9
@@ -32,12 +33,12 @@ jobs:
     - name: Install CMake
       run: |
         cmake_setup ${cmake_version} --prefix ${HOME}/.local
-        echo "::add-path::${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin"
+        echo "${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Install Ninja
       run: |
         ninja_setup --prefix ${HOME}/.local/bin
-        echo "::add-path::${HOME}/.local/bin"
+        echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
     - name: CMake configure
       run: |
@@ -45,7 +46,7 @@ jobs:
         cmake -B build
 
     - name: CMake build
-      run: cmake --build build --parallel
+      run: cmake --build build
 
     - name: CTest
       run: ctest --output-on-failure

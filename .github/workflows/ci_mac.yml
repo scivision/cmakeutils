@@ -28,11 +28,11 @@ jobs:
     - name: Install Ninja
       run: |
         ninja_setup --prefix ${HOME}/.local/bin
-        echo "::add-path::${HOME}/.local/bin"
+        echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
     - run: cmake -B build
 
-    - run: cmake --build build --parallel
+    - run: cmake --build build
 
     - run: ctest --output-on-failure
       working-directory: build
