@@ -1,7 +1,7 @@
 name: ci_linux
 
 env:
-  cmake_version: '3.18.3'
+  cmake_version: '3.18.4'
   CMAKE_GENERATOR: Ninja
   FC: gfortran-9
   CC: gcc-9

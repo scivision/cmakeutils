@@ -1,2 +1,0 @@
-%% always true
-assert(true)
