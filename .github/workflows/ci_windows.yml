@@ -26,7 +26,7 @@ jobs:
     - name: Install Ninja
       run: |
         ninja_setup --prefix ${HOME}/.local/bin
-        echo "${HOME}/.local/bin" >> $GITHUB_PATH
+        echo "${HOME}/.local/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8
 
     - run: cmake -B build
 
