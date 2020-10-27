@@ -3,8 +3,10 @@
 Download and install Ninja
 for Linux, Mac and Windows
 
-Automatically determines URL of latest version via Git >= 2.18, or manual choice.
+Automatically determines URL of latest version or manual choice.
 """
+
+import tempfile
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 import zipfile
@@ -36,20 +38,20 @@ def main():
 
 def cli(P: Namespace):
 
-    outfile = Path(ninja_files[sys.platform])
+    outfile = Path(tempfile.gettempdir()) / ninja_files[sys.platform]
 
     version = get_latest_version("git://github.com/ninja-build/ninja.git", request=P.version)
 
-    if not P.version:
-        if check_ninja_version(version):
-            print(f"You already have latest Ninja {version}")
-            return
+    if not P.version and check_ninja_version(version):
+        print(f"You already have latest Ninja {version}")
+        return
 
     if P.dryrun:
         print(f"Ninja {version} is available")
         return
 
-    url = f"{HEAD}/v{version}/{outfile}"
+    url = f"{HEAD}/v{version}/{outfile.name}"
+
     url_retrieve(url, outfile)
 
     install_ninja(outfile, P.prefix)

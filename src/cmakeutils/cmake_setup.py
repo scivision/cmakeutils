@@ -5,6 +5,7 @@ for Linux, Mac and Windows
 
 Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 """
+
 from pathlib import Path
 import argparse
 import subprocess
@@ -17,6 +18,7 @@ import hashlib
 import platform
 import tarfile
 import zipfile
+import tempfile
 
 HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
@@ -180,7 +182,7 @@ def check_cmake_version(min_version: str) -> bool:
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("version", help="request version (default latest)", nargs="?")
-    p.add_argument("-o", "--outdir", help="download archive directory", default="~/Downloads")
+    p.add_argument("-o", "--outdir", help="download archive directory", default=tempfile.gettempdir())
     p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
     p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
     p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
