@@ -22,11 +22,11 @@ ExternalProject_Get_Property(child_proj BINARY_DIR)
 file(MAKE_DIRECTORY ${BINARY_DIR}/include)
 
 add_library(timestwo STATIC IMPORTED GLOBAL)
+add_dependencies(timestwo child_proj)
 set_target_properties(timestwo PROPERTIES
   IMPORTED_LOCATION ${BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
   INTERFACE_INCLUDE_DIRECTORIES ${BINARY_DIR}/include)
 #
 add_executable(test_timestwo test_timestwo.f90)
-add_dependencies(test_timestwo child_proj)
 target_link_libraries(test_timestwo timestwo)
-add_test(NAME ExternalProjectSubmodule COMMAND test_timestwo)
+add_test(NAME ExternalProjectSubmodule COMMAND $<TARGET_FILE:test_timestwo>)
