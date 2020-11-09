@@ -21,31 +21,31 @@ Cygwin: setup-x86_64.exe -P gcc-g++ make libncurses-devel libssl-devel
 
 Git > 2.18 required, or specify CMake version at command line e.g.
 
-python cmake_compile.py v3.18.1
+python cmake_compile.py v3.18.4
 """
 
 import tempfile
 import argparse
 import os
-import sys
 import subprocess
 import tarfile
 import shutil
 import urllib.request
 from pathlib import Path
 
+
 from .cmake_setup import get_latest_version, file_checksum
 
-# RAM is a problem for parallel build, so make a guess at number of parallel jobs
-Njobs = "1"
+# < 2GB RAM is a problem for parallel builds
+
+Njobs = ""
+# not free
 try:
     import psutil
-
-    free = psutil.virtual_memory().free
-    if free > 4e9:
-        Njobs = ""
-    elif free > 2e9:
-        Njobs = "2"
+    if psutil.virtual_memory().available < 1.5e9:
+        Ncpu = psutil.cpu_count(logical=False)
+        if Ncpu is not None:
+            Njobs = str(min(Ncpu, 4))
 except ImportError:
     pass
 
@@ -58,12 +58,6 @@ def main():
     p.add_argument("-prefix", help="where to install CMake")
     p.add_argument("-workdir", help="use existing source code path")
     p = p.parse_args()
-
-    # 0. check prereqs
-    if subprocess.run(
-        ["cmake", "--find-package", "-DNAME=OpenSSL", "-DCOMPILER_ID=GNU", "-DLANGUAGE=C", "-DMODE=EXIST"]
-    ).returncode:
-        print("WARNING: SSL development library needed for typical CMake use", file=sys.stderr)
 
     # 1. download
     if p.workdir:
@@ -99,7 +93,7 @@ def cmake_build(src_root: Path, prefix: Path):
     build_root = src_root / "build"
 
     opts = [
-        "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_USE_OPENSSL:BOOL=ON",
     ]
     if prefix:
@@ -129,7 +123,7 @@ def bootstrap(src_root: Path, prefix: Path):
 
     opts = [
         "--",
-        "-DCMAKE_BUILD_TYPE:STRING=Release",
+        "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_USE_OPENSSL:BOOL=ON",
     ]
 
