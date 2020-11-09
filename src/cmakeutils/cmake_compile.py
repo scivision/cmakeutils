@@ -119,7 +119,7 @@ def cmake_build(src_root: Path, prefix: Path):
         opts.append("-GNinja")
 
     cmd = ["cmake", "-S", str(src_root), "-B", str(build_root)] + opts
-    print(cmd)
+    print(" ".join(cmd))
     subprocess.check_call(cmd)
 
     popts = ["--parallel"]
@@ -127,12 +127,14 @@ def cmake_build(src_root: Path, prefix: Path):
     if Njobs:
         popts.append(str(Njobs))
     cmd = ["cmake", "--build", str(build_root)] + popts
-    print(cmd)
+    print(" ".join(cmd))
     subprocess.check_call(cmd)
 
     if prefix:
         print("installing cmake:", prefix)
-        subprocess.check_call(["cmake", "--install", str(build_root)])
+        cmd = ["cmake", "--install", str(build_root)]
+        print(" ".join(cmd))
+        subprocess.check_call(cmd)
 
 
 def bootstrap(src_root: Path, prefix: Path):
@@ -158,17 +160,17 @@ def bootstrap(src_root: Path, prefix: Path):
     if Njobs:
         opts.append(f"--parallel={Njobs}")
 
-    print("running CMake bootstrap", cmake_bootstrap)
-    subprocess.check_call(
-        [str(cmake_bootstrap)] + opts,
-        cwd=src_root,
-    )
+    cmd = [str(cmake_bootstrap)] + opts
+    print(" ".join(cmd))
+    subprocess.check_call(cmd, cwd=src_root)
 
     popts = ["-j"]
     if Njobs:
         popts.append(str(Njobs))
 
-    subprocess.check_call(["make"] + popts, cwd=src_root)
+    cmd = ["make"] + popts
+    print(" ".join(cmd))
+    subprocess.check_call(cmd, cwd=src_root)
 
     if prefix:
         print("installing cmake:", prefix)
