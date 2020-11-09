@@ -37,15 +37,21 @@ from pathlib import Path
 from .cmake_setup import get_latest_version, file_checksum
 
 # < 2GB RAM is a problem for parallel builds
+# Make is more problematic than Ninja in this regard
 
 Njobs = ""
-# not free
 try:
     import psutil
-    if psutil.virtual_memory().available < 1.5e9:
-        Ncpu = psutil.cpu_count(logical=False)
-        if Ncpu is not None:
-            Njobs = str(min(Ncpu, 4))
+    Ncpu = psutil.cpu_count(logical=False)
+    avail = psutil.virtual_memory().available
+    if avail < 1e9:
+        maxcpu = 2
+    elif avail < 1.5e9:
+        maxcpu = 4
+    else:
+        maxcpu = Ncpu
+    if maxcpu is not None:
+        Njobs = str(min(maxcpu, Ncpu))
 except ImportError:
     pass
 
@@ -134,7 +140,8 @@ def bootstrap(src_root: Path, prefix: Path):
 
     print("running CMake bootstrap", cmake_bootstrap)
     subprocess.check_call(
-        [str(cmake_bootstrap)] + opts, cwd=src_root,
+        [str(cmake_bootstrap)] + opts,
+        cwd=src_root,
     )
 
     popts = ["-j"]

@@ -75,7 +75,10 @@ def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
 
 
 def install_cmake(
-    cmake_version: str, outfile: Path, prefix: Path = None, quiet: bool = False,
+    cmake_version: str,
+    outfile: Path,
+    prefix: Path = None,
+    quiet: bool = False,
 ):
 
     if sys.platform == "darwin":
