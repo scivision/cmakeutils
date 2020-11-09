@@ -42,6 +42,7 @@ from .cmake_setup import get_latest_version, file_checksum
 Njobs = ""
 try:
     import psutil
+
     Ncpu = psutil.cpu_count(logical=False)
     avail = psutil.virtual_memory().available
     if avail < 1e9:
@@ -104,6 +105,8 @@ def cmake_build(src_root: Path, prefix: Path):
     ]
     if prefix:
         opts.append(f"-DCMAKE_INSTALL_PREFIX={prefix}")
+    if os.environ.get("CMAKE_GENERATOR") and os.environ["CMAKE_GENERATOR"] == "Ninja":
+        opts.append("-GNinja")
 
     subprocess.check_call(["cmake", "-S", str(src_root), "-B", str(build_root)] + opts)
 
