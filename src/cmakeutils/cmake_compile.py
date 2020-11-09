@@ -108,6 +108,7 @@ def job_count() -> int:
 def cmake_build(src_root: Path, prefix: Path):
 
     build_root = src_root / "build"
+    build_root.mkdir(parents=True, exist_ok=True)
 
     opts = [
         "-DCMAKE_BUILD_TYPE=Release",
@@ -118,9 +119,9 @@ def cmake_build(src_root: Path, prefix: Path):
     if os.environ.get("CMAKE_GENERATOR") and os.environ["CMAKE_GENERATOR"] == "Ninja":
         opts.append("-GNinja")
 
-    cmd = ["cmake", "-S", str(src_root), "-B", str(build_root)] + opts
+    cmd = ["cmake", str(src_root)] + opts
     print(" ".join(cmd))
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=build_root)
 
     popts = ["--parallel"]
     Njobs = job_count()
@@ -132,7 +133,7 @@ def cmake_build(src_root: Path, prefix: Path):
 
     if prefix:
         print("installing cmake:", prefix)
-        cmd = ["cmake", "--install", str(build_root)]
+        cmd = ["cmake", "--build", str(build_root), "--target", "install"]
         print(" ".join(cmd))
         subprocess.check_call(cmd)
 
