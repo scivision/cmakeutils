@@ -36,26 +36,6 @@ from pathlib import Path
 
 from .cmake_setup import get_latest_version, file_checksum
 
-# < 2GB RAM is a problem for parallel builds
-# Make is more problematic than Ninja in this regard
-
-Njobs = ""
-try:
-    import psutil
-
-    Ncpu = psutil.cpu_count(logical=False)
-    avail = psutil.virtual_memory().available
-    if avail < 1e9:
-        maxcpu = 2
-    elif avail < 1.5e9:
-        maxcpu = 4
-    else:
-        maxcpu = Ncpu
-    if maxcpu is not None:
-        Njobs = str(min(maxcpu, Ncpu))
-except ImportError:
-    pass
-
 url_stem = "https://github.com/Kitware/CMake/releases/download"
 
 
@@ -95,6 +75,36 @@ def main():
         print("To install CMake, rerun using cmake_compile -prefix option set to desired install path.")
 
 
+def job_count() -> int:
+    """
+    < 2GB RAM is a problem for parallel builds
+    Make is more problematic than Ninja in this regard
+    if ram or cpu count cannot be determined, return 1
+    """
+
+    Njobs = 1
+    maxcpu = None
+    try:
+        import psutil
+
+        Ncpu = psutil.cpu_count(logical=False)
+        avail = psutil.virtual_memory().available
+        if avail < 1e9:
+            maxcpu = 2
+        elif avail < 1.5e9:
+            maxcpu = 4
+        else:
+            maxcpu = Ncpu
+    except ImportError:
+        pass
+
+    if maxcpu is not None and Ncpu is not None:
+        # we know free ram and CPU count
+        Njobs = min(maxcpu, Ncpu)
+
+    return Njobs
+
+
 def cmake_build(src_root: Path, prefix: Path):
 
     build_root = src_root / "build"
@@ -108,12 +118,17 @@ def cmake_build(src_root: Path, prefix: Path):
     if os.environ.get("CMAKE_GENERATOR") and os.environ["CMAKE_GENERATOR"] == "Ninja":
         opts.append("-GNinja")
 
-    subprocess.check_call(["cmake", "-S", str(src_root), "-B", str(build_root)] + opts)
+    cmd = ["cmake", "-S", str(src_root), "-B", str(build_root)] + opts
+    print(cmd)
+    subprocess.check_call(cmd)
 
     popts = ["--parallel"]
+    Njobs = job_count()
     if Njobs:
-        popts.append(Njobs)
-    subprocess.check_call(["cmake", "--build", str(build_root)] + popts)
+        popts.append(str(Njobs))
+    cmd = ["cmake", "--build", str(build_root)] + popts
+    print(cmd)
+    subprocess.check_call(cmd)
 
     if prefix:
         print("installing cmake:", prefix)
@@ -138,6 +153,8 @@ def bootstrap(src_root: Path, prefix: Path):
 
     if prefix:
         opts.append(f"--prefix={prefix}")
+
+    Njobs = job_count()
     if Njobs:
         opts.append(f"--parallel={Njobs}")
 
@@ -149,7 +166,7 @@ def bootstrap(src_root: Path, prefix: Path):
 
     popts = ["-j"]
     if Njobs:
-        popts.append(Njobs)
+        popts.append(str(Njobs))
 
     subprocess.check_call(["make"] + popts, cwd=src_root)
 
