@@ -37,6 +37,9 @@ def main():
 
 
 def cli(P: Namespace):
+    if sys.platform in ("darwin", "linux"):
+        if platform.machine().lower() not in PLATFORMS:
+            raise ValueError("This method is for Linux 64-bit x86_64 systems")
 
     outfile = Path(tempfile.gettempdir()) / ninja_files[sys.platform]
 
@@ -80,17 +83,6 @@ def url_retrieve(url: str, outfile: Path):
 def install_ninja(outfile: Path, prefix: Path = None):
 
     prefix = Path(prefix).expanduser().resolve()
-    prefix.mkdir(parents=True, exist_ok=True)
-    print("Installing to", prefix)
-
-    member = "ninja"
-    if os.name == "nt":
-        member += ".exe"
-
-    with zipfile.ZipFile(outfile) as z:
-        z.extract(member, str(prefix))
-
-    os.chmod(prefix / member, stat.S_IRWXU)
 
     if sys.platform in ("darwin", "linux"):
         if platform.machine().lower() not in PLATFORMS:
@@ -104,6 +96,19 @@ def install_ninja(outfile: Path, prefix: Path = None):
     else:
         print("add to PATH environment variable:")
         print(prefix)
+
+    # %% extract ninja exe
+    prefix.mkdir(parents=True, exist_ok=True)
+    print("Installing to", prefix)
+
+    member = "ninja"
+    if os.name == "nt":
+        member += ".exe"
+
+    with zipfile.ZipFile(outfile) as z:
+        z.extract(member, str(prefix))
+
+    os.chmod(prefix / member, stat.S_IRWXU)
 
 
 if __name__ == "__main__":
