@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.18.4'
+  cmake_version: '3.19.1'
   CMAKE_GENERATOR: Ninja
 
 on:
@@ -32,25 +32,16 @@ jobs:
       run: |
         cmake_setup ${cmake_version} --prefix ${HOME}/.local
         echo "${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin" >> $GITHUB_PATH
-      env:
-        FC: gfortran-9
-        CC: gcc-9
 
     - name: Install Ninja
       run: |
         ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
-      env:
-        FC: gfortran-9
-        CC: gcc-9
 
     - name: CMake configure
       run: |
         cmake --version
         cmake -B build
-      env:
-        FC: gfortran-9
-        CC: gcc-9
 
     - name: CMake build
       run: cmake --build build

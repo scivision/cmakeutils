@@ -10,8 +10,9 @@ enable_testing()
 include(ExternalProject)
 
 ExternalProject_Add(child_proj
-  GIT_REPOSITORY https://github.com/scivision/cmake-externalproject
+  GIT_REPOSITORY https://github.com/scivision/cmake-externalproject.git
   GIT_TAG master  # it's much better to use a specific Git revision or Git tag for reproducability
+  GIT_SHALLOW true
   INSTALL_COMMAND ""  # this disables the install step for the external project
   BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/child_proj-prefix/src/child_proj-build/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
 )

@@ -9,6 +9,7 @@ include(FetchContent)
 FetchContent_Declare(child
   GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
   GIT_TAG master
+  GIT_SHALLOW true
 )
 
 FetchContent_MakeAvailable(child)
