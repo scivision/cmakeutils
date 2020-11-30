@@ -8,6 +8,8 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
+message(STATUS "CMake ${CMAKE_VERSION}")
+
 add_subdirectory(fetchContent)
 add_subdirectory(externalProject)
 
