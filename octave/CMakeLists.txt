@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 project(demoOctave LANGUAGES CXX)
-enable_testing()
+include(CTest)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/Modules/)
 
@@ -9,7 +9,7 @@ find_package(Octave COMPONENTS Interpreter)
 
 if(Octave_Interpreter_FOUND)
   add_test(NAME BasicOctave
-           COMMAND Octave::Interpreter -q --eval "runtests('${CMAKE_CURRENT_SOURCE_DIR}')")
+           COMMAND Octave::Interpreter --eval "oruntests('${CMAKE_CURRENT_SOURCE_DIR}')")
   set_tests_properties(BasicOctave PROPERTIES TIMEOUT 20)
 endif()
 
@@ -19,8 +19,11 @@ find_package(Octave COMPONENTS Development)
 if(Octave_Development_FOUND)
   add_executable(octdemo octdemo.cpp)
   target_link_libraries(octdemo Octave::Octave)
-  target_compile_features(octdemo PROPERTIES cxx_std_17)
+  target_compile_features(octdemo PRIVATE cxx_std_17)
 
-  add_test(NAME DevOctave COMMAND octdemo)
+  if(BUILD_TESTING)
+  # this might fail on Windows if Octave MinGW not in PATH, just a generic problem with Octave on Windows
+  add_test(NAME DevOctave COMMAND $<TARGET_FILE:octdemo>)
   set_tests_properties(BasicOctave PROPERTIES TIMEOUT 10)
+  endif()
 endif()

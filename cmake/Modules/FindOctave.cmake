@@ -45,16 +45,28 @@ The following cache variables may also be set:
 ``Octave_OCTAVE_LIBRARY``
   path to the liboctave library
 
+
+Hints
+^^^^^
+
+FindOctave checks the environment variable OCTAVE_EXECUTABLE for the
+Octave interpreter.
 #]=======================================================================]
 
-unset(Octave_REQUIRED_VARS)
 unset(Octave_Development_FOUND)
 unset(Octave_Interpreter_FOUND)
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME Interpreter)
 
+set(_hint)
+if(DEFINED ENV{OCTAVE_EXECUTABLE})
+  get_filename_component(_hint $ENV{OCTAVE_EXECUTABLE} DIRECTORY)
+endif()
+
 if(Development IN_LIST Octave_FIND_COMPONENTS)
   find_program(Octave_CONFIG_EXECUTABLE
-               NAMES octave-config)
+               NAMES octave-config
+               HINTS ${_hint}
+               NAMES_PER_DIR)
 
   if(Octave_CONFIG_EXECUTABLE)
 
@@ -67,7 +79,6 @@ if(Development IN_LIST Octave_FIND_COMPONENTS)
                     OUTPUT_VARIABLE Octave_INCLUDE_DIR
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-    list(APPEND Octave_REQUIRED_VARS ${Octave_INCLUDE_DIR})
 
     execute_process(COMMAND ${Octave_CONFIG_EXECUTABLE} -p OCTLIBDIR
                     OUTPUT_VARIABLE Octave_LIB1
@@ -78,32 +89,32 @@ if(Development IN_LIST Octave_FIND_COMPONENTS)
                     OUTPUT_VARIABLE Octave_LIB2
                     ERROR_QUIET
                     OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    find_library(Octave_INTERP_LIBRARY
-               NAMES octinterp
-               PATHS ${Octave_LIB1} ${Octave_LIB2}
-               NO_DEFAULT_PATH
-              )
-    find_library(Octave_OCTAVE_LIBRARY
-                 NAMES octave
-                 PATHS ${Octave_LIB1} ${Octave_LIB2}
-                 NO_DEFAULT_PATH
-                )
-    list(APPEND Octave_REQUIRED_VARS ${Octave_OCTAVE_LIBRARY} ${Octave_INTERP_LIBRARY})
-
-    if(Octave_REQUIRED_VARS)
-      set(Octave_Development_FOUND true)
-    endif()
   endif(Octave_CONFIG_EXECUTABLE)
+
+  find_library(Octave_INTERP_LIBRARY
+              NAMES octinterp
+              HINTS ${Octave_LIB1} ${Octave_LIB2}
+              NAMES_PER_DIR
+            )
+  find_library(Octave_OCTAVE_LIBRARY
+                NAMES octave
+                HINTS ${Octave_LIB1} ${Octave_LIB2}
+                NAMES_PER_DIR
+              )
+
+  if(Octave_INTERP_LIBRARY AND Octave_OCTAVE_LIBRARY)
+    set(Octave_Development_FOUND true)
+  endif()
+
 endif()
 
 if(Interpreter IN_LIST Octave_FIND_COMPONENTS)
 
   find_program(Octave_EXECUTABLE
-               NAMES octave
-               HINTS ENV OCTAVE_EXECUTABLE)
-
-  list(APPEND Octave_REQUIRED_VARS ${Octave_EXECUTABLE})
+              # plain octave.exe isn't stable across operating systems
+               NAMES octave-cli
+               HINTS ${Octave_BINARY_DIR}
+                     ${_hint})
 
 endif()
 
@@ -119,8 +130,6 @@ if(Octave_EXECUTABLE)
     string(REGEX REPLACE "GNU Octave, version [0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" Octave_VERSION_PATCH ${Octave_VERSION})
 
     set(Octave_VERSION ${Octave_VERSION_MAJOR}.${Octave_VERSION_MINOR}.${Octave_VERSION_PATCH})
-  else()
-    set(Octave_VERSION "unknown")
   endif()
 
   set(Octave_Interpreter_FOUND true)
@@ -129,7 +138,6 @@ endif(Octave_EXECUTABLE)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Octave
-  REQUIRED_VARS Octave_REQUIRED_VARS
   VERSION_VAR Octave_VERSION
   HANDLE_COMPONENTS)
 
