@@ -87,6 +87,7 @@ def install_cmake(
             subprocess.check_call(["brew", "install", "cmake"])
         else:
             subprocess.check_call(["pip", "install", "cmake"])
+        return
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
@@ -128,7 +129,7 @@ def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
     if sys.platform == "cygwin":
         raise ValueError("use Cygwin setup.exe to install CMake, or manual compile")
     elif sys.platform == "darwin":
-        tail = "Darwin-x86_64.dmg"
+        tail = "macos-universal.dmg"
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
