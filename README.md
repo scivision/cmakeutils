@@ -27,6 +27,22 @@ git clone https://github.com/scivision/cmakeutils
 pip install -e cmakeutils
 ```
 
+## convert CMake hierarchy .dot to SVG or PNG
+
+CMake plots
+[dependency graphs](https://www.scivision.dev/fortran-dependency-graph)
+for programs like:
+
+```sh
+cmake -B build --graphviz=gfx/block.dot
+```
+
+Then convert to PNG or SVG like:
+
+```sh
+python -m cmakeutils.graph ~/myprog/gfx
+```
+
 ## Install CMake binary
 
 ```sh
