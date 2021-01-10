@@ -1,6 +1,6 @@
 """
 CMake dependency graph.
-Requires graphviz installed
+Requires graphviz installed.
 
 Requires user to first invoke "cmake -B build --graphviz=gfx/block.dot"
 """
