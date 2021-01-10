@@ -28,14 +28,20 @@ def main():
         raise NotADirectoryError(path)
 
     try:
-        name_pat = next(path.glob("*.dot"))
+        name_file = next(path.glob("*.dot"))
     except StopIteration:
         raise FileNotFoundError(f"No .dot files in {path}")
 
-    for file in path.glob(name_pat.name + "*"):
+    name_pat = name_file.name
+
+    for file in path.glob(name_pat + "*"):
         if file.suffix in (".png", ".svg"):
             continue
-        cmd = ["dot", f"-T{fmt}", "-o", f"{file.name}.{fmt}", str(file.name)]
+        out_name = file.name
+        if out_name != name_pat:
+            # remove vestigial name from front
+            out_name = out_name[len(name_pat) + 1 :]
+        cmd = ["dot", f"-T{fmt}", "-o", f"{out_name}.{fmt}", str(file.name)]
         print(" ".join(cmd))
         subprocess.run(cmd, cwd=str(path))
 
