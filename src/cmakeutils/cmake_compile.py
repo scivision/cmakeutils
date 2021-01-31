@@ -113,6 +113,7 @@ def cmake_build(src_root: Path, prefix: Path):
     opts = [
         "-DCMAKE_BUILD_TYPE=Release",
         "-DCMAKE_USE_OPENSSL:BOOL=ON",
+        "-DBUILD_TESTING:BOOL=OFF",
     ]
     if prefix:
         opts.append(f"-DCMAKE_INSTALL_PREFIX={prefix}")
