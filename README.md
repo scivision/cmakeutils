@@ -15,10 +15,16 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 * Matlab / GNU Octave
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
-This can be done via the Python script below, or from CMake >= 2.8.12 by:
+This can be done via the Python package described below, or from CMake >= 2.8.12 by:
 
 ```sh
 cmake -P install_cmake.cmake
+```
+
+if you need to compile CMake from source, for example on BSD or ARM 32-bit using existing CMake >= 3.13:
+
+```sh
+cmake -P build_cmake.cmake
 ```
 
 ## Install

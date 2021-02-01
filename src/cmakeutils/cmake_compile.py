@@ -116,7 +116,7 @@ def cmake_build(src_root: Path, prefix: Path):
         "-DBUILD_TESTING:BOOL=OFF",
     ]
     if prefix:
-        opts.append(f"-DCMAKE_INSTALL_PREFIX={prefix}")
+        opts.append(f"-DCMAKE_INSTALL_PREFIX:PATH={prefix}")
     if os.environ.get("CMAKE_GENERATOR") and os.environ["CMAKE_GENERATOR"] == "Ninja":
         opts.append("-GNinja")
 
