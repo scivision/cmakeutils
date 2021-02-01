@@ -1,8 +1,6 @@
-# this script is to install a recent CMake version
-# this handles the most common cases, but doesn't handle corner cases like 64-bit kernel with 32-bit user space
-# CMAKE_HOST_SYSTEM_PROCESSOR, CMAKE_HOST_SYSTEM_NAME don't work in CMake script mode
+# this script is to build and install a recent CMake version
 #
-# cmake -P install_cmake.cmake
+# cmake -P build_cmake.cmake
 # will install CMake under the user's home directory.
 #
 # this script should work from CMake >= 2.8.12.
