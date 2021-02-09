@@ -24,3 +24,10 @@ add_subdirectory(matlab)
 add_subdirectory(octave)
 
 add_subdirectory(system)
+
+# demo target echo properties
+include(echo_target_properties.cmake)
+find_package(ZLIB)
+if(ZLIB_FOUND)
+  echo_target_properties(ZLIB::ZLIB)
+endif()
