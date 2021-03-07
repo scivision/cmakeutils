@@ -1,3 +1,5 @@
+#!/usr/bin/env -S cmake -P
+
 # this script is to install a recent Ninja version
 #
 # cmake -P install_ninja.cmake

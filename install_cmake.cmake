@@ -1,3 +1,5 @@
+#!/usr/bin/env -S cmake -P
+
 # this script is to install a recent CMake version
 # this handles the most common cases, but doesn't handle corner cases like 64-bit kernel with 32-bit user space
 # CMAKE_HOST_SYSTEM_PROCESSOR, CMAKE_HOST_SYSTEM_NAME don't work in CMake script mode
