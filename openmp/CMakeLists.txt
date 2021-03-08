@@ -1,5 +1,7 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.14...3.20)
+
 project(openmp_demo LANGUAGES C)
+
 enable_testing()
 
 find_package(OpenMP COMPONENTS C)

@@ -3,17 +3,21 @@
 # Ninja requires BUILD_BYPRODUCTS, which requires a priori knowledge of the other project's directory structure
 # Note how BUILD_BYPRODUCTS ${BINARY_DIR}/... couldn't be used because BINARY_DIR is populated by ExternalProject_Get_Property()
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.14...3.20)
+
 project(parentExtProj LANGUAGES Fortran)
+
 enable_testing()
 
 include(ExternalProject)
 
 ExternalProject_Add(child_proj
   GIT_REPOSITORY https://github.com/scivision/cmake-externalproject.git
-  GIT_TAG master  # it's much better to use a specific Git revision or Git tag for reproducability
+  GIT_TAG 8f9b8d81c0914eca8dad15aaaba563b1ef2a5bda
   GIT_SHALLOW true
-  INSTALL_COMMAND ""  # this disables the install step for the external project
+  UPDATE_DISCONNECTED true  # avoid constant rebuild
+  CONFIGURE_HANDLED_BY_BUILD true  # avoid constant reconfigure
+  INSTALL_COMMAND ""  # disables the install step for the external project
   BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/child_proj-prefix/src/child_proj-build/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
 
