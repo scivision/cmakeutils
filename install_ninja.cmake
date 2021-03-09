@@ -5,6 +5,8 @@
 # cmake -P install_ninja.cmake
 # will install Ninja under the user's home directory.
 
+cmake_minimum_required(VERSION 3.7...3.20)
+
 if(NOT prefix)
   get_filename_component(prefix ~ ABSOLUTE)
 endif()

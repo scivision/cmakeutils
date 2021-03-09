@@ -42,9 +42,18 @@ endfunction(checkup)
 
 
 if(APPLE)
-  message(STATUS "please use Homebrew https://brew.sh to install cmake:  'brew install cmake'
-  or use Python  'pip install cmake'")
-  return()
+  find_program(brew
+    NAMES brew
+    PATHS /usr/local /opt/homeebrew
+    PATH_SUFFIXES bin)
+
+  if(brew)
+    execute_process(COMMAND ${brew} install cmake)
+  else(brew)
+    message(STATUS "please use Homebrew https://brew.sh to install cmake:  'brew install cmake'
+    or use Python  'pip install cmake'")
+    return()
+  endif(brew)
 elseif(UNIX)
   execute_process(COMMAND uname -m OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE)
 
