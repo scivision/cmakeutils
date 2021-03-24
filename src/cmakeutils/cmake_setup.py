@@ -129,13 +129,13 @@ def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
     if sys.platform == "cygwin":
         raise ValueError("use Cygwin setup.exe to install CMake, or manual compile")
     elif sys.platform == "darwin":
-        tail = "macos-universal.dmg"
+        raise ValueError("use brew install cmake, or manual compile")
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
-        tail = "Linux-x86_64.tar.gz"
+        tail = "linux-x86_64.tar.gz"
     elif sys.platform == "win32":
-        tail = "win64-x64.zip"
+        tail = "windows-x86_64.zip"
     else:
         raise ValueError(f"unknown platform {sys.platform}")
 
