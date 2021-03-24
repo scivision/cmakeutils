@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.19.4'
+  cmake_version: '3.20.0'
   CMAKE_GENERATOR: Ninja
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
@@ -32,7 +32,7 @@ jobs:
     - name: Install CMake
       run: |
         cmake_setup ${cmake_version} --prefix ${HOME}/.local
-        echo "${HOME}/.local/cmake-${cmake_version}-Linux-x86_64/bin" >> $GITHUB_PATH
+        echo "${HOME}/.local/cmake-${cmake_version}-linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Install Ninja
       run: |

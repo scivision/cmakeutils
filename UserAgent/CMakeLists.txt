@@ -1,5 +1,5 @@
 # get CMake UserAgent
-cmake_minimum_required(VERSION 3.14...3.20)
+cmake_minimum_required(VERSION 3.14...3.21)
 
 project(CMakeUserAgent LANGUAGES NONE)
 
