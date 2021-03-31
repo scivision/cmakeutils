@@ -1,20 +1,40 @@
-set(x "~/code")
+function(expanduser in outvar)
+# expands ~ to user home directory
+#
+# cmake_path and file do not expand ~
+# get_filename_component expands ~ in C++ similar to above
+#
+# usage:
+# expanduser("~/code" x)
 
-# cmake_path does not expand ~
+string(SUBSTRING ${in} 0 1 first)
+if(NOT ${first} STREQUAL "~")
+  set(${outvar} ${in} PARENT_SCOPE)
+  return()
+endif()
 
-cmake_path(ABSOLUTE_PATH x NORMALIZE)
+if(WIN32 AND NOT CYGWIN)
+  set(home $ENV{USERPROFILE})
+else()
+  set(home $ENV{HOME})
+endif()
 
-message(STATUS "cmake_path(ABSOLUTE_PATH ~): ${x}")
+if(NOT home)
+  set(${outvar} ${in} PARENT_SCOPE)
+  return()
+endif()
 
-# --- file()
+string(SUBSTRING ${in} 1 -1 tail)
+if(CMAKE_VERSION VERSION_LESS 3.20)
+  file(TO_CMAKE_PATH ${home}${tail} out)
+else()
+  cmake_path(CONVERT ${home}${tail} TO_CMAKE_PATH_LIST out)
+endif()
 
-file(REAL_PATH "~/code" x)
-message(STATUS "file(REAL_PATH ~): ${x}")
+set(${outvar} ${out} PARENT_SCOPE)
 
-# --- get_filename_component()
+endfunction(expanduser)
 
-get_filename_component(x "~/code" ABSOLUTE)
-message(STATUS "get_filename_component(... ABSOLUTE): ${x}")
 
-get_filename_component(x "~/code" REALPATH)
-message(STATUS "get_filename_component(... REALPATH): ${x}")
+expanduser("~/code" x)
+message(STATUS "${x}")
