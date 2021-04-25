@@ -20,7 +20,7 @@ if(NOT prefix)
 endif()
 
 if(NOT version)
-  set(version 3.20.0)
+  set(version 3.20.1)
 endif()
 
 if(version STREQUAL 2.8.12)
@@ -44,7 +44,7 @@ endfunction(checkup)
 if(APPLE)
   find_program(brew
     NAMES brew
-    PATHS /usr/local /opt/homeebrew
+    PATHS /usr/local /opt/homebrew
     PATH_SUFFIXES bin)
 
   if(brew)
