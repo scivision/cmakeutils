@@ -13,14 +13,16 @@
 # This script can be used to install CMake >= 2.8.12.2 (e.g. for compatibility tests)
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 
-cmake_minimum_required(VERSION 3.7...3.21)
+cmake_minimum_required(VERSION 3.7...${CMAKE_VERSION})
+
+set(CMAKE_TLS_VERIFY true)
 
 if(NOT prefix)
   get_filename_component(prefix ~ ABSOLUTE)
 endif()
 
 if(NOT version)
-  set(version 3.20.1)
+  set(version 3.20.2)
 endif()
 
 if(version STREQUAL 2.8.12)
@@ -60,13 +62,13 @@ elseif(UNIX)
   if(version VERSION_LESS 3.1.0)
     set(stem cmake-${version}-Linux-i386)
   elseif(arch STREQUAL x86_64)
-    if(CMAKE_VERSION VERSION_LESS 3.20)
+    if(version VERSION_LESS 3.20)
       set(stem cmake-${version}-Linux-x86_64)
     else()
       set(stem cmake-${version}-linux-x86_64)
     endif()
   elseif(arch STREQUAL aarch64)
-    if(CMAKE_VERSION VERSION_LESS 3.20)
+    if(version VERSION_LESS 3.20)
       set(stem cmake-${version}-Linux-aarch64)
     else()
       set(stem cmake-${version}-linux-aarch64)
@@ -123,7 +125,7 @@ message(STATUS "installing CMake ${version} to ${prefix}")
 
 set(archive ${prefix}/${name})
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)  # CMake < 3.7 compatible
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
   if(EXISTS ${archive})
     file(SIZE ${archive} fsize)
     if(fsize LESS 1000000)
@@ -135,7 +137,7 @@ endif()
 if(NOT EXISTS ${archive})
   set(url ${host}${name})
   message(STATUS "download ${url}")
-  file(DOWNLOAD ${url} ${archive} TLS_VERIFY ON)
+  file(DOWNLOAD ${url} ${archive})
 
   if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
     file(SIZE ${archive} fsize)
