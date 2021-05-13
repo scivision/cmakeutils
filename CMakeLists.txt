@@ -10,6 +10,9 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
 
+set(CMAKE_TLS_VERIFY true)
+set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)
+
 message(STATUS "CMake ${CMAKE_VERSION}")
 
 add_subdirectory(autotools)

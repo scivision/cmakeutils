@@ -1,25 +1,20 @@
 # Example of using CMake ExternalProject
-# notice how this is much more complicated than FetchContent
+# this is more complicated than FetchContent, but completely isolates scopes unlike FetchContent
 # Ninja requires BUILD_BYPRODUCTS, which requires a priori knowledge of the other project's directory structure
 # Note how BUILD_BYPRODUCTS ${BINARY_DIR}/... couldn't be used because BINARY_DIR is populated by ExternalProject_Get_Property()
-
-cmake_minimum_required(VERSION 3.14...3.21)
-
-project(parentExtProj LANGUAGES Fortran)
-
-enable_testing()
 
 include(ExternalProject)
 
 ExternalProject_Add(child_proj
   GIT_REPOSITORY https://github.com/scivision/cmake-externalproject.git
-  GIT_TAG 8f9b8d81c0914eca8dad15aaaba563b1ef2a5bda
-  GIT_SHALLOW true
-  UPDATE_DISCONNECTED true  # avoid constant rebuild
+  GIT_TAG 35f1c97ab1f102e9b00d1d3241f53666856bb1a5
+  INACTIVITY_TIMEOUT 15
   CONFIGURE_HANDLED_BY_BUILD true  # avoid constant reconfigure
   INSTALL_COMMAND ""  # disables the install step for the external project
   BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/child_proj-prefix/src/child_proj-build/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
 )
+# in this scope, we have already set directory property EP_UPDATE_DISCONNECTED true
+# to avoid constant rebuild of externalProjects
 
 ExternalProject_Get_Property(child_proj BINARY_DIR)
 
