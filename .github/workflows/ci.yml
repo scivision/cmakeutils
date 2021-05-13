@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.20.0'
+  cmake_version: '3.20.2'
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 on:
@@ -41,13 +41,10 @@ jobs:
     - name: CMake configure
       run: |
         cmake --version
-        cmake --preset ninja
+        cmake --preset default
 
-    - name: CMake build
-      run: cmake --build build
-
-    - name: CTest
-      run: ctest --test-dir build --output-on-failure
+    - run: cmake --build build
+    - run: ctest --preset default
 
 
   macos:
@@ -71,11 +68,9 @@ jobs:
         ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-    - run: cmake --preset=ninja
+    - run: cmake --preset default
     - run: cmake --build build
-
-    - run: ctest --output-on-failure
-      working-directory: build
+    - run: ctest --preset default
 
 
   windows:
@@ -95,8 +90,6 @@ jobs:
         ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - run: cmake --preset=ninja
+    - run: cmake --preset default
     - run: cmake --build build
-
-    - run: ctest --output-on-failure
-      working-directory: build
+    - run: ctest --preset default
