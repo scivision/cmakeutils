@@ -1,5 +1,7 @@
 #!/usr/bin/env -S cmake -P
 
+# NOTE: most users should use install_cmake.cmake instead.
+#
 # this script builds and installs a recent CMake version
 #
 # cmake -P build_cmake.cmake
@@ -21,10 +23,10 @@ if(NOT prefix)
 endif()
 
 if(NOT version)
-  set(version 3.20.2)
+  set(version 3.20.3)
 endif()
 
-if(version VERSION_EQUAL 2.8.12)
+if(version VERSION_LESS 2.8.12.2)
   set(version 2.8.12.2)
 endif()
 
@@ -59,7 +61,7 @@ message(STATUS "installing CMake ${version} to ${path}")
 
 set(archive ${prefix}/${name})
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
+if(NOT CMAKE_VERSION VERSION_LESS 3.14)
   if(EXISTS ${archive})
     file(SIZE ${archive} fsize)
     if(fsize LESS 1000000)
@@ -73,7 +75,7 @@ if(NOT EXISTS ${archive})
   message(STATUS "download ${url}")
   file(DOWNLOAD ${url} ${archive})
 
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.14)
+  if(NOT CMAKE_VERSION VERSION_LESS 3.14)
     file(SIZE ${archive} fsize)
     if(fsize LESS 1000000)
       message(FATAL_ERROR "failed to download ${url}")
@@ -83,10 +85,10 @@ endif()
 
 if(NOT IS_DIRECTORY ${path})
   message(STATUS "extracting to ${path}")
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.18)
-    file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${prefix})
-  else()
+  if(CMAKE_VERSION VERSION_LESS 3.18)
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar xf ${archive} WORKING_DIRECTORY ${prefix})
+  else()
+    file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${prefix})
   endif()
 endif()
 
