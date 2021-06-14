@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.20.2'
+  cmake_version: '3.20.4'
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
 on:
@@ -30,12 +30,12 @@ jobs:
 
     - name: Install CMake
       run: |
-        cmake_setup ${cmake_version} --prefix ${HOME}/.local
+        python -m cmakeutils.cmake_setup ${cmake_version} --prefix ${HOME}/.local
         echo "${HOME}/.local/cmake-${cmake_version}-linux-x86_64/bin" >> $GITHUB_PATH
 
     - name: Install Ninja
       run: |
-        ninja_setup --prefix ${HOME}/.local/bin
+        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
     - name: CMake configure
@@ -51,9 +51,9 @@ jobs:
     needs: linux
     runs-on: macos-latest
     env:
-      FC: gfortran-10
-      CC: gcc-10
-      CXX: g++-10
+      FC: gfortran-11
+      CC: gcc-11
+      CXX: g++-11
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -65,7 +65,7 @@ jobs:
 
     - name: Install Ninja
       run: |
-        ninja_setup --prefix ${HOME}/.local/bin
+        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
     - run: cmake --preset default
@@ -87,7 +87,7 @@ jobs:
 
     - name: Install Ninja
       run: |
-        ninja_setup --prefix ${HOME}/.local/bin
+        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - run: cmake --preset default

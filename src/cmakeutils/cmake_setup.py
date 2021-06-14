@@ -6,12 +6,11 @@ for Linux, Mac and Windows
 Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 """
 
+from __future__ import annotations
 from pathlib import Path
 import argparse
 import subprocess
-import re
 import sys
-import typing as T
 import shutil
 import urllib.request
 import hashlib
@@ -22,33 +21,7 @@ import tempfile
 
 HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
-
-
-def get_latest_version(repo: str, *, tail: str = "", request: str = None) -> str:
-    """
-    get latest version using Git
-    """
-
-    git = shutil.which("git")
-    if not git:
-        raise FileNotFoundError("Git required to download CMake")
-
-    cmd = [git, "ls-remote", "--tags", "--sort=v:refname", repo]
-    revs = subprocess.check_output(cmd, universal_newlines=True).strip().split("\n")
-    pat = r".*refs/tags/v(\w+\.\w+\.\w+.*)" + tail
-
-    versions = []
-    for v in revs:
-        mat = re.match(pat, v)
-        if mat:
-            versions.append(mat.group(1))
-
-    if request:
-        if request in versions:
-            return request
-        raise ValueError(f"version {request} is not available. Available versions: {versions}")
-
-    return versions[-1]
+VERSION = "3.20.4"
 
 
 def url_retrieve(url: str, outfile: Path):
@@ -74,20 +47,14 @@ def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
     return False
 
 
-def install_cmake(
-    cmake_version: str,
-    outfile: Path,
-    prefix: Path = None,
-    quiet: bool = False,
-):
+def install_cmake(outfile: Path, prefix: Path = None):
 
     if sys.platform == "darwin":
         brew = shutil.which("brew")
         if brew:
             subprocess.check_call(["brew", "install", "cmake"])
         else:
-            subprocess.check_call(["pip", "install", "cmake"])
-        return
+            raise OSError("Use Homebrew to install CMake   https://brew.sh")
     elif sys.platform == "linux":
         if platform.machine().lower() not in PLATFORMS:
             raise ValueError("This method is for Linux 64-bit x86_64 systems")
@@ -121,7 +88,7 @@ def install_cmake(
         raise ValueError(f"Unsure how to install CMake for {sys.platform}")
 
 
-def cmake_files(cmake_version: str, odir: Path) -> T.Tuple[Path, str]:
+def cmake_files(cmake_version: str, odir: Path) -> tuple[Path, str]:
     """
     this relies on the per-OS naming scheme used by Kitware in their GitHub Releases
     """
@@ -166,48 +133,16 @@ def download_cmake(outdir: Path, get_version: str) -> Path:
     return outfile
 
 
-def check_cmake_version(min_version: str) -> bool:
-    cmake = shutil.which("cmake")
-    if not cmake:
-        return False
-
-    cmake_version = subprocess.check_output([cmake, "--version"], universal_newlines=True).split()[2]
-
-    try:
-        import pkg_resources
-
-        return pkg_resources.parse_version(cmake_version) >= pkg_resources.parse_version(min_version)
-    except ImportError:
-        print(f"CMake {cmake_version} already installed.")
-
-    return None
-
-
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?")
+    p.add_argument("version", help="request version (default latest)", nargs="?", default=VERSION)
     p.add_argument("-o", "--outdir", help="download archive directory", default=tempfile.gettempdir())
-    p.add_argument("--prefix", help="Path prefix to install CMake under", default="~/.local")
-    p.add_argument("-q", "--quiet", help="non-interactive install", action="store_true")
-    p.add_argument("-n", "--dryrun", help="just check version", action="store_true")
+    p.add_argument("--prefix", help="Path prefix to install CMake under", default="~")
     P = p.parse_args()
 
-    get_version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=P.version)
+    outfile = None if sys.platform == "darwin" else download_cmake(P.outdir, P.version)
 
-    if not P.version and check_cmake_version(get_version):
-        print(f"You already have the latest CMake {get_version}")
-        return
-
-    if P.dryrun:
-        print(f"CMake {get_version} is available")
-        return
-
-    if sys.platform != "darwin":
-        outfile = download_cmake(P.outdir, get_version)
-    else:
-        outfile = None
-
-    install_cmake(get_version, outfile, P.prefix, P.quiet)
+    install_cmake(outfile, P.prefix)
 
 
 if __name__ == "__main__":

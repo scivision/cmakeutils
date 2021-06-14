@@ -59,16 +59,16 @@ python -m cmakeutils.graph ~/myprog/gfx
 ## Install CMake binary
 
 ```sh
-cmake_setup
+python -m cmakeutils.cmake_setup
 ```
 
 takes only a minute to install binary and includes `cmake-gui`.
 It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
 
-Ninja is strongly recommended in general for use with CMake on Windows, Mac and Linux:
+Ninja is recommended in general for use with CMake on Windows, Mac and Linux:
 
 ```sh
-ninja_setup
+python -m cmakeutils.ninja_setup
 ```
 
 ## Build CMake

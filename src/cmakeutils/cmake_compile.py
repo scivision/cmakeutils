@@ -34,14 +34,14 @@ import urllib.request
 from pathlib import Path
 
 
-from .cmake_setup import get_latest_version, file_checksum
+from .cmake_setup import VERSION, file_checksum
 
 url_stem = "https://github.com/Kitware/CMake/releases/download"
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", nargs="?")
+    p.add_argument("version", nargs="?", default=VERSION)
     p.add_argument("-prefix", help="where to install CMake")
     p.add_argument("-workdir", help="use existing source code path")
     p = p.parse_args()
@@ -50,10 +50,7 @@ def main():
     if p.workdir:
         src_root = Path(p.workdir).expanduser()
     else:
-        # get latest CMake version if not specified
-        version = get_latest_version("git://github.com/kitware/cmake.git", tail=r"\^\{\}$", request=p.version)
-
-        src_root = download_and_extract(tempfile.gettempdir(), version)
+        src_root = download_and_extract(tempfile.gettempdir(), p.version)
 
     prefix = None
     if p.prefix:
@@ -69,7 +66,7 @@ def main():
     print("\n----------------------------------------------------")
     if prefix:
         print(f"please add to your system PATH:  {prefix}/bin/")
-        print("\nreopen a new terminal to use CMake", version)
+        print("\nreopen a new terminal to use CMake", p.version)
     else:
         print(f"CMake built under {src_root}")
         print("To install CMake, rerun using cmake_compile -prefix option set to desired install path.")
