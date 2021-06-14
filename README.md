@@ -82,7 +82,7 @@ The bootstrap method is only for Unix-like systems, while the CMake-based build 
 Any platform for which Kitware doesn't distribute binaries use this script, including IBM Power and ARM.
 
 ```sh
-cmake_compile
+python -m cmakeutils.cmake_compile
 ```
 
 This downloads the latest CMake release source and builds from scratch.
