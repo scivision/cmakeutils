@@ -82,7 +82,10 @@ if(APPLE)
     return()
   endif(brew)
 elseif(UNIX)
-  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE)
+  execute_process(COMMAND uname -m
+    OUTPUT_VARIABLE arch
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    TIMEOUT 5)
 
   if(arch STREQUAL x86_64)
     if(version VERSION_LESS 3.20)
@@ -158,7 +161,7 @@ endif()
 if(NOT EXISTS ${archive})
   set(url ${host}${name})
   message(STATUS "download ${url}")
-  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 5)
+  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
 
   if(NOT CMAKE_VERSION VERSION_LESS 3.14)
     file(SIZE ${archive} fsize)
