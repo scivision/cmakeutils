@@ -4,13 +4,13 @@ project(FetchContent_Demo
   LANGUAGES Fortran
   DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchContent")
 
-  enable_testing()
+enable_testing()
 # --- sub-projects
 include(FetchContent)
 
 FetchContent_Declare(child
   GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
-  GIT_TAG ad96979f82ebd35da722d01807f4b7d207c21154
+  GIT_TAG ffe65778a55af69253885d47330c5b1a68a331c3
   GIT_SHALLOW true
   UPDATE_DISCONNECTED true  # avoid constant rebuild
 )
@@ -29,4 +29,6 @@ FetchContent_Declare(demodata
   URL https://github.com/scivision/cmake-fetchcontent/raw/main/octo.zip
   URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
 )
-FetchContent_MakeAvailable(demodata)
+if(NOT demodata_POPULATED)
+  FetchContent_Populate(demodata)
+endif()

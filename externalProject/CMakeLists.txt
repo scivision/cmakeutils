@@ -3,6 +3,12 @@
 # Ninja requires BUILD_BYPRODUCTS, which requires a priori knowledge of the other project's directory structure
 # Note how BUILD_BYPRODUCTS ${BINARY_DIR}/... couldn't be used because BINARY_DIR is populated by ExternalProject_Get_Property()
 
+cmake_minimum_required(VERSION 3.14...3.21)
+project(ExternalProject_Demo
+  LANGUAGES Fortran
+  DESCRIPTION "Demonstrate ExternalProject in Fortran")
+enable_testing()
+
 include(ExternalProject)
 
 ExternalProject_Add(child_proj
