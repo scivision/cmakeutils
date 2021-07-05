@@ -1,6 +1,6 @@
 # https://www.mathworks.com/support/requirements/supported-compilers.html
 if(WIN32 OR APPLE)
-  if(NOT CMAKE_Fortran_COMPILER_ID STREQUAL Intel)
+  if(NOT CMAKE_Fortran_COMPILER_ID MATCHES Intel)
     message(STATUS "SKIP: on Windows and MacOS, Matlab Fortran supports only Intel compiler.")
     return()
   endif()
