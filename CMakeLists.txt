@@ -24,7 +24,6 @@ add_subdirectory(externalProject)
 
 add_subdirectory(zip)
 
-add_subdirectory(mpi)
 add_subdirectory(openmp)
 add_subdirectory(opencl)
 
