@@ -10,30 +10,9 @@
 },
 {
   "name": "intel", "inherits": "default",
-  "displayName": "Intel Classic compiler: Linux/MacOS",
-  "environment": {
-    "CC": "icc",
-    "CXX": "icpc",
-    "FC": "ifort",
-    "LAPACK_ROOT": "$env{MKLROOT}",
-    "SCLAPACK_ROOT": "$env{MKLROOT}",
-    "MPI_ROOT": "$env{I_MPI_ROOT}"
-  }
-},
-{
-  "name": "intelwin", "inherits": "intel",
-  "displayName": "Intel Classic compiler: Windows",
-  "environment": {
-    "CC": "icl",
-    "CXX": "icl"
-  }
-},
-{
-  "name": "intelnext", "inherits": "intel",
   "displayName": "Intel oneAPI LLVM",
   "environment": {
     "CC": "icx",
-    "CXX": "icx",
     "FC": "ifx"
   }
 }

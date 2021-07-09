@@ -34,14 +34,14 @@ import urllib.request
 from pathlib import Path
 
 
-from .cmake_setup import VERSION, file_checksum
+from .cmake_setup import default_version, file_checksum
 
 url_stem = "https://github.com/Kitware/CMake/releases/download"
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", nargs="?", default=VERSION)
+    p.add_argument("version", nargs="?", default=default_version())
     p.add_argument("-prefix", help="where to install CMake")
     p.add_argument("-workdir", help="use existing source code path")
     p = p.parse_args()
@@ -137,7 +137,7 @@ def cmake_build(src_root: Path, prefix: Path):
 
 
 def bootstrap(src_root: Path, prefix: Path):
-    """ cmake Unix bootstrap """
+    """cmake Unix bootstrap"""
 
     if os.name == "nt":
         raise RuntimeError("CMake bootstrap is for Unix-like systems only")

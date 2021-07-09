@@ -23,7 +23,7 @@ if(NOT prefix)
 endif()
 
 if(version VERSION_LESS 2.8.12.2)
-  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/CMAKE_VERSION version
+  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/CMAKE_VERSION version
     REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
 endif()
 

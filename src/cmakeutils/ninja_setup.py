@@ -7,6 +7,7 @@ Automatically determines URL of latest version or manual choice.
 """
 
 import tempfile
+import importlib.resources
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 import zipfile
@@ -20,12 +21,15 @@ import platform
 HEAD = "https://github.com/ninja-build/ninja/releases/download"
 ninja_files = {"win32": "ninja-win.zip", "darwin": "ninja-mac.zip", "linux": "ninja-linux.zip"}
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
-VERSION = "1.10.2"
+
+
+def default_version() -> str:
+    return importlib.resources.read_text(__package__, "NINJA_VERSION").strip()
 
 
 def main():
     p = ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?", default=VERSION)
+    p.add_argument("version", help="request version (default latest)", nargs="?", default=default_version())
     p.add_argument("--prefix", help="Path prefix to install under", default="~/.local/bin")
     P = p.parse_args()
 

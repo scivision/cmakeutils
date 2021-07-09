@@ -14,7 +14,7 @@ if(NOT prefix)
 endif()
 
 if(NOT version)
-  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/NINJA_VERSION version
+  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/NINJA_VERSION version
    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
 endif()
 

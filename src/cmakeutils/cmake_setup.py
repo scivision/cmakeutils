@@ -8,6 +8,7 @@ Automatically determines URL of latest CMake via Git >= 2.18, or manual choice.
 
 from __future__ import annotations
 from pathlib import Path
+import importlib.resources
 import argparse
 import subprocess
 import sys
@@ -21,7 +22,10 @@ import tempfile
 
 HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
-VERSION = "3.20.4"
+
+
+def default_version() -> str:
+    return importlib.resources.read_text(__package__, "CMAKE_VERSION").strip()
 
 
 def url_retrieve(url: str, outfile: Path):
@@ -135,7 +139,7 @@ def download_cmake(outdir: Path, get_version: str) -> Path:
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?", default=VERSION)
+    p.add_argument("version", help="request version (default latest)", nargs="?", default=default_version())
     p.add_argument("-o", "--outdir", help="download archive directory", default=tempfile.gettempdir())
     p.add_argument("--prefix", help="Path prefix to install CMake under", default="~")
     P = p.parse_args()

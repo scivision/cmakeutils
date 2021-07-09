@@ -61,12 +61,21 @@ set(_hint)
 if(DEFINED ENV{OCTAVE_EXECUTABLE})
   get_filename_component(_hint $ENV{OCTAVE_EXECUTABLE} DIRECTORY)
 endif()
+if(WIN32)
+  set(_path "$ENV{LocalAppData}/Programs/GNU Octave/")
+  set(_suff
+    Octave-6.1.0/mingw64/bin
+    Octave-6.2.0/mingw64/bin
+    Octave-6.2.90/mingw64/bin
+    Octave-6.2.92/mingw64/bin)
+endif()
 
 if(Development IN_LIST Octave_FIND_COMPONENTS)
   find_program(Octave_CONFIG_EXECUTABLE
                NAMES octave-config
                HINTS ${_hint}
-               NAMES_PER_DIR)
+               PATHS ${_path}
+               PATH_SUFFIXES ${_suff})
 
   if(Octave_CONFIG_EXECUTABLE)
 
@@ -111,10 +120,10 @@ endif()
 if(Interpreter IN_LIST Octave_FIND_COMPONENTS)
 
   find_program(Octave_EXECUTABLE
-              # plain octave.exe isn't stable across operating systems
-               NAMES octave-cli
-               HINTS ${Octave_BINARY_DIR}
-                     ${_hint})
+               NAMES octave octave.bat
+               HINTS ${Octave_BINARY_DIR} ${_hint}
+               PATHS ${_path}
+               PATH_SUFFIXES ${_suff})
 
 endif()
 

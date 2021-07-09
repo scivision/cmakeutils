@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.21)
+cmake_minimum_required(VERSION 3.20...3.21)
 
 project(demoOctave LANGUAGES CXX)
 
@@ -24,8 +24,11 @@ if(Octave_Development_FOUND)
   target_compile_features(octdemo PRIVATE cxx_std_17)
 
   if(BUILD_TESTING)
-  # this might fail on Windows if Octave MinGW not in PATH, just a generic problem with Octave on Windows
-  add_test(NAME DevOctave COMMAND $<TARGET_FILE:octdemo>)
-  set_tests_properties(BasicOctave PROPERTIES TIMEOUT 10)
+    # this will fail on Windows if Octave MinGW not in PATH, which you don't want generally.
+    # fix this by adding a few lines of CMake script to append to
+    # ENV{PATH} the Octave MinGW bin directory and set test property ENVIRONMENT with that path.
+    # be careful about escaping the path, especially if it contains spaces.
+    add_test(NAME DevOctave COMMAND $<TARGET_FILE:octdemo>)
+    set_tests_properties(BasicOctave PROPERTIES TIMEOUT 10)
   endif()
 endif()
