@@ -52,8 +52,7 @@ jobs:
     runs-on: macos-latest
     env:
       FC: gfortran-11
-      CC: gcc-11
-      CXX: g++-11
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -87,14 +86,14 @@ jobs:
 
     - name: Install CMake
       run: |
-        python -m cmakeutils.cmake_setup ${cmake_version} --prefix ${HOME}/.local
-        echo "${HOME}/.local/cmake-${cmake_version}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        python -m cmakeutils.cmake_setup ${cmake_version} --prefix ${HOME}
+        echo "${HOME}/cmake-${cmake_version}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Install Ninja
       run: |
         python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - run: cmake --preset default
+    - run: cmake -B build
     - run: cmake --build build
-    - run: ctest --preset default
+    - run: ctest --test-dir build
