@@ -76,6 +76,9 @@ jobs:
   windows:
     needs: linux
     runs-on: windows-latest
+    env:
+      CMAKE_GENERATOR: "MinGW Makefiles"
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
