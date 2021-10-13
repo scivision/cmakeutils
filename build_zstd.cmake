@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.21)
+cmake_minimum_required(VERSION 3.20...3.22)
 
 set(version 1.5.0)
 
@@ -16,7 +16,11 @@ else()
   set(tmpdir ~/tmp)
 endif()
 
-file(REAL_PATH ${tmpdir} tmpdir EXPAND_TILDE)
+if(CMAKE_VERSION VERSION_LESS 3.21)
+  get_filename_component(tmpdir ${tmpdir} ABSOLUTE)
+else()
+  file(REAL_PATH ${tmpdir} tmpdir EXPAND_TILDE)
+endif()
 
 set(name zstd-${version}.tar.gz)
 set(archive ${tmpdir}/${name})
@@ -30,7 +34,7 @@ if(NOT IS_DIRECTORY ${src})
   file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${tmpdir})
 endif()
 
-execute_process(COMMAND ${CMAKE_COMMAND} --install-prefix ${prefix} -S ${src} -B ${build}
+execute_process(COMMAND ${CMAKE_COMMAND} --install-prefix=${prefix} -S ${src} -B ${build}
 COMMAND_ERROR_IS_FATAL ANY)
 
 execute_process(COMMAND ${CMAKE_COMMAND} --build ${build} --parallel

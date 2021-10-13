@@ -13,7 +13,7 @@
 # This script can be used to install CMake >= 3.7.
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 
-cmake_minimum_required(VERSION 3.7...3.21)
+cmake_minimum_required(VERSION 3.14...3.22)
 
 set(CMAKE_TLS_VERIFY true)
 
@@ -155,12 +155,10 @@ message(STATUS "installing CMake ${version} to ${prefix}")
 
 set(archive ${prefix}/${name})
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.14)
-  if(EXISTS ${archive})
-    file(SIZE ${archive} fsize)
-    if(fsize LESS 1000000)
-      file(REMOVE ${archive})
-    endif()
+if(EXISTS ${archive})
+  file(SIZE ${archive} fsize)
+  if(fsize LESS 1000000)
+    file(REMOVE ${archive})
   endif()
 endif()
 
@@ -169,11 +167,9 @@ if(NOT EXISTS ${archive})
   message(STATUS "download ${url}")
   file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
 
-  if(NOT CMAKE_VERSION VERSION_LESS 3.14)
-    file(SIZE ${archive} fsize)
-    if(fsize LESS 1000000)
-      message(FATAL_ERROR "failed to download ${url}")
-    endif()
+  file(SIZE ${archive} fsize)
+  if(fsize LESS 1000000)
+    message(FATAL_ERROR "failed to download ${url}")
   endif()
 endif()
 

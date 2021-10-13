@@ -5,7 +5,7 @@
 # cmake -P install_ninja.cmake
 # will install Ninja under the user's home directory.
 
-cmake_minimum_required(VERSION 3.20...3.21)
+cmake_minimum_required(VERSION 3.20...3.22)
 
 if(NOT prefix)
   set(prefix "~")
@@ -71,36 +71,20 @@ endif()
 
 set(name ${stem}.zip)
 
-file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
-set(path ${prefix}/ninja-${version})
-
-find_program(ninja NAMES ninja PATHS ${path} PATH_SUFFIXES bin NO_DEFAULT_PATH)
-if(ninja)
-  message(STATUS "Ninja ${version} already at ${ninja}")
-  checkup(${ninja})
-  return()
+if(CMAKE_VERSION VERSION_LESS 3.21)
+  get_filename_component(prefix ${prefix} ABSOLUTE)
+else()
+  file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 endif()
+set(path ${prefix}/ninja-${version})
 
 message(STATUS "installing Ninja ${version} to ${path}")
 
 set(archive ${path}/${name})
 
-if(EXISTS ${archive})
-  file(SIZE ${archive} fsize)
-  if(fsize LESS 10000)
-    file(REMOVE ${archive})
-  endif()
-endif()
-
-if(NOT EXISTS ${archive})
-  set(url ${host}${name})
-  message(STATUS "download ${url}")
-  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
-  file(SIZE ${archive} fsize)
-  if(fsize LESS 10000)
-    message(FATAL_ERROR "failed to download ${url}")
-  endif()
-endif()
+set(url ${host}${name})
+message(STATUS "download ${url} to ${archive}")
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
 
 message(STATUS "extracting to ${path}")
 file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${path})

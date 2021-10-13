@@ -5,7 +5,7 @@
 # cmake -P build_cmake.cmake
 # will install Ninja under the user's home directory.
 
-cmake_minimum_required(VERSION 3.20...3.21)
+cmake_minimum_required(VERSION 3.20...3.22)
 
 if(NOT prefix)
   set(prefix "~")
@@ -19,7 +19,7 @@ if(NOT version)
 endif()
 
 set(host https://github.com/ninja-build/ninja/archive/)
-set(name v${version}.tar.gz)
+set(name v${version}.zip)
 
 function(checkup ninja)
 
@@ -38,45 +38,30 @@ endif()
 
 endfunction(checkup)
 
-file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
-set(path ${prefix}/ninja-${version})
-
-find_program(ninja NAMES ninja PATHS ${path} PATH_SUFFIXES bin NO_DEFAULT_PATH)
-if(ninja)
-  message(STATUS "Ninja ${version} already at ${ninja}")
-  checkup(${ninja})
-  return()
+if(CMAKE_VERSION VERSION_LESS 3.21)
+  get_filename_component(prefix ${prefix} ABSOLUTE)
+else()
+  file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 endif()
+set(path ${prefix}/ninja-${version})
 
 message(STATUS "installing Ninja ${version} to ${path}")
 
 set(archive ${path}/${name})
 
-if(EXISTS ${archive})
-  file(SIZE ${archive} fsize)
-  if(fsize LESS 10000)
-    file(REMOVE ${archive})
-  endif()
-endif()
-
-if(NOT EXISTS ${archive})
-  set(url ${host}${name})
-  message(STATUS "download ${url}")
-  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
-endif()
+set(url ${host}${name})
+message(STATUS "download ${url} to ${archive}")
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
 
 set(src_dir ${path}/ninja-${version})
 
-if(NOT EXISTS ${src_dir}/ninjaCMakeLists.txt)
-  message(STATUS "extracting ${archive} to ${path}")
-  file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${path})
-endif()
+message(STATUS "extracting ${archive} to ${path}")
+file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${path})
 
 file(MAKE_DIRECTORY ${src_dir}/build)
 
 execute_process(
-  COMMAND ${CMAKE_COMMAND} .. -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release --install-prefix ${path}
-  WORKING_DIRECTORY ${src_dir}/build
+  COMMAND ${CMAKE_COMMAND} -S${src_dir} -B${src_dir}/build -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release --install-prefix=${path}
   COMMAND_ERROR_IS_FATAL ANY)
 
 execute_process(COMMAND ${CMAKE_COMMAND} --build ${src_dir}/build --parallel
