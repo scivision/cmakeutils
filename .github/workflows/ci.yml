@@ -39,13 +39,10 @@ jobs:
         python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
         echo "${HOME}/.local/bin" >> $GITHUB_PATH
 
-    - name: CMake configure
-      run: |
-        cmake --version
-        cmake --preset default
-
+    - run: cmake --version
+    - run: cmake -B build
     - run: cmake --build build
-    - run: ctest --preset default
+    - run: ctest --test-dir build --preset default
 
 
   macos:
@@ -70,7 +67,7 @@ jobs:
 
     - run: cmake -B build
     - run: cmake --build build
-    - run: ctest --test-dir build
+    - run: ctest --test-dir build --preset default
 
 
   windows:
@@ -100,4 +97,4 @@ jobs:
 
     - run: cmake -B build
     - run: cmake --build build
-    - run: ctest --test-dir build
+    - run: ctest --test-dir build --preset default

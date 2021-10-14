@@ -1,9 +1,3 @@
-cmake_minimum_required(VERSION 3.14...3.21)
-
-project(openmp_demo LANGUAGES C)
-
-enable_testing()
-
 find_package(OpenMP COMPONENTS C)
 if(NOT OpenMP_FOUND)
   message(STATUS "SKIP: OpenMP")
