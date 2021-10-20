@@ -12,7 +12,7 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 * C / C++
 * modern object-oriented Fortran 2008 / 2018
 * Python
-* Matlab / GNU Octave
+* pMatlab / GNU Octave](https://github.com/scivision/matlab-cmake-mex)
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
 This can be done via the Python package described below, or from CMake >= 2.8.12 by:
@@ -98,24 +98,3 @@ Requirements:
 * Download with [git](./fetchgit) using [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html)
 * Download and extract [ZIP](./zip)
 * measure [system](./system) parameters with CMake. Note Cygwin reports really small RAM and zero virtual memory.
-
-### GNU Octave
-
-[Octave from CMake](./octave) via our
-[FindOctave.cmake](./cmake/Modules/FindOctave.cmake)
-works well from CMake for unit tests, liboctave, etc. for Octave &ge; 3.8.
-We didn't try older versions of Octave.
-
-### Matlab
-
-One-time setup: if you've never used `mex` before, you must setup the C++ compiler.
-It doesn't hurt to do this again if you're not sure.
-From Matlab:
-
-```matlab
-mex -setup -client engine C++
-```
-
-Will ask you to select a compiler, or simply return:
-
-> ENGINE configured to use 'g++' for C++ language compilation.

@@ -27,9 +27,6 @@ add_subdirectory(zip)
 add_subdirectory(openmp)
 add_subdirectory(opencl)
 
-add_subdirectory(matlab)
-add_subdirectory(octave)
-
 add_subdirectory(system)
 
 # --- demo target echo properties
