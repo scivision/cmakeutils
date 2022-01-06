@@ -11,10 +11,10 @@
 # optionally, specify a specific CMake version like:
 #   cmake -Dversion="3.13.5" -P install_cmake.cmake
 #
-# This script can be used to install CMake >= 2.8.12.2 (e.g. for compatibility tests)
+# This script could be used to install CMake >= 2.8.12.2 (e.g. for compatibility tests)
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 
-cmake_minimum_required(VERSION 3.14...3.22)
+cmake_minimum_required(VERSION 3.19...3.22)
 
 set(CMAKE_TLS_VERIFY true)
 
@@ -22,9 +22,16 @@ if(NOT prefix)
   get_filename_component(prefix ~ ABSOLUTE)
 endif()
 
-if(version VERSION_LESS 2.8.12.2)
-  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/CMAKE_VERSION version
-    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
+file(READ ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/versions.json _j)
+
+if(version VERSION_LESS 3.13)
+  string(JSON version GET ${_j} cmake latest)
+endif()
+
+# only major.minor specified -- default to latest release known.
+string(LENGTH ${version} L)
+if (L LESS 5)  # 3.x or 3.xx
+  string(JSON version GET ${_j} cmake ${version})
 endif()
 
 set(host https://github.com/Kitware/CMake/releases/download/v${version}/)

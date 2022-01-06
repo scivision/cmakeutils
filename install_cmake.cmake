@@ -10,10 +10,9 @@
 # optionally, specify a specific CMake version like:
 #   cmake -Dversion="3.13.5" -P install_cmake.cmake
 #
-# This script can be used to install CMake >= 3.7.
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 
-cmake_minimum_required(VERSION 3.14...3.22)
+cmake_minimum_required(VERSION 3.19...3.22)
 
 set(CMAKE_TLS_VERIFY true)
 
@@ -21,35 +20,19 @@ if(NOT prefix)
   get_filename_component(prefix ~ ABSOLUTE)
 endif()
 
-if(version VERSION_LESS 3.7)
-  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/CMAKE_VERSION version
-    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
+file(READ ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/versions.json _j)
+
+if(version VERSION_LESS 3.13)
+  string(JSON version GET ${_j} cmake latest)
+endif()
+
+# only major.minor specified -- default to latest release known.
+string(LENGTH ${version} L)
+if (L LESS 5)  # 3.x or 3.xx
+  string(JSON version GET ${_j} cmake ${version})
 endif()
 
 set(host https://github.com/Kitware/CMake/releases/download/v${version}/)
-
-function(check_tls)
-# some CMake may not have SSL/TLS enabled, or may have missing/broken system certificates.
-# this is a publicly-usable service (as per their TOS)
-
-set(url https://www.howsmyssl.com/a/check)
-set(temp ${CMAKE_CURRENT_LIST_DIR}/test_ssl.json)
-
-file(DOWNLOAD ${url} ${temp} INACTIVITY_TIMEOUT 5)
-file(READ ${temp} json)
-
-if(CMAKE_VERSION VERSION_LESS 3.19)
-  string(REGEX MATCH "(\"rating\":\"Probably Okay\")" rating ${json})
-else()
-  string(JSON rating ERROR_VARIABLE e GET ${json} rating)
-endif()
-
-message(STATUS "TLS status: ${rating}")
-if(NOT rating)
-  message(WARNING "TLS seems to be broken on your system. Download will probably fail.  ${rating}")
-endif()
-
-endfunction(check_tls)
 
 
 function(checkup exe)
@@ -63,35 +46,23 @@ endif()
 endfunction(checkup)
 
 
-check_tls()
-
 if(APPLE)
 
-find_program(brew
-  NAMES brew
-  PATHS /usr/local /opt/homebrew
-  PATH_SUFFIXES bin)
+if(version VERSION_LESS 3.19)
+  set(stem cmake-${version}-Darwin-x86_64)
+else()
+  set(stem cmake-${version}-macos-universal)
+endif()
 
-if(brew)
-  execute_process(COMMAND ${brew} install cmake)
-else(brew)
-  message(STATUS "please use Homebrew https://brew.sh to install cmake:
-    brew install cmake
-  or use Python:
-    pip install cmake")
-endif(brew)
+set(name ${stem}.tar.gz)
 
-return()
-
-endif(APPLE)
-
-
-if(UNIX)
+elseif(UNIX)
 
 execute_process(COMMAND uname -m
-  OUTPUT_VARIABLE arch
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  TIMEOUT 5)
+OUTPUT_VARIABLE arch
+OUTPUT_STRIP_TRAILING_WHITESPACE
+TIMEOUT 5
+)
 
 if(arch STREQUAL x86_64)
   if(version VERSION_LESS 3.20)
@@ -133,6 +104,7 @@ set(name ${stem}.zip)
 
 endif()
 
+
 if(NOT stem)
   message(FATAL_ERROR "unknown CPU arch ${arch}.  Try building CMake from source:
     cmake -P ${CMAKE_CURRENT_LIST_DIR}/build_cmake.cmake
@@ -169,6 +141,9 @@ if(NOT EXISTS ${archive})
 
   file(SIZE ${archive} fsize)
   if(fsize LESS 1000000)
+    if(fsize EQUAL 0)
+      file(REMOVE ${archive})
+    endif()
     message(FATAL_ERROR "failed to download ${url}")
   endif()
 endif()

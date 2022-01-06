@@ -8,6 +8,7 @@ Automatically determines URL of latest version or manual choice.
 
 import tempfile
 import importlib.resources
+import json
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
 import zipfile
@@ -24,7 +25,7 @@ PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
 def default_version() -> str:
-    return importlib.resources.read_text(__package__, "NINJA_VERSION").strip()
+    return json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["ninja"]
 
 
 def main():

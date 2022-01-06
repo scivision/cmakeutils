@@ -14,8 +14,8 @@ endif()
 set(CMAKE_TLS_VERIFY true)
 
 if(NOT version)
-  file(STRINGS ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/NINJA_VERSION version
-   REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
+  file(READ ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/versions.json _j)
+  string(JSON version GET ${_j} ninja)
 endif()
 
 set(host https://github.com/ninja-build/ninja/releases/download/v${version}/)

@@ -10,6 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 import importlib.resources
 import argparse
+import json
 import subprocess
 import sys
 import shutil
@@ -25,7 +26,8 @@ PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
 def default_version() -> str:
-    return importlib.resources.read_text(__package__, "CMAKE_VERSION").strip()
+    jd = json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["cmake"]
+    return jd[jd["latest"]]
 
 
 def url_retrieve(url: str, outfile: Path):
