@@ -15,22 +15,32 @@ import zipfile
 import sys
 import os
 import stat
-import urllib.request
 import platform
 
+from .cmake_setup import url_retrieve
 
-HEAD = "https://github.com/ninja-build/ninja/releases/download"
+
 ninja_files = {"win32": "ninja-win.zip", "darwin": "ninja-mac.zip", "linux": "ninja-linux.zip"}
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
-def default_version() -> str:
-    return json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["ninja"]
+def latest_version() -> str:
+    return json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["ninja"][
+        "latest"
+    ]
+
+
+def get_host() -> str:
+    return json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["ninja"][
+        "binary"
+    ]
 
 
 def main():
     p = ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?", default=default_version())
+    p.add_argument(
+        "version", help="request version (default latest)", nargs="?", default=latest_version()
+    )
     p.add_argument("--prefix", help="Path prefix to install under", default="~/.local/bin")
     P = p.parse_args()
 
@@ -44,21 +54,11 @@ def cli(P: Namespace):
 
     outfile = Path(tempfile.gettempdir()) / ninja_files[sys.platform]
 
-    url = f"{HEAD}/v{P.version}/{outfile.name}"
+    url = f"{get_host()}v{P.version}/{outfile.name}"
 
     url_retrieve(url, outfile)
 
     install_ninja(outfile, P.prefix)
-
-
-def url_retrieve(url: str, outfile: Path):
-    print("downloading", url)
-    outfile = Path(outfile).expanduser().resolve()
-    if outfile.is_dir():
-        raise ValueError("Please specify full filepath, including filename")
-    outfile.parent.mkdir(parents=True, exist_ok=True)
-
-    urllib.request.urlretrieve(url, str(outfile))
 
 
 def install_ninja(outfile: Path, prefix: Path = None):

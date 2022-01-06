@@ -1,1 +1,1 @@
-include src/cmakeutils/CMAKE_VERSION src/cmakeutils/NINJA_VERSION VERSION
+include src/cmakeutils/versions.json

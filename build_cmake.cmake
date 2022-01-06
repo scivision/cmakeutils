@@ -34,7 +34,8 @@ if (L LESS 5)  # 3.x or 3.xx
   string(JSON version GET ${_j} cmake ${version})
 endif()
 
-set(host https://github.com/Kitware/CMake/releases/download/v${version}/)
+string(JSON host GET ${_j} cmake source)
+set(host ${host}v${version}/)
 set(stem cmake-${version})
 set(name ${stem}.tar.gz)
 

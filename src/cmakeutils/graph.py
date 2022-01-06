@@ -13,7 +13,9 @@ from pathlib import Path
 
 def main():
     p = argparse.ArgumentParser(description="convert .dot graph to SVG or PNG")
-    p.add_argument("path", help="Path to CMake gfx/ directory from cmake -B build --graphviz=gfx/block.dot")
+    p.add_argument(
+        "path", help="Path to CMake gfx/ directory from cmake -B build --graphviz=gfx/block.dot"
+    )
     p.add_argument("format", help="output format", choices=["svg", "png"], default="svg", nargs="?")
     P = p.parse_args()
 

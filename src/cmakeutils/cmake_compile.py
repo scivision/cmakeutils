@@ -34,14 +34,14 @@ import urllib.request
 from pathlib import Path
 
 
-from .cmake_setup import default_version, file_checksum
+from .cmake_setup import latest_version, file_checksum
 
 url_stem = "https://github.com/Kitware/CMake/releases/download"
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", nargs="?", default=default_version())
+    p.add_argument("version", nargs="?", default=latest_version())
     p.add_argument("-prefix", help="where to install CMake")
     p.add_argument("-workdir", help="use existing source code path")
     p = p.parse_args()
@@ -69,7 +69,9 @@ def main():
         print("\nreopen a new terminal to use CMake", p.version)
     else:
         print(f"CMake built under {src_root}")
-        print("To install CMake, rerun using cmake_compile -prefix option set to desired install path.")
+        print(
+            "To install CMake, rerun using cmake_compile -prefix option set to desired install path."
+        )
 
 
 def job_count() -> int:

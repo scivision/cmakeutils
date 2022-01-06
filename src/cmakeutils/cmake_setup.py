@@ -21,16 +21,22 @@ import tarfile
 import zipfile
 import tempfile
 
-HEAD = "https://github.com/Kitware/CMake/releases/download/"
 PLATFORMS = ("amd64", "x86_64", "x64", "i86pc")
 
 
-def default_version() -> str:
-    jd = json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["cmake"]
-    return jd[jd["latest"]]
+def latest_version() -> str:
+    cjd = json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["cmake"]
+    return cjd[cjd["latest"]]
+
+
+def get_host() -> str:
+    return json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["cmake"][
+        "binary"
+    ]
 
 
 def url_retrieve(url: str, outfile: Path):
+    print("downloading", url)
     outfile = Path(outfile).expanduser().resolve()
     if outfile.is_dir():
         raise ValueError("Please specify full filepath, including filename")
@@ -114,24 +120,26 @@ def cmake_files(cmake_version: str, odir: Path) -> tuple[Path, str]:
 
     ofn = f"cmake-{cmake_version}-{tail}"
 
-    return odir / ofn, HEAD + f"v{cmake_version}/{ofn}"
+    return odir / ofn, f"{cmake_version}/{ofn}"
 
 
 def download_cmake(outdir: Path, get_version: str) -> Path:
 
+    host = get_host()
+
     outdir = Path(outdir).expanduser()
     outdir.mkdir(parents=True, exist_ok=True)
-    outfile, url = cmake_files(get_version, outdir)
+    outfile, tail = cmake_files(get_version, outdir)
     # %% checksum
     hashstem = f"cmake-{get_version}-SHA-256.txt"
-    hashurl = HEAD + f"v{get_version}/{hashstem}"
+    hashurl = f"{host}v{get_version}/{hashstem}"
     hashfile = outdir / hashstem
 
     if not hashfile.is_file() or hashfile.stat().st_size == 0:
         url_retrieve(hashurl, hashfile)
 
     if not outfile.is_file() or outfile.stat().st_size < 1e6:
-        url_retrieve(url, outfile)
+        url_retrieve(f"{host}v{tail}", outfile)
 
     if not file_checksum(outfile, hashfile, "sha256"):
         raise ValueError(f"{outfile} SHA256 checksum did not match {hashfile}")
@@ -141,8 +149,12 @@ def download_cmake(outdir: Path, get_version: str) -> Path:
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("version", help="request version (default latest)", nargs="?", default=default_version())
-    p.add_argument("-o", "--outdir", help="download archive directory", default=tempfile.gettempdir())
+    p.add_argument(
+        "version", help="request version (default latest)", nargs="?", default=latest_version()
+    )
+    p.add_argument(
+        "-o", "--outdir", help="download archive directory", default=tempfile.gettempdir()
+    )
     p.add_argument("--prefix", help="Path prefix to install CMake under", default="~")
     P = p.parse_args()
 
