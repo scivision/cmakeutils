@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.22)
+cmake_minimum_required(VERSION 3.14...3.23)
 
 project(OpenCL-example LANGUAGES C CXX)
 
@@ -28,5 +28,5 @@ add_executable(opencl_hello hello2.cxx)
 target_link_libraries(opencl_hello OpenCL::OpenCL)
 target_compile_features(opencl_hello PRIVATE cxx_std_11)
 
-add_test(NAME opencl:basic COMMAND $<TARGET_FILE:opencl_hello>)
+add_test(NAME opencl:basic COMMAND opencl_hello)
 set_tests_properties(opencl:basic PROPERTIES TIMEOUT 15)
