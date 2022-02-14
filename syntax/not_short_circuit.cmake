@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.12...3.23)
 # CMake if() is NOT short circuit.
 # this requires care with undefined variables
 

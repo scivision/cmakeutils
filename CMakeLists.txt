@@ -29,6 +29,8 @@ add_subdirectory(opencl)
 
 add_subdirectory(system)
 
+add_subdirectory(syntax)
+
 # --- demo target echo properties
 # include(echo_target_properties.cmake)
 # find_package(ZLIB)
