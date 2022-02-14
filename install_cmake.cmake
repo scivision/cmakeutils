@@ -12,29 +12,38 @@
 #
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 
-cmake_minimum_required(VERSION 3.19...3.22)
+cmake_minimum_required(VERSION 3.7...3.23)
+
+# --- version
+if(CMAKE_VERSION VERSION_LESS 3.19)
+  set(version 3.22.2)
+  set(host https://github.com/Kitware/CMake/releases/download/)
+else()
+  file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
+
+  if(version VERSION_LESS 3.1)
+    string(JSON version GET ${_j} cmake latest)
+  endif()
+
+  # only major.minor specified -- default to latest release known.
+  string(LENGTH ${version} L)
+  if (L LESS 5)  # 3.x or 3.xx
+    string(JSON version GET ${_j} cmake ${version})
+  endif()
+
+  string(JSON host GET ${_j} cmake binary)
+endif()
+
+# --- URL
+set(host ${host}v${version}/)
+
+# --- defaults
 
 set(CMAKE_TLS_VERIFY true)
 
 if(NOT prefix)
   get_filename_component(prefix ~ ABSOLUTE)
 endif()
-
-file(READ ${CMAKE_CURRENT_LIST_DIR}/src/cmakeutils/versions.json _j)
-
-if(version VERSION_LESS 3.13)
-  string(JSON version GET ${_j} cmake latest)
-endif()
-
-# only major.minor specified -- default to latest release known.
-string(LENGTH ${version} L)
-if (L LESS 5)  # 3.x or 3.xx
-  string(JSON version GET ${_j} cmake ${version})
-endif()
-
-string(JSON host GET ${_j} cmake binary)
-set(host ${host}v${version}/)
-
 
 function(checkup exe)
 
@@ -88,7 +97,9 @@ elseif(WIN32)
 set(arch $ENV{PROCESSOR_ARCHITECTURE})
 
 if(arch STREQUAL AMD64)
-  if(version VERSION_LESS 3.20)
+  if(version VERSION_LESS 3.6)
+    set(stem cmake-${version}-win32-x86)
+  elseif(version VERSION_LESS 3.20)
     set(stem cmake-${version}-win64-x64)
   else()
     set(stem cmake-${version}-windows-x86_64)
@@ -128,26 +139,9 @@ message(STATUS "installing CMake ${version} to ${prefix}")
 
 set(archive ${prefix}/${name})
 
-if(EXISTS ${archive})
-  file(SIZE ${archive} fsize)
-  if(fsize LESS 1000000)
-    file(REMOVE ${archive})
-  endif()
-endif()
-
-if(NOT EXISTS ${archive})
-  set(url ${host}${name})
-  message(STATUS "download ${url}")
-  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
-
-  file(SIZE ${archive} fsize)
-  if(fsize LESS 1000000)
-    if(fsize EQUAL 0)
-      file(REMOVE ${archive})
-    endif()
-    message(FATAL_ERROR "failed to download ${url}")
-  endif()
-endif()
+set(url ${host}${name})
+message(STATUS "download ${url}")
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
 
 message(STATUS "extracting to ${path}")
 if(CMAKE_VERSION VERSION_LESS 3.18)
