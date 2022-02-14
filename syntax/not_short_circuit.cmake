@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.12...3.23)
 # this requires care with undefined variables
 
 
-# will error if "undef1" is undefined
+# syntax error if "undef1" is undefined
 # if(1 AND ${undef1})
+# endif()
 
 # expected behavior since "undef2" is evaluated as variable even if undefined
 if(0 OR undef2)
