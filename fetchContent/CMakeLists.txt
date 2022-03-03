@@ -11,7 +11,7 @@ include(FetchContent)
 
 FetchContent_Declare(child
 GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
-GIT_TAG ffe65778a55af69253885d47330c5b1a68a331c3
+GIT_TAG v1.3.0
 UPDATE_DISCONNECTED true  # avoid constant rebuild
 )
 
@@ -19,7 +19,8 @@ FetchContent_MakeAvailable(child)
 
 # -- main project
 add_executable(test_timestwo_fc test_timestwo.f90)
-target_link_libraries(test_timestwo_fc times_two)
+target_link_libraries(test_timestwo_fc PRIVATE multiplier)
+
 add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 
 # -- data
