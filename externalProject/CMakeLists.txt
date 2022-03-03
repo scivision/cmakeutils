@@ -14,30 +14,41 @@ enable_testing()
 
 include(ExternalProject)
 
+if(BUILD_SHARED_LIBS)
+  if(WIN32)
+    set(tt_LIBRARY ${CMAKE_INSTALL_PREFIX}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}multiplier${CMAKE_SHARED_LIBRARY_SUFFIX})
+  else()
+    set(tt_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}multiplier${CMAKE_SHARED_LIBRARY_SUFFIX})
+  endif()
+else()
+  set(tt_LIBRARY ${CMAKE_INSTALL_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}multiplier${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
+
+set(cmake_args
+-DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+)
+
 ExternalProject_Add(child_proj
 GIT_REPOSITORY https://github.com/scivision/cmake-externalproject.git
-GIT_TAG 35f1c97ab1f102e9b00d1d3241f53666856bb1a5
+GIT_TAG v1.0.0
 INACTIVITY_TIMEOUT 15
-CONFIGURE_HANDLED_BY_BUILD true  # avoid constant reconfigure
-INSTALL_COMMAND ""  # disables the install step for the external project
-BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/child_proj-prefix/src/child_proj-build/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
-CMAKE_ARGS -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS}
+UPDATE_DISCONNECTED true
+CONFIGURE_HANDLED_BY_BUILD true
+BUILD_BYPRODUCTS ${tt_LIBRARY}
+CMAKE_ARGS ${cmake_args}
 )
-# in this scope, we have already set directory property EP_UPDATE_DISCONNECTED true
-# to avoid constant rebuild of externalProjects
 
-ExternalProject_Get_Property(child_proj BINARY_DIR)
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include)
 
-# avoid race condition.
-file(MAKE_DIRECTORY ${BINARY_DIR}/include)
-
-add_library(timestwo STATIC IMPORTED GLOBAL)
+add_library(timestwo INTERFACE IMPORTED)
+target_link_libraries(timestwo INTERFACE ${tt_LIBRARY})
+target_include_directories(timestwo INTERFACE ${CMAKE_INSTALL_PREFIX}/include)
 add_dependencies(timestwo child_proj)
-set_target_properties(timestwo PROPERTIES
-IMPORTED_LOCATION ${BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}timestwo${CMAKE_STATIC_LIBRARY_SUFFIX}
-INTERFACE_INCLUDE_DIRECTORIES ${BINARY_DIR}/include
-)
-#
+
+# --- our current project
+
 add_executable(test_timestwo test_timestwo.f90)
-target_link_libraries(test_timestwo timestwo)
-add_test(NAME ExternalProjectSubmodule COMMAND $<TARGET_FILE:test_timestwo>)
+target_link_libraries(test_timestwo PRIVATE timestwo)
+
+add_test(NAME ExternalProject COMMAND test_timestwo)
