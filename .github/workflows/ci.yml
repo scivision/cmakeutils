@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.22.1'
+  cmake_version: '3.23.1'
   CMAKE_BUILD_TYPE: Release
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
