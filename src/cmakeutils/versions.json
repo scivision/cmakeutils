@@ -30,7 +30,7 @@
   "ninja": {
     "binary": "https://github.com/ninja-build/ninja/releases/download/",
     "source": "https://github.com/ninja-build/ninja/archive/refs/tags/",
-    "latest": "1.10.2"
+    "latest": "1.11.0"
   },
   "zstd": "1.5.2"
 }

@@ -5,7 +5,7 @@ function(check_tls)
 # this is a publicly-usable service (as per their TOS)
 
 set(url https://www.howsmyssl.com/a/check)
-cmake_path(APPEND tls_check_file ${PROJECT_BINARY_DIR} check_tls.json)
+cmake_path(SET tls_check_file ${PROJECT_BINARY_DIR}/check_tls.json)
 
 if(EXISTS ${tls_check_file})
   # we've already checked this computer's TLS configuration.

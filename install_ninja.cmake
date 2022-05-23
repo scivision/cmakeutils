@@ -5,9 +5,9 @@
 # cmake -P install_ninja.cmake
 # will install Ninja under the user's home directory.
 
-cmake_minimum_required(VERSION 3.20...3.23)
+cmake_minimum_required(VERSION 3.20)
 
-include(CheckNinja.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/CheckNinja.cmake)
 
 if(NOT prefix)
   set(prefix "~")
@@ -69,7 +69,12 @@ cmake_path(SET archive ${path}/${name})
 
 set(url ${host}${name})
 message(STATUS "download ${url} to ${archive}")
-file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15)
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15 STATUS ret)
+list(GET ret 0 stat)
+if(NOT stat EQUAL 0)
+  list(GET ret 1 err)
+  message(FATAL_ERROR "download failed: ${err}")
+endif()
 
 message(STATUS "extracting to ${path}")
 file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${path})
