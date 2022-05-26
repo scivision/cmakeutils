@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.7...3.24)
 
 # --- version
 if(CMAKE_VERSION VERSION_LESS 3.19)
-  set(version 3.23.1)
+  set(version 3.23.2)
   set(host https://github.com/Kitware/CMake/releases/download/)
 else()
   file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
