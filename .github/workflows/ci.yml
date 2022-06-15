@@ -1,9 +1,10 @@
 name: ci
 
 env:
-  cmake_version: '3.23.1'
-  CMAKE_BUILD_TYPE: Release
+  cmake_version: '3.23.2'
+  ninja_version: '1.11.0'
   HOMEBREW_NO_INSTALL_CLEANUP: 1
+  CMAKE_GENERATOR: Ninja
 
 on:
   push:
@@ -16,86 +17,57 @@ on:
 
 jobs:
 
-  linux:
-    runs-on: ubuntu-latest
+  core:
+
+    strategy:
+      matrix:
+        cfg: [
+          {os: ubuntu-latest, fc: gfortran},
+          {os: macos-latest, fc: gfortran-11},
+          {os: windows-latest, fc: gfortran}
+          ]
+
+    runs-on: ${{ matrix.cfg.os }}
+
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
 
-    - run: pip install .[tests,lint]
+    - run: pip install .[lint]
     - run: flake8
     - run: mypy
-    - run: pytest
 
     - name: Install CMake
-      run: |
-        python -m cmakeutils.cmake_setup ${cmake_version} --prefix ${HOME}/.local
-        echo "${HOME}/.local/cmake-${cmake_version}-linux-x86_64/bin" >> $GITHUB_PATH
+      run: cmake -Dversion=${{ env.cmake_version }} -Dprefix:PATH=${{ runner.temp }} -P install_cmake.cmake
+
+    - name: CMake path (Linux)
+      if: runner.os == 'linux'
+      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-linux-x86_64/bin" >> $GITHUB_PATH
+
+    - name: CMake path (MacOS)
+      if: runner.os == 'macos'
+      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-macos-universal/bin" >> $GITHUB_PATH
+
+    - name: CMake path (Windows)
+      if: runner.os == 'windows'
+      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Install Ninja
-      run: |
-        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
-        echo "${HOME}/.local/bin" >> $GITHUB_PATH
+      run: cmake -Dversion=${{ env.ninja_version }} -Dprefix:PATH=${{ runner.temp }} -P install_ninja.cmake
+
+    - name: CMake path (unix)
+      if: runner.os == 'linux' || runner.os == 'macos'
+      run: echo "${{ runner.temp }}/ninja-${{ env.ninja_version }}/bin" >> $GITHUB_PATH
+
+    - name: CMake path (Windows)
+      if: runner.os == 'windows'
+      run: echo "${{ runner.temp }}/ninja-${{ env.ninja_version }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
 
     - run: cmake --version
 
     - run: cmake -B build --install-prefix=${HOME}
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
-
-
-  macos:
-    needs: linux
-    runs-on: macos-latest
-    env:
-      FC: gfortran-11
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install .[tests]
-    - run: pytest
-
-    - name: Install Ninja
-      run: |
-        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
-        echo "${HOME}/.local/bin" >> $GITHUB_PATH
-
-    - run: cmake -B build --install-prefix=${HOME}
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
-
-
-  windows:
-    needs: linux
-    runs-on: windows-latest
-    env:
-      CMAKE_GENERATOR: "MinGW Makefiles"
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-
-    - run: pip install .[tests]
-    - run: pytest
-
-    - name: Install CMake
-      run: |
-        python -m cmakeutils.cmake_setup ${cmake_version} --prefix ${HOME}
-        echo "${HOME}/cmake-${cmake_version}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-    - name: Install Ninja
-      run: |
-        python -m cmakeutils.ninja_setup --prefix ${HOME}/.local/bin
-        echo "${HOME}/.local/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-    - run: cmake -B build --install-prefix=${{ github.workspace }}/..
     - run: cmake --build build
     - run: ctest --test-dir build --preset default

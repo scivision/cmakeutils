@@ -5,7 +5,7 @@
 # cmake -P install_ninja.cmake
 # will install Ninja under the user's home directory.
 
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.20...3.24)
 
 include(${CMAKE_CURRENT_LIST_DIR}/CheckNinja.cmake)
 
@@ -24,14 +24,7 @@ string(JSON host GET ${_j} ninja binary)
 set(host ${host}v${version}/)
 
 if(APPLE)
-  execute_process(COMMAND uname -m
-    OUTPUT_VARIABLE arch
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    TIMEOUT 5
-    COMMAND_ERROR_IS_FATAL ANY)
-  if(arch STREQUAL x86_64)
-    set(stem ninja-mac)
-  endif()
+  set(stem ninja-mac)
 elseif(UNIX)
   execute_process(COMMAND uname -m
     OUTPUT_VARIABLE arch
@@ -69,11 +62,11 @@ cmake_path(SET archive ${path}/${name})
 
 set(url ${host}${name})
 message(STATUS "download ${url} to ${archive}")
-file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15 STATUS ret)
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 60 STATUS ret)
 list(GET ret 0 stat)
 if(NOT stat EQUAL 0)
   list(GET ret 1 err)
-  message(FATAL_ERROR "download failed: ${err}")
+  message(FATAL_ERROR "download failed: ${stat} ${err}")
 endif()
 
 message(STATUS "extracting to ${path}")

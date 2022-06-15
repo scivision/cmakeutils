@@ -25,21 +25,44 @@ python cmake_compile.py v3.18.4
 """
 
 import tempfile
+import json
+import importlib.resources
 import argparse
 import os
 import subprocess
 import tarfile
 import shutil
 import urllib.request
+import hashlib
 from pathlib import Path
 
-
-from .cmake_setup import latest_version, file_checksum
 
 url_stem = "https://github.com/Kitware/CMake/releases/download"
 
 
-def main():
+def latest_version() -> str:
+    """get latest version"""
+    cjd = json.load(importlib.resources.open_text("cmakeutils", "versions.json"))["cmake"]
+    return cjd[cjd["latest"]]
+
+
+def file_checksum(fn: Path, hashfn: Path, mode: str) -> bool:
+    """file checksum"""
+    h = hashlib.new(mode)
+    h.update(fn.read_bytes())
+    digest = h.hexdigest()
+
+    with hashfn.open("r") as f:
+        for line in f:
+            if line.startswith(digest):
+                if line.split()[-1] == fn.name:
+                    return True
+
+    return False
+
+
+def cli():
+    """CLI"""
     p = argparse.ArgumentParser()
     p.add_argument("version", nargs="?", default=latest_version())
     p.add_argument("-prefix", help="where to install CMake")
@@ -105,6 +128,7 @@ def job_count() -> int:
 
 
 def cmake_build(src_root: Path, prefix: Path):
+    """build CMake with CMake"""
 
     build_root = src_root / "build"
     build_root.mkdir(parents=True, exist_ok=True)
@@ -179,6 +203,7 @@ def bootstrap(src_root: Path, prefix: Path):
 
 
 def download_and_extract(workdir: Path, version: str) -> Path:
+    """download and extract CMake source"""
 
     workdir = Path(workdir)
     workdir.mkdir(exist_ok=True)
@@ -213,4 +238,4 @@ def download_and_extract(workdir: Path, version: str) -> Path:
 
 
 if __name__ == "__main__":
-    main()
+    cli()

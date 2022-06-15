@@ -14,7 +14,7 @@
 # old CMake versions have broken file(DOWNLOAD)--they just "download" 0-byte files.
 #
 # NOTE: CMake 3.24 introduced need for CMake >= 3.13 to build CMake itself.
-# The execute_process commands below also use Cmake >= 3.13 syntax.
+# The execute_process commands below also use CMake >= 3.13 syntax.
 
 cmake_minimum_required(VERSION 3.13...3.24)
 
@@ -37,6 +37,14 @@ else()
 
   string(JSON host GET ${_j} cmake source)
 endif()
+
+# --- CMake build arguments
+set(cmake_args
+-DBUILD_TESTING:BOOL=OFF
+-DCMAKE_BUILD_TYPE=Release
+-DCMAKE_USE_OPENSSL:BOOL=ON
+-DCMAKE_INSTALL_PREFIX:PATH=${path}
+)
 
 # --- URL
 set(host ${host}v${version}/)
@@ -78,11 +86,11 @@ message(STATUS "installing CMake ${version} to ${path}")
 set(archive ${prefix}/${name})
 set(url ${host}${name})
 message(STATUS "download ${url}")
-file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15 STATUS ret)
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 60 STATUS ret)
 list(GET ret 0 stat)
 if(NOT stat EQUAL 0)
   list(GET ret 1 err)
-  message(FATAL_ERROR "download failed: ${err}")
+  message(FATAL_ERROR "download failed: ${stat} ${err}")
 endif()
 
 if(NOT IS_DIRECTORY ${path})
@@ -97,7 +105,7 @@ endif()
 file(MAKE_DIRECTORY ${path}/build)
 
 execute_process(
-COMMAND ${CMAKE_COMMAND} -S${path} -B${path}/build -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_USE_OPENSSL:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=${path}
+COMMAND ${CMAKE_COMMAND} -S${path} -B${path}/build ${cmake_args}
 RESULT_VARIABLE err
 )
 if(NOT err EQUAL 0)

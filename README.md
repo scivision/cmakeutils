@@ -27,6 +27,12 @@ if you need to compile CMake from source, for example on BSD or ARM 32-bit using
 cmake -P build_cmake.cmake
 ```
 
+Ninja is recommended in general for use with CMake instead of Make:
+
+```sh
+cmake -P install_ninja.cmake
+```
+
 ## Install
 
 ```sh
@@ -54,21 +60,6 @@ Then convert to PNG or SVG like:
 
 ```sh
 python -m cmakeutils.graph ~/myprog/gfx
-```
-
-## Install CMake binary
-
-```sh
-python -m cmakeutils.cmake_setup
-```
-
-takes only a minute to install binary and includes `cmake-gui`.
-It works for Linux, MacOS, native Windows and Windows Subsystem for Linux.
-
-Ninja is recommended in general for use with CMake on Windows, Mac and Linux:
-
-```sh
-python -m cmakeutils.ninja_setup
 ```
 
 ## Build CMake

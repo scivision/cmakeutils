@@ -56,15 +56,17 @@ endif()
 endfunction(checkup)
 
 
+set(vname cmake-${version}-)
+
 if(APPLE)
 
 if(version VERSION_LESS 3.19)
-  set(stem cmake-${version}-Darwin-x86_64)
+  set(file_arch Darwin-x86_64)
 else()
-  set(stem cmake-${version}-macos-universal)
+  set(file_arch macos-universal)
 endif()
 
-set(name ${stem}.tar.gz)
+set(suffix .tar.gz)
 
 elseif(UNIX)
 
@@ -76,55 +78,63 @@ TIMEOUT 5
 
 if(arch STREQUAL x86_64)
   if(version VERSION_LESS 3.20)
-    set(stem cmake-${version}-Linux-x86_64)
+    set(file_arch Linux-x86_64)
   else()
-    set(stem cmake-${version}-linux-x86_64)
+    set(file_arch linux-x86_64)
   endif()
 elseif(arch STREQUAL aarch64)
   if(version VERSION_LESS 3.20)
-    set(stem cmake-${version}-Linux-aarch64)
+    set(file_arch Linux-aarch64)
   else()
-    set(stem cmake-${version}-linux-aarch64)
+    set(file_arch linux-aarch64)
   endif()
 endif()
 
-set(name ${stem}.tar.gz)
+set(suffix .tar.gz)
 
 elseif(WIN32)
 
 # https://docs.microsoft.com/en-us/windows/win32/winprog64/wow64-implementation-details?redirectedfrom=MSDN#environment-variables
-# CMake doesn't currently have binary downloads for ARM64 or IA64
 set(arch $ENV{PROCESSOR_ARCHITECTURE})
 
-if(arch STREQUAL AMD64)
+if(arch STREQUAL ARM64)
+  if(version VERSION_GREATER_EQUAL 3.24)
+    set(file_arch windows-arm64)
+  endif()
+elseif(arch STREQUAL AMD64)
   if(version VERSION_LESS 3.6)
-    set(stem cmake-${version}-win32-x86)
+    set(file_arch win32-x86)
   elseif(version VERSION_LESS 3.20)
-    set(stem cmake-${version}-win64-x64)
+    set(file_arch win64-x64)
   else()
-    set(stem cmake-${version}-windows-x86_64)
+    set(file_arch windows-x86_64)
   endif()
 elseif(arch STREQUAL x86)
   if(version VERSION_LESS 3.20)
-    set(stem cmake-${version}-win32-x86)
+    set(file_arch win32-x86)
   else()
-    set(stem cmake-${version}-windows-i386)
+    set(file_arch windows-i386)
   endif()
 endif()
 
-set(name ${stem}.zip)
+set(suffix .zip)
 
 endif()
 
 
-if(NOT stem)
-  message(FATAL_ERROR "unknown CPU arch ${arch}.  Try building CMake from source:
+if(NOT file_arch)
+  message(FATAL_ERROR "No CMake ${version} binary downwload available for ${arch}.
+  Try building CMake from source:
     cmake -P ${CMAKE_CURRENT_LIST_DIR}/build_cmake.cmake
   or use Python:
     pip install cmake")
 endif()
 
+set(stem ${vname}${file_arch})
+set(name ${stem}${suffix})
+
 get_filename_component(prefix ${prefix} ABSOLUTE)
+
 set(path ${prefix}/${stem})
 
 find_program(cmake NAMES cmake PATHS ${path} PATH_SUFFIXES bin NO_DEFAULT_PATH)
@@ -140,12 +150,12 @@ message(STATUS "installing CMake ${version} to ${prefix}")
 set(archive ${prefix}/${name})
 
 set(url ${host}${name})
-message(STATUS "download ${url}")
-file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 15 STATUS ret)
+message(STATUS "download ${url} => ${archive}")
+file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 60 STATUS ret)
 list(GET ret 0 stat)
 if(NOT stat EQUAL 0)
   list(GET ret 1 err)
-  message(FATAL_ERROR "download failed: ${err}")
+  message(FATAL_ERROR "download failed: ${stat} ${err}")
 endif()
 
 message(STATUS "extracting to ${path}")
