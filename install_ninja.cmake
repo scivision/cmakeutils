@@ -15,8 +15,9 @@ endif()
 
 set(CMAKE_TLS_VERIFY true)
 
+file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
+
 if(NOT version)
-  file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
   string(JSON version GET ${_j} ninja latest)
 endif()
 
