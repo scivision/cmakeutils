@@ -27,13 +27,16 @@ jobs:
           {os: windows-latest, fc: gfortran}
           ]
 
+    env:
+      FC: ${{ matrix.cfg.fc }}
+
     runs-on: ${{ matrix.cfg.os }}
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Install CMake
-      run: cmake -Dversion=${{ env.cmake_version }} -Dprefix:PATH=${{ runner.temp }} -P install_cmake.cmake
+      run: cmake "-Dversion=${{ env.cmake_version }}" -Dprefix:PATH=${{ runner.temp }} -P install_cmake.cmake
 
     - name: CMake path (Linux)
       if: runner.os == 'linux'
@@ -48,7 +51,7 @@ jobs:
       run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Install Ninja
-      run: cmake -Dversion=${{ env.ninja_version }} -Dprefix:PATH=${{ runner.temp }} -P install_ninja.cmake
+      run: cmake "-Dversion=${{ env.ninja_version }}" -Dprefix:PATH=${{ runner.temp }} -P install_ninja.cmake
 
     - name: Ninja path (unix)
       if: runner.os == 'linux' || runner.os == 'macos'
