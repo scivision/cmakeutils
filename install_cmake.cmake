@@ -49,7 +49,7 @@ function(checkup exe)
 
 get_filename_component(path ${exe} DIRECTORY)
 set(ep $ENV{PATH})
-if(NOT ep MATCHES ${path})
+if(NOT ep MATCHES "${path}")
   message(STATUS "add to environment variable PATH ${path}")
 endif()
 
@@ -76,13 +76,13 @@ OUTPUT_STRIP_TRAILING_WHITESPACE
 TIMEOUT 5
 )
 
-if(arch STREQUAL x86_64)
+if(arch STREQUAL "x86_64")
   if(version VERSION_LESS 3.20)
     set(file_arch Linux-x86_64)
   else()
     set(file_arch linux-x86_64)
   endif()
-elseif(arch STREQUAL aarch64)
+elseif(arch STREQUAL "aarch64")
   if(version VERSION_LESS 3.20)
     set(file_arch Linux-aarch64)
   else()
@@ -97,11 +97,11 @@ elseif(WIN32)
 # https://docs.microsoft.com/en-us/windows/win32/winprog64/wow64-implementation-details?redirectedfrom=MSDN#environment-variables
 set(arch $ENV{PROCESSOR_ARCHITECTURE})
 
-if(arch STREQUAL ARM64)
+if(arch STREQUAL "ARM64")
   if(version VERSION_GREATER_EQUAL 3.24)
     set(file_arch windows-arm64)
   endif()
-elseif(arch STREQUAL AMD64)
+elseif(arch STREQUAL "AMD64")
   if(version VERSION_LESS 3.6)
     set(file_arch win32-x86)
   elseif(version VERSION_LESS 3.20)
@@ -109,7 +109,7 @@ elseif(arch STREQUAL AMD64)
   else()
     set(file_arch windows-x86_64)
   endif()
-elseif(arch STREQUAL x86)
+elseif(arch STREQUAL "x86")
   if(version VERSION_LESS 3.20)
     set(file_arch win32-x86)
   else()
@@ -127,7 +127,9 @@ if(NOT file_arch)
   Try building CMake from source:
     cmake -P ${CMAKE_CURRENT_LIST_DIR}/build_cmake.cmake
   or use Python:
-    pip install cmake")
+    pip install cmake
+  or use Snap:
+    snap install cmake")
 endif()
 
 set(stem ${vname}${file_arch})

@@ -32,13 +32,13 @@ elseif(UNIX)
     OUTPUT_STRIP_TRAILING_WHITESPACE
     TIMEOUT 5
     COMMAND_ERROR_IS_FATAL ANY)
-  if(arch STREQUAL x86_64)
+  if(arch STREQUAL "x86_64")
     set(stem ninja-linux)
   endif()
 elseif(WIN32)
   # https://docs.microsoft.com/en-us/windows/win32/winprog64/wow64-implementation-details?redirectedfrom=MSDN#environment-variables
   set(arch $ENV{PROCESSOR_ARCHITECTURE})
-  if(arch STREQUAL AMD64)
+  if(arch STREQUAL "AMD64")
     set(stem ninja-win)
   endif()
 endif()
