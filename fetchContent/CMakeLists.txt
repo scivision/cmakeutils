@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.23)
+cmake_minimum_required(VERSION 3.14...3.24)
 
 project(FetchContent_Demo
 LANGUAGES Fortran
@@ -12,6 +12,9 @@ include(FetchContent)
 FetchContent_Declare(child
 GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
 GIT_TAG v1.3.0
+GIT_SHALLOW true
+INACTIVITY_TIMEOUT 60
+TLS_VERIFY true
 UPDATE_DISCONNECTED true  # avoid constant rebuild
 )
 
@@ -25,9 +28,13 @@ add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 
 # -- data
 # This MUST be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
-# you will find the extracted data files under bin/_deps/demodata-src/
+# extracted data files under:
+# ${CMAKE_CURRENT_BINARY_DIR}/_deps/demodata-src/
 FetchContent_Declare(demodata
 URL https://github.com/scivision/cmake-fetchcontent/raw/main/octo.zip
 URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
+INACTIVITY_TIMEOUT 60
+TLS_VERIFY true
+UPDATE_DISCONNECTED true
 )
 FetchContent_Populate(demodata)

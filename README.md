@@ -18,33 +18,15 @@ It's important to use a recent CMake version to be effective and clean with CMak
 This can be done via the Python package described below, or from CMake >= 2.8.12 by:
 
 ```sh
-cmake -P install_cmake.cmake
-```
-
-if you need to compile CMake from source, for example on BSD or ARM 32-bit using existing CMake >= 3.13:
-
-```sh
-cmake -P build_cmake.cmake
+cmake -S install_cmake
 ```
 
 Ninja is recommended in general for use with CMake instead of Make:
 
 ```sh
-cmake -P install_ninja.cmake
+cmake -S install_ninja
 ```
 
-## Install
-
-```sh
-pip install cmakeutils
-```
-
-or
-
-```sh
-git clone https://github.com/scivision/cmakeutils
-pip install -e cmakeutils
-```
 
 ## convert CMake hierarchy .dot to SVG or PNG
 
@@ -64,19 +46,11 @@ python -m cmakeutils.graph ~/myprog/gfx
 
 ## Build CMake
 
-CMake can be builts from source using either:
-
-* older version of CMake,
-* without CMake using the "bootstrap" method
-
-The bootstrap method is only for Unix-like systems, while the CMake-based build can also be used on Windows.
-Any platform for which Kitware doesn't distribute binaries use this script, including IBM Power and ARM.
+To compile CMake from source, for example on BSD or ARM 32-bit using existing CMake:
 
 ```sh
-python -m cmakeutils.cmake_compile
+cmake -S build_cmake -B build
 ```
-
-This downloads the latest CMake release source and builds from scratch.
 
 Requirements:
 
