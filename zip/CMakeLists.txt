@@ -12,7 +12,7 @@ if(NOT EXISTS ${OUTFN})
   if(NOT EXISTS ${ZIPFN})
     file(DOWNLOAD https://zenodo.org/record/1486184/files/github-mark.zip?download=1 ${ZIPFN}
     EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923
-    INACTIVITY_TIMEOUT 15
+    INACTIVITY_TIMEOUT 60
     )
   endif(NOT EXISTS ${ZIPFN})
 

@@ -27,7 +27,7 @@ cmake_path(SET build ${src}/build)
 
 if(NOT IS_DIRECTORY ${src})
   file(DOWNLOAD https://github.com/facebook/zstd/releases/download/v${zstd_version}/${name} ${archive}
-  INACTIVITY_TIMEOUT 15
+  INACTIVITY_TIMEOUT 60
   )
   file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${tmpdir})
 endif()

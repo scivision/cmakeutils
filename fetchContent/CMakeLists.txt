@@ -11,7 +11,7 @@ include(FetchContent)
 
 FetchContent_Declare(child
 GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
-GIT_TAG v1.3.0
+GIT_TAG v1.4.0
 GIT_SHALLOW true
 INACTIVITY_TIMEOUT 60
 TLS_VERIFY true
@@ -27,14 +27,13 @@ target_link_libraries(test_timestwo_fc PRIVATE multiplier)
 add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 
 # -- data
-# This MUST be a .zip, .tar, .tar.gz or similar archive, NOT just a file itself!
-# extracted data files under:
-# ${CMAKE_CURRENT_BINARY_DIR}/_deps/demodata-src/
 FetchContent_Declare(demodata
-URL https://github.com/scivision/cmake-fetchcontent/raw/main/octo.zip
-URL_HASH SHA256=8a1df15d6ed7ae28ad872e5425adbcb31573ede1e84c21121a88de38a293bd97
+URL https://raw.githubusercontent.com/scivision/cmake-fetchcontent/main/Octicons-mark-github.svg
+URL_HASH SHA256=ed5b640553973a1739d5dfddbf9e2c3db64bcd7181f89e99db42e221e295cc3a
 INACTIVITY_TIMEOUT 60
 TLS_VERIFY true
 UPDATE_DISCONNECTED true
+DOWNLOAD_NO_EXTRACT true
+DOWNLOAD_NAME ${CMAKE_CURRENT_BINARY_DIR}/octocat.svg
 )
 FetchContent_Populate(demodata)

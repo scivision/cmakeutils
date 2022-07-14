@@ -32,7 +32,7 @@ set(cmake_args
 ExternalProject_Add(child_proj
 GIT_REPOSITORY https://github.com/scivision/cmake-externalproject.git
 GIT_TAG v1.0.0
-INACTIVITY_TIMEOUT 15
+INACTIVITY_TIMEOUT 60
 UPDATE_DISCONNECTED true
 CONFIGURE_HANDLED_BY_BUILD true
 BUILD_BYPRODUCTS ${tt_LIBRARY}
