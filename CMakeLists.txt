@@ -11,7 +11,7 @@ HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 
 enable_testing()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 set(CMAKE_TLS_VERIFY true)
 set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)

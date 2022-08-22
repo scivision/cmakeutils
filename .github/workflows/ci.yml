@@ -1,7 +1,7 @@
 name: ci
 
 env:
-  cmake_version: '3.23.2'
+  cmake_version: '3.24.1'
   ninja_version: '1.11.0'
   HOMEBREW_NO_INSTALL_CLEANUP: 1
 
@@ -16,77 +16,59 @@ on:
 
 jobs:
 
-  unix:
+  core:
 
     strategy:
       matrix:
-        cfg: [
-          {os: ubuntu-latest, fc: gfortran},
-          {os: macos-latest, fc: gfortran-11}
-          ]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
-    env:
-      FC: ${{ matrix.cfg.fc }}
-
-    runs-on: ${{ matrix.cfg.os }}
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
 
-    - name: Install Ninja
-      run: cmake -S install_ninja -B ${{ runner.temp }}/ninja -Dversion="${{ env.ninja_version }}" -DCMAKE_INSTALL_PREFIX:PATH=${{ runner.temp }}
-
-    - name: Ninja path (unix)
-      run: echo "${{ runner.temp }}/ninja" >> $GITHUB_PATH
-
-    - name: Install CMake
-      run: cmake -S install_cmake -B ${{ runner.temp }}/cmake -Dversion="${{ env.cmake_version }}" -DCMAKE_INSTALL_PREFIX:PATH=${{ runner.temp }}
-
-    - name: CMake path (Linux)
-      if: runner.os == 'linux'
-      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-linux-x86_64/bin" >> $GITHUB_PATH
-
-    - name: CMake path (MacOS)
-      if: runner.os == 'macos'
-      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-macos-universal/bin" >> $GITHUB_PATH
-
-    - run: cmake --version
-
-    - run: cmake -G Ninja -B build --install-prefix=${HOME}
-    - run: cmake --build build
-    - run: ctest --test-dir build --preset default
-
-
-  windows:
-    runs-on: windows-latest
-
-    steps:
     - uses: msys2/setup-msys2@v2
+      if: runner.os == 'Windows'
       with:
         update: true
         install: >-
           mingw-w64-x86_64-gcc-fortran
 
     - name: Put MSYS2_MinGW64 on PATH
+      if: runner.os == 'Windows'
       run: echo "${{ runner.temp }}/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - uses: actions/checkout@v2
+    - name: Install Gfortran (macOS)
+      if: runner.os == 'macOS'
+      run: brew reinstall gcc
+
+    - uses: actions/checkout@v3
 
     - name: Install Ninja
-      run: cmake -S install_ninja -B ${{ runner.temp }}/ninja -Dversion="${{ env.ninja_version }}" -DCMAKE_INSTALL_PREFIX:PATH=${{ runner.temp }}
+      run: cmake -Dversion="${{ env.ninja_version }}" -Dprefix:PATH=${{ runner.temp }} -P scripts/install_ninja.cmake
+
+    - name: Ninja path (unix)
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      run: echo "${{ runner.temp }}" >> $GITHUB_PATH
 
     - name: Ninja path (Windows)
-      run: echo "${{ runner.temp }}/ninja" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      if: runner.os == 'Windows'
+      run: echo "${{ runner.temp }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Install CMake
-      run: cmake -S install_cmake -B ${{ runner.temp }}/cmake -Dversion="${{ env.cmake_version }}" -DCMAKE_INSTALL_PREFIX:PATH=${{ runner.temp }}
+      run: cmake -Dversion="${{ env.cmake_version }}" -Dprefix:PATH=${{ runner.temp }} -P scripts/install_cmake.cmake
+
+    - name: CMake path (unix)
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      run: echo "${{ runner.temp }}/bin" >> $GITHUB_PATH
 
     - name: CMake path (Windows)
-      run: echo "${{ runner.temp }}/cmake-${{ env.cmake_version }}-windows-x86_64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      if: runner.os == 'Windows'
+      run: echo "${{ runner.temp }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
 
     - run: cmake --version
 
-    - run: cmake -G Ninja -B build --install-prefix=${HOME}
+    - run: cmake -G Ninja -B build --install-prefix=${{ runner.temp }}
     - run: cmake --build build
     - run: ctest --test-dir build --preset default
 
@@ -96,9 +78,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 

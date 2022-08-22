@@ -9,12 +9,10 @@ set(ZIPFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.zip)
 set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)
 
 if(NOT EXISTS ${OUTFN})
-  if(NOT EXISTS ${ZIPFN})
-    file(DOWNLOAD https://zenodo.org/record/1486184/files/github-mark.zip?download=1 ${ZIPFN}
-    EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923
-    INACTIVITY_TIMEOUT 60
-    )
-  endif(NOT EXISTS ${ZIPFN})
+  file(DOWNLOAD https://zenodo.org/record/1486184/files/github-mark.zip?download=1 ${ZIPFN}
+  EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923
+  INACTIVITY_TIMEOUT 60
+  )
 
   # this is OS-agnostic
   file(ARCHIVE_EXTRACT INPUT ${ZIPFN} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

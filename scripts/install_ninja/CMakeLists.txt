@@ -1,5 +1,5 @@
 # install a recent Ninja version
-cmake_minimum_required(VERSION 3.18...3.24)
+cmake_minimum_required(VERSION 3.19...3.25)
 
 project(ninja LANGUAGES NONE)
 
@@ -26,7 +26,7 @@ endif()
 
 if(NOT stem)
   message(FATAL_ERROR "unknown CPU arch ${arch}. Try building Ninja from source:
-    cmake -S ${CMAKE_CURRENT_LIST_DIR}/build_ninja -B build")
+    cmake -P ${CMAKE_CURRENT_LIST_DIR}/build_ninja.cmake")
 endif()
 
 set(url ${host}${stem}.zip)
@@ -53,15 +53,14 @@ endif()
 get_filename_component(ninja_filename ${exe} NAME)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  get_filename_component(p ~ ABSOLUTE)
+  get_filename_component(p ~/ninja-${version} ABSOLUTE)
   set(CMAKE_INSTALL_PREFIX ${p} CACHE PATH "install path" FORCE)
 endif()
 
-set(dest ${CMAKE_INSTALL_PREFIX}/${ninja_filename})
 file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX})
-file(COPY ${exe} DESTINATION ${dest})
+file(COPY ${exe} DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 
-message(STATUS "installed Ninja ${version} to ${dest}")
+message(STATUS "installed Ninja ${version} to ${CMAKE_INSTALL_PREFIX}")
 
 set(ep $ENV{PATH})
 if(NOT ep MATCHES "${CMAKE_INSTALL_PREFIX}")

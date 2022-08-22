@@ -18,13 +18,13 @@ It's important to use a recent CMake version to be effective and clean with CMak
 This can be done via the Python package described below, or from CMake >= 2.8.12 by:
 
 ```sh
-cmake -S install_cmake
+cmake -P scripts/install_cmake.cmake
 ```
 
 Ninja is recommended in general for use with CMake instead of Make:
 
 ```sh
-cmake -S install_ninja
+cmake -P scripts/install_ninja.cmake
 ```
 
 
