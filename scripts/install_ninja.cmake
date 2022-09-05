@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.13)
 
 set(bindir ${CMAKE_CURRENT_LIST_DIR}/../build/ninja_install)
 
+# need to remove cache to avoid corner cases
+file(REMOVE ${bindir}/CMakeCache.txt)
+
 set(args)
 if(version)
   list(APPEND args -Dversion=${version})
