@@ -12,6 +12,9 @@ endif()
 if(prefix)
   list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
 endif()
+if(WIN32)
+  list(APPEND args -G "MinGW Makefiles")
+endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND} ${args}
 -B${bindir}

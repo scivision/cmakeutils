@@ -1,13 +1,19 @@
 # install a recent Ninja version
-cmake_minimum_required(VERSION 3.19...3.25)
+cmake_minimum_required(VERSION 3.11...3.25)
 
 project(ninja LANGUAGES NONE)
 
 include(FetchContent)
 
 if(NOT version)
-  file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
-  string(JSON version GET ${_j} ninja)
+  if(CMAKE_VERSION VERSION_LESS 3.19)
+    file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/../version_ninja_latest.txt version
+    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 12 LENGTH_MAXIMUM 12 LIMIT_COUNT 1
+    )
+  else()
+    file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
+    string(JSON version GET ${_j} ninja)
+  endif()
 endif()
 
 set(host https://github.com/ninja-build/ninja/releases/download/v${version}/)

@@ -7,13 +7,15 @@ project(cmake LANGUAGES NONE)
 
 include(FetchContent)
 
+set(CMAKE_TLS_VERIFY true)
+
 
 function(full_version)
 
 if(CMAKE_VERSION VERSION_LESS 3.19)
-  file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/../cmake_latest_version.txt version
-    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 12 LENGTH_MAXIMUM 12 LIMIT_COUNT 1
-    )
+  file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/../version_cmake_latest.txt version
+  REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 12 LENGTH_MAXIMUM 12 LIMIT_COUNT 1
+  )
 else()
   file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
 
@@ -140,11 +142,11 @@ set(hash_url ${url_stem}/${hash_name})
 set(hash_file ${CMAKE_CURRENT_BINARY_DIR}/${hash_name})
 message(STATUS "CMake ${version} hash: ${hash_url} => ${hash_file}")
 
-file(DOWNLOAD ${hash_url} ${hash_file} INACTIVITY_TIMEOUT 60 TLS_VERIFY true STATUS ret)
+file(DOWNLOAD ${hash_url} ${hash_file} INACTIVITY_TIMEOUT 60 STATUS ret LOG log)
 list(GET ret 0 stat)
 if(NOT stat EQUAL 0)
   list(GET ret 1 err)
-  message(FATAL_ERROR "CMake hash download failed: ${err}")
+  message(FATAL_ERROR "CMake hash download failed: ${stat} ${err} ${log}")
 endif()
 
 set(pat "([0-9a-f]+)  ${filename}")
@@ -253,7 +255,7 @@ if(CMAKE_VERSION VERSION_LESS 3.19 OR version VERSION_LESS 3.20)
 
   FetchContent_Declare(cmake
   URL ${url_stem}/${archive}
-  TLS_VERIFY true
+  TLS_VERIFY ${CMAKE_TLS_VERIFY}
   UPDATE_DISCONNECTED true
   INACTIVITY_TIMEOUT 60
   )
@@ -263,11 +265,11 @@ else()
   set(json_url ${url_stem}/cmake-${version}-files-v1.json)
 
   message(STATUS "CMake ${version} metadata: ${json_url} => ${json_file}")
-  file(DOWNLOAD ${json_url} ${json_file} INACTIVITY_TIMEOUT 60 TLS_VERIFY true STATUS ret)
+  file(DOWNLOAD ${json_url} ${json_file} INACTIVITY_TIMEOUT 60 STATUS ret LOG log)
   list(GET ret 0 stat)
   if(NOT stat EQUAL 0)
     list(GET ret 1 err)
-    message(FATAL_ERROR "CMake metadata download failed: ${err}")
+    message(FATAL_ERROR "CMake metadata download failed: ${stat} ${err} ${log}")
   endif()
 
   cmake_archive_name(${json_file} "archive")
@@ -275,7 +277,7 @@ else()
   FetchContent_Declare(cmake
   URL ${url_stem}/${archive}
   URL_HASH SHA256=${sha256}
-  TLS_VERIFY true
+  TLS_VERIFY ${CMAKE_TLS_VERIFY}
   UPDATE_DISCONNECTED true
   INACTIVITY_TIMEOUT 60
   )

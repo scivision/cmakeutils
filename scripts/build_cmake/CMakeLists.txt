@@ -10,6 +10,8 @@ project(cmake LANGUAGES C CXX)
 
 include(ExternalProject)
 
+set(CMAKE_TLS_VERIFY true)
+
 function(full_version)
 
 if(CMAKE_VERSION VERSION_LESS 3.19)
@@ -79,7 +81,6 @@ GIT_TAG ${tag}
 GIT_SHALLOW true
 CMAKE_ARGS ${cmake_args}
 TEST_COMMAND ""
-TLS_VERIFY true
 INACTIVITY_TIMEOUT 60
 UPDATE_DISCONNECTED true
 CONFIGURE_HANDLED_BY_BUILD ON

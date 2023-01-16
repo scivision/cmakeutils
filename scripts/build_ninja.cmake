@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.15)
 
 set(bindir ${CMAKE_CURRENT_LIST_DIR}/../build/ninja_build)
 
@@ -12,8 +12,13 @@ endif()
 if(prefix)
   list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
 endif()
+if(WIN32)
+  list(APPEND args -G "MinGW Makefiles")
+endif()
 
-execute_process(COMMAND ${CMAKE_COMMAND} ${args} -B${bindir} -S${CMAKE_CURRENT_LIST_DIR}/build_ninja
+execute_process(COMMAND ${CMAKE_COMMAND} ${args}
+-B${bindir}
+-S${CMAKE_CURRENT_LIST_DIR}/build_ninja
 RESULT_VARIABLE ret
 )
 
