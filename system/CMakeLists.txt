@@ -1,13 +1,5 @@
-cmake_minimum_required(VERSION 3.14...3.23)
-
-project(systemdemo LANGUAGES NONE)
-
-include(ProcessorCount)
-ProcessorCount(NCORES)
-
 cmake_host_system_information(RESULT OSNAME QUERY OS_NAME)
-#cmake_host_system_information(RESULT NCORES QUERY NUMBER_OF_PHYSICAL_CORES)  # incorrect on Cygwin, says 1.
-
+cmake_host_system_information(RESULT NCORES QUERY NUMBER_OF_PHYSICAL_CORES)
 
 cmake_host_system_information(RESULT VIRTTOT QUERY TOTAL_VIRTUAL_MEMORY)
 cmake_host_system_information(RESULT VIRTFREE QUERY AVAILABLE_VIRTUAL_MEMORY)
