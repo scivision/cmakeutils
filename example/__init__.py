@@ -7,7 +7,6 @@ __all__ = ["cmake_exe"]
 
 
 def cmake_exe() -> str:
-
     cmake = shutil.which("cmake")
     if not cmake:
         # try to help if Homebrew or Ports is not on PATH
@@ -22,7 +21,9 @@ def cmake_exe() -> str:
         raise FileNotFoundError("CMake not found.  Try:\n    pip install cmake")
 
     cmake_version = (
-        subprocess.check_output([cmake, "--version"], text=True).split("\n")[0].split(" ")[2]
+        subprocess.check_output([cmake, "--version"], text=True)
+        .split("\n")[0]
+        .split(" ")[2]
     )
 
     print("Using CMake", cmake_version)

@@ -48,7 +48,9 @@ def build(
         subprocess.check_call([cmake, "--install", str(build_dir)])
 
 
-def build_targets(root: Path, targets: list[str], name: str, cmake_args: list[str] = None):
+def build_targets(
+    root: Path, targets: list[str], name: str, cmake_args: list[str] = None
+):
     """
     build targets from program
     """

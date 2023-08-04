@@ -1,9 +1,6 @@
 # CMake Utils
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/scivision/cmakeutils.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/scivision/cmakeutils/context:python)
-[![PyPi versions](https://img.shields.io/pypi/pyversions/cmakeutils.svg)](https://pypi.python.org/pypi/cmakeutils)
-[![PyPi Download stats](http://pepy.tech/badge/cmakeutils)](http://pepy.tech/project/cmakeutils)
 
 ![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci/badge.svg)
 
@@ -12,7 +9,7 @@ CMake is a powerful and easy to use build system for a wide variety of languages
 * C / C++
 * modern object-oriented Fortran 2008 / 2018
 * Python
-* pMatlab / GNU Octave](https://github.com/scivision/matlab-cmake-mex)
+* [Matlab / GNU Octave](https://github.com/scivision/matlab-cmake-mex)
 
 It's important to use a recent CMake version to be effective and clean with CMake script.
 This can be done via the Python package described below, or from CMake >= 2.8.12 by:

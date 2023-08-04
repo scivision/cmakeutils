@@ -1,6 +1,0 @@
-[flake8]
-max-line-length = 132
-exclude = .git,__pycache__,.eggs/,doc/,docs/,build/,dist/,archive/
-ignore =
-  W503
-  E203
