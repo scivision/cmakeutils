@@ -9,7 +9,6 @@ on:
   push:
     paths:
       - "**.cmake"
-      - "**.py"
       - "**/CMakeLists.txt"
       - ".github/workflows/ci.yml"
 
