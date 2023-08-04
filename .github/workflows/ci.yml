@@ -36,10 +36,6 @@ jobs:
       if: runner.os == 'Windows'
       run: echo "${{ runner.temp }}/msys64/mingw64/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-    - name: Install Gfortran (macOS)
-      if: runner.os == 'macOS'
-      run: brew reinstall gcc
-
     - uses: actions/checkout@v3
 
     - name: Install Ninja
@@ -63,6 +59,10 @@ jobs:
     - name: CMake path (Windows)
       if: runner.os == 'Windows'
       run: echo "${{ runner.temp }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+    - name: Gfortran name (macOS)
+      if: runner.os == 'macOS'
+      run: echo "FC=gfortran-12" >> $GITHUB_PATH
 
 
     - run: cmake --version
