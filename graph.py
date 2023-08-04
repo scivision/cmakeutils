@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import argparse
 from pathlib import Path
+import webbrowser
 
 
 p = argparse.ArgumentParser(description="convert .dot graph to SVG or PNG")
@@ -27,7 +28,7 @@ fmt = P.format
 if not (dot := shutil.which("dot")):
     raise FileNotFoundError("GraphViz Dot program not available.")
 
-path = Path(P.path).expanduser()
+path = Path(P.path).expanduser().resolve(strict=True)
 if not path.is_dir():
     raise NotADirectoryError(path)
 
@@ -38,6 +39,28 @@ except StopIteration:
 
 name_pat = name_file.name
 
+# %% write HTML file to display all graphs
+html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<title>{path} CMake Graphs</title>
+<style>
+img {{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    }}
+</style>
+</head>
+<body>
+<figure>
+<img src="{name_file.name}.{fmt}" alt="graph legend and top-level diagram">
+<figcaption>Graph legend and top-level project diagram</figcaption>
+</figure>
+"""
+
+
 for file in path.glob(name_pat + "*"):
     if file.suffix in (".png", ".svg"):
         continue
@@ -45,6 +68,25 @@ for file in path.glob(name_pat + "*"):
     if out_name != name_pat:
         # remove vestigial name from front
         out_name = out_name[len(name_pat) + 1:]
-    cmd = ["dot", f"-T{fmt}", f"-o{out_name}.{fmt}", str(file.name)]
+    out_file = f"{out_name}.{fmt}"
+
+    cmd = ["dot", f"-T{fmt}", f"-o{out_file}", str(file.name)]
     print(" ".join(cmd))
     subprocess.run(cmd, cwd=path)
+
+    html += f"""
+<figure>
+<img src="{out_file}" alt="{out_name}">
+<figcaption>{out_name}</figcaption>
+</figure>
+"""
+
+html += """
+</body>
+</html>
+"""
+
+html_path = path / "index.html"
+html_path.write_text(html)
+
+webbrowser.open(html_path.as_uri())
