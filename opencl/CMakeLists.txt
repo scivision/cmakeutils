@@ -4,6 +4,8 @@ project(OpenCL-example LANGUAGES C CXX)
 
 enable_testing()
 
+set(CMAKE_CXX_STANDARD 11)
+
 find_package(OpenCL)
 if(NOT OpenCL_FOUND)
   message(STATUS "SKIP: OpenCL")
@@ -26,7 +28,5 @@ endif()
 
 add_executable(opencl_hello hello2.cxx)
 target_link_libraries(opencl_hello OpenCL::OpenCL)
-target_compile_features(opencl_hello PRIVATE cxx_std_11)
 
 add_test(NAME opencl:basic COMMAND opencl_hello)
-set_tests_properties(opencl:basic PROPERTIES TIMEOUT 15)

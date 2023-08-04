@@ -363,7 +363,7 @@ XCTEST
 )
 
   message("======================== ${tgt} ========================")
-  foreach(p ${props})
+  foreach(p IN LISTS props)
     echo_target_property("${t}" "${p}")
   endforeach()
 
@@ -373,7 +373,7 @@ endfunction()
 
 function(echo_target_properties)
   set(tgts ${ARGV})
-  foreach(t ${tgts})
+  foreach(t IN LISTS tgts)
     echo_target("${t}")
   endforeach()
 endfunction()

@@ -14,10 +14,11 @@ from pathlib import Path
 p = argparse.ArgumentParser(description="convert .dot graph to SVG or PNG")
 p.add_argument(
     "path",
-    help="Path to CMake gfx/ directory from cmake -B build --graphviz=gfx/block.dot",
+    help="Project gfx/ directory from cmake -B build --graphviz=gfx/block.dot",
 )
 p.add_argument(
-    "format", help="output format", choices=["svg", "png"], default="svg", nargs="?"
+    "format", help="output format", choices=["svg", "png"],
+    default="svg", nargs="?"
 )
 P = p.parse_args()
 
@@ -43,7 +44,7 @@ for file in path.glob(name_pat + "*"):
     out_name = file.name
     if out_name != name_pat:
         # remove vestigial name from front
-        out_name = out_name[len(name_pat) + 1 :]
-    cmd = ["dot", f"-T{fmt}", "-o", f"{out_name}.{fmt}", str(file.name)]
+        out_name = out_name[len(name_pat) + 1:]
+    cmd = ["dot", f"-T{fmt}", f"-o{out_name}.{fmt}", str(file.name)]
     print(" ".join(cmd))
     subprocess.run(cmd, cwd=path)

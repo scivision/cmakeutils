@@ -1,11 +1,7 @@
-cmake_minimum_required(VERSION 3.20...3.24)
-
-file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/VERSION PROJECT_VERSION
-  REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 16 LENGTH_MAXIMUM 16 LIMIT_COUNT 1)
+cmake_minimum_required(VERSION 3.20...3.27)
 
 project(CMakeDemos
 LANGUAGES C CXX Fortran
-VERSION ${PROJECT_VERSION}
 DESCRIPTION "Demonstrate CMake usage"
 HOMEPAGE_URL https://github.com/scivision/cmake-utils)
 
@@ -21,9 +17,7 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif()
 
 # --- auto-ignore build directory
-if(NOT EXISTS ${PROJECT_BINARY_DIR}/.gitignore)
-  file(WRITE ${PROJECT_BINARY_DIR}/.gitignore "*")
-endif()
+file(GENERATE OUTPUT .gitignore CONTENT "*")
 
 message(STATUS "CMake ${CMAKE_VERSION}")
 
