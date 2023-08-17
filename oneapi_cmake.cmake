@@ -10,42 +10,44 @@ endif()
 
 set(BUILD ${SOURCE}/build_oneapi)
 
-if(DEFINED ENV{ONEAPI_ROOT})
-  message(STATUS "ONEAPI_ROOT is set to $ENV{ONEAPI_ROOT}")
-else()
-  find_file(setvars NAMES setvars.sh setvars.bat
-  PATHS
-    ENV PROGRAMFILES
-    ENV PROGRAMFILES(X86)
-    /opt
-    ENV HOME
-  PATH_SUFFIXES intel/oneapi
-  )
-  if(setvars)
-    message(STATUS "Please run setvars script ${setvars} and then rerun this script.")
-    return()
-  else()
-    message(FATAL_ERROR "Could not find setvars.sh / setvars.bat script, is oneAPI installed?
+message(STATUS "ONEAPI_ROOT: $ENV{ONEAPI_ROOT}")
+message(STATUS "CMPLR_ROOT: $ENV{CMPLR_ROOT}")
+
+find_file(setvars
+NAMES setvars.bat setvars.sh
+HINTS $ENV{ONEAPI_ROOT}
+PATHS
+  $ENV{PROGRAMFILES}/intel/oneapi
+  $ENV{PROGRAMFILES\(X86\)}/intel/oneapi
+  /opt/intel/oneapi
+  $ENV{HOME}/intel/oneapi
+)
+
+if(NOT DEFINED ENV{CMPLR_ROOT})
+  if(nonce OR NOT setvars)
+    # nonce is used to avoid fork-bombing
+    message(FATAL_ERROR "oneAPI: setvars not found -- is oneAPI installed?
 https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2023-2/oneapi-development-environment-setup.html")
   endif()
+
+  set(cfg_cmd ${CMAKE_COMMAND} -Dnonce:BOOL=true -DSOURCE:PATH=${SOURCE} -P ${CMAKE_CURRENT_LIST_FILE})
+
+  if(WIN32)
+    list(PREPEND cfg_cmd ${setvars} &&)
+  else()
+    string(REPLACE ";" " " cfg_cmd "${cfg_cmd}")
+    set(cfg_cmd sh -c "source ${setvars} && ${cfg_cmd}")
+  endif()
+
+  execute_process(COMMAND ${cfg_cmd} COMMAND_ERROR_IS_FATAL ANY)
 endif()
 
-find_program(CMAKE_C_COMPILER
-NAMES icx
-HINTS $ENV{ONEAPI_ROOT}
-)
+set(langs C CXX Fortran)
+set(names icx icpx ifx)
 
-find_program(CMAKE_CXX_COMPILER
-NAMES icpx
-HINTS $ENV{ONEAPI_ROOT}
-)
+foreach(lang name IN ZIP_LISTS langs names)
 
-find_program(CMAKE_Fortran_COMPILER
-NAMES ifx
-HINTS $ENV{ONEAPI_ROOT}
-)
-
-foreach(lang IN ITEMS C CXX Fortran)
+  find_program(CMAKE_${lang}_COMPILER NAMES ${name} HINTS $ENV{CMPLR_ROOT})
 
   if(NOT CMAKE_${lang}_COMPILER)
     message(FATAL_ERROR "oneAPI ${lang}: compiler not found")
@@ -115,15 +117,19 @@ if(NOT CMAKE_MAKE_PROGRAM)
 endif()
 message(STATUS "CMAKE_GENERATOR ${CMAKE_GENERATOR}  ${CMAKE_MAKE_PROGRAM}")
 
-execute_process(COMMAND ${CMAKE_COMMAND}
--S${SOURCE}
--B${BUILD}
--DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
--DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
--DCMAKE_Fortran_COMPILER:FILEPATH=${CMAKE_Fortran_COMPILER}
--DCMAKE_GENERATOR:STRING=${CMAKE_GENERATOR}
--DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}
+execute_process(
+COMMAND ${CMAKE_COMMAND}
+  -S${SOURCE}
+  -B${BUILD}
+  -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
+  -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
+  -DCMAKE_Fortran_COMPILER:FILEPATH=${CMAKE_Fortran_COMPILER}
+  -DCMAKE_GENERATOR:STRING=${CMAKE_GENERATOR}
+  -DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}
 COMMAND_ERROR_IS_FATAL ANY
 )
 
-execute_process(COMMAND ${CMAKE_COMMAND} --build ${BUILD})
+execute_process(
+COMMAND ${CMAKE_COMMAND} --build ${BUILD}
+COMMAND_ERROR_IS_FATAL ANY
+)
