@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
+file(READ ${CMAKE_CURRENT_LIST_DIR}/scripts/versions.json _j)
 string(JSON zstd_version GET ${_j} zstd)
 
 cmake_path(SET prefix "~/zstd-${zstd_version}")
