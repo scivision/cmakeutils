@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(bindir ${CMAKE_CURRENT_LIST_DIR}/../build/ninja_build)
-
-# need to remove cache to avoid corner cases
-file(REMOVE ${bindir}/CMakeCache.txt)
+execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE ret)
+if(NOT ret EQUAL 0)
+  string(RANDOM LENGTH 6 r)
+  set(bindir /tmp/build_${r})
+endif()
 
 set(args)
 if(version)
@@ -11,9 +12,6 @@ if(version)
 endif()
 if(prefix)
   list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
-endif()
-if(WIN32)
-  list(APPEND args -G "MinGW Makefiles")
 endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND} ${args}

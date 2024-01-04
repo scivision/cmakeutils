@@ -4,32 +4,31 @@
 #
 # NOTE: CMake 3.24 needs CMake >= 3.13 to build CMake itself.
 
-cmake_minimum_required(VERSION 3.13...3.25)
+cmake_minimum_required(VERSION 3.13...3.28)
 
 project(cmake LANGUAGES C CXX)
 
 include(ExternalProject)
 
-set(CMAKE_TLS_VERIFY true)
+option(gui "build cmake-gui")
+
+option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
 
 function(full_version)
 
-if(CMAKE_VERSION VERSION_LESS 3.19)
-  file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/../cmake_latest_version.txt version
-    REGEX "^([0-9]+\.[0-9]+\.[0-9]+)" LIMIT_INPUT 12 LENGTH_MAXIMUM 12 LIMIT_COUNT 1
-    )
-else()
-  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
-
-  if(version VERSION_LESS 3.1)
+if(version VERSION_LESS 3.5)
+  if(CMAKE_VERSION VERSION_LESS 3.19)
+    set(version 3.27.9)
+  else()
+    file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
     string(JSON version GET ${_j} cmake latest)
   endif()
+endif()
 
-  # only major.minor specified -- default to latest release known.
-  string(LENGTH ${version} L)
-  if (L LESS 5)  # 3.x or 3.xx
-    string(JSON version GET ${_j} cmake ${version})
-  endif()
+# only major.minor specified -- default to latest release known.
+string(LENGTH ${version} L)
+if (L LESS 5)  # 3.x or 3.xx
+  string(JSON version GET ${_j} cmake ${version})
 endif()
 
 set(version ${version} PARENT_SCOPE)
@@ -51,6 +50,7 @@ set(cmake_args
 -DBUILD_TESTING:BOOL=OFF
 -DCMAKE_BUILD_TYPE=Release
 -DCMAKE_USE_OPENSSL:BOOL=ON
+-DBUILD_QtDialog:BOOL=${gui}
 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
 )
 
@@ -84,4 +84,10 @@ TEST_COMMAND ""
 INACTIVITY_TIMEOUT 60
 UPDATE_DISCONNECTED true
 CONFIGURE_HANDLED_BY_BUILD ON
+USES_TERMINAL_DOWNLOAD true
+USES_TERMINAL_UPDATE true
+USES_TERMINAL_CONFIGURE true
+USES_TERMINAL_BUILD true
+USES_TERMINAL_INSTALL true
+USES_TERMINAL_TEST true
 )
