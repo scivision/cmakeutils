@@ -1,41 +1,68 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.19...3.28)
 
-if(NOT bindir)
-  find_program(mktemp NAMES mktemp)
-  if(mktemp)
-    execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE)
-  else()
-    string(RANDOM LENGTH 12 _s)
-    if(DEFINED ENV{TEMP})
-      set(bindir $ENV{TEMP}/${_s})
-    elseif(IS_DIRECTORY "/tmp")
-      set(bindir /tmp/${_s})
-    else()
-      set(bindir ${CMAKE_CURRENT_BINARY_DIR}/${_s})
-    endif()
+include(FetchContent)
+
+option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
+
+set(host https://github.com/ninja-build/ninja/releases/download/)
+
+if(NOT version)
+  file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
+  string(JSON version GET ${_j} ninja)
+endif()
+
+if(NOT prefix)
+  get_filename_component(prefix ~/ninja-${version} ABSOLUTE)
+endif()
+
+string(APPEND host "v${version}/")
+
+if(APPLE)
+  set(stem ninja-mac)
+elseif(WIN32)
+  set(stem ninja-win)
+elseif(UNIX)
+  execute_process(COMMAND uname -m
+  OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY
+  )
+  if(arch STREQUAL "x86_64")
+    set(stem ninja-linux)
+  elseif(arch STREQUAL "aarch64")
+    set(stem ninja-linux-aarch64)
   endif()
 endif()
 
-set(args)
-if(version)
-  list(APPEND args -Dversion=${version})
-endif()
-if(prefix)
-  list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
-endif()
-if(WIN32)
-  list(APPEND args -G "MinGW Makefiles")
+if(NOT stem)
+  message(FATAL_ERROR "unknown CPU arch ${arch}. Try building Ninja from source:
+    cmake -P ${CMAKE_CURRENT_LIST_DIR}/build_ninja.cmake")
 endif()
 
-execute_process(
-COMMAND ${CMAKE_COMMAND} ${args}
--B${bindir}
--S${CMAKE_CURRENT_LIST_DIR}/install_ninja
-RESULT_VARIABLE ret
+set(url ${host}${stem}.zip)
+
+FetchContent_Populate(ninja
+URL ${url}
+TLS_VERIFY ${CMAKE_TLS_VERIFY}
+UPDATE_DISCONNECTED true
+INACTIVITY_TIMEOUT 60
+SOURCE_DIR ${prefix}
 )
 
-if(ret EQUAL 0)
-  message(STATUS "Ninja install complete.")
-else()
-  execute_process(COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/build_ninja.cmake)
+find_program(exe
+NAMES ninja
+HINTS ${ninja_SOURCE_DIR}
+NO_DEFAULT_PATH
+)
+if(NOT exe)
+  message(FATAL_ERROR "failed to download Ninja ${version}")
+endif()
+
+get_filename_component(ninja_filename ${exe} NAME)
+
+
+message(STATUS "installed Ninja ${version} to ${prefix}")
+
+set(ep $ENV{PATH})
+if(NOT ep MATCHES "${prefix}")
+  message(STATUS "add to environment variable PATH ${prefix}")
 endif()
