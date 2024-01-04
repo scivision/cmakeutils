@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18...3.24)
+cmake_minimum_required(VERSION 3.18...3.28)
 
 project(FetchContent_Demo
 LANGUAGES Fortran
@@ -14,7 +14,7 @@ GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
 GIT_TAG v1.4.0
 GIT_SHALLOW true
 INACTIVITY_TIMEOUT 60
-TLS_VERIFY true
+TLS_VERIFY "${CMAKE_TLS_VERIFY}"
 UPDATE_DISCONNECTED true  # avoid constant rebuild
 )
 
@@ -31,7 +31,7 @@ FetchContent_Declare(demodata
 URL https://raw.githubusercontent.com/scivision/cmake-fetchcontent/main/Octicons-mark-github.svg
 URL_HASH SHA256=ed5b640553973a1739d5dfddbf9e2c3db64bcd7181f89e99db42e221e295cc3a
 INACTIVITY_TIMEOUT 60
-TLS_VERIFY true
+TLS_VERIFY "${CMAKE_TLS_VERIFY}"
 UPDATE_DISCONNECTED true
 DOWNLOAD_NO_EXTRACT true
 DOWNLOAD_NAME ${CMAKE_CURRENT_BINARY_DIR}/octocat.svg

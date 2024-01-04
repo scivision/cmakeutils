@@ -1,15 +1,15 @@
 {
-  "version": 3,
+  "version": 6,
 
 "configurePresets": [
 {
-  "name": "multi",
-  "binaryDir": "${sourceDir}/build",
+  "name": "multi", "inherits": "default",
   "displayName": "Ninja Multi-Config",
   "generator": "Ninja Multi-Config"
 },
 {
-  "name": "phony"
+  "name": "default",
+  "binaryDir": "${sourceDir}/build"
 }
 ],
 "buildPresets": [
@@ -27,7 +27,7 @@
 "testPresets": [
 {
   "name": "default",
-  "configurePreset": "phony",
+  "configurePreset": "default",
   "output": {
     "outputOnFailure": true,
     "verbosity": "default"
