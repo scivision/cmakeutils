@@ -34,33 +34,32 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Ninja
-      run: cmake -Dprefix:PATH=${{ runner.temp }} -P scripts/install_ninja.cmake
+      run: cmake -Dprefix:PATH=~/ninja -P scripts/install_ninja.cmake
 
     - name: Install CMake
-      run: cmake -Dprefix:PATH=${{ runner.temp }} -P scripts/install_cmake.cmake
+      run: cmake -Dprefix:PATH=~/cmake -P scripts/install_cmake.cmake
 
     - name: CMake path (linux)
       if: runner.os == 'Linux'
-      run: echo "${{ runner.temp }}:${{ runner.temp }}/bin" >> $GITHUB_PATH
+      run: echo "$HOME/ninja:$HOME/cmake/bin" >> $GITHUB_PATH
 
     - name: CMake path (macOS)
       if: runner.os == 'macOS'
-      run: echo "${{ runner.temp }}:${{ runner.temp }}/CMake.app/Contents/bin" >> $GITHUB_PATH
+      run: echo "$HOME/ninja:$HOME/cmake/CMake.app/Contents/bin" >> $GITHUB_PATH
 
     - name: CMake path (Windows)
       if: runner.os == 'Windows'
-      run: echo "${{ runner.temp }};${{ runner.temp }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      run: echo "$env:userprofile/ninja;$env:userprofile/cmake/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Gfortran name (macOS)
       if: runner.os == 'macOS'
       run: echo "FC=gfortran-13" >> $GITHUB_PATH
 
     - run: echo $PATH
-    - run: ls ${{ runner.temp }}
 
     - run: cmake --version
     - run: ninja --version
 
-    - run: cmake -G Ninja -B build --install-prefix=${{ runner.temp }}
+    - run: cmake -G Ninja -B build
     - run: cmake --build build
     - run: ctest --test-dir build --preset default
