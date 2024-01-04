@@ -9,7 +9,7 @@
 # specify install prefix
 #   cmake -Dprefix=~/cmake -P nightly.cmake
 
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
 
@@ -75,8 +75,17 @@ set(pat ">(cmake-[1-9]+\.[0-9]+\.${date}-g[a-f0-9]+-${os}-${arch}${suffix})</a>"
 
 message(VERBOSE "${pat}")
 
+set(dev_url "https://cmake.org/files/dev/")
 #if(NOT EXISTS index.html)
-file(DOWNLOAD "https://cmake.org/files/dev/" index.html INACTIVITY_TIMEOUT 15 TIMEOUT 60)
+file(DOWNLOAD ${dev_url} index.html SHOW_PROGRESS STATUS ret)
+list(GET ret 0 status)
+if(NOT status EQUAL 0)
+  list(GET ret 1 msg)
+  message(FATAL_ERROR "download ${dev_url} failed.
+  Return code: ${status}
+  Error: ${msg}"
+  )
+endif()
 #endif()
 
 file(STRINGS index.html lines REGEX "${pat}")
@@ -98,7 +107,5 @@ message(STATUS "${url} => ${prefix}")
 
 FetchContent_Populate(cmake
 URL ${url}
-TLS_VERIFY ${CMAKE_TLS_VERIFY}
-INACTIVITY_TIMEOUT 60
 SOURCE_DIR ${prefix}
 )
