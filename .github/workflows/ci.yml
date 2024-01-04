@@ -50,9 +50,13 @@ jobs:
     - name: Install CMake
       run: cmake -Dprefix:PATH=${{ runner.temp }} -P scripts/install_cmake.cmake
 
-    - name: CMake path (unix)
-      if: runner.os != 'Windows'
+    - name: CMake path (linux)
+      if: runner.os == 'Linux'
       run: echo "${{ runner.temp }}/bin" >> $GITHUB_PATH
+
+    - name: CMake path (macOS)
+      if: runner.os == 'macOS'
+      run: echo "${{ runner.temp }}/CMake.app/Contents/bin" >> $GITHUB_PATH
 
     - name: CMake path (Windows)
       if: runner.os == 'Windows'
@@ -64,6 +68,7 @@ jobs:
 
 
     - run: cmake --version
+    - run: ninja --version
 
     - run: cmake -G Ninja -B build --install-prefix=${{ runner.temp }}
     - run: cmake --build build
