@@ -55,6 +55,8 @@ jobs:
       if: runner.os == 'macOS'
       run: echo "FC=gfortran-13" >> $GITHUB_PATH
 
+    - run: echo $PATH
+    - run: ls ${{ runner.temp }}
 
     - run: cmake --version
     - run: ninja --version
