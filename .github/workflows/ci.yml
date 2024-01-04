@@ -58,4 +58,8 @@ jobs:
       run: cmake -G Ninja --preset default -Dfortran=no
 
     - run: cmake --build --preset release
+      env:
+        FC: gfortran-13
+      # external project needs FC on build step
+
     - run: ctest --preset release
