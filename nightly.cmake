@@ -20,23 +20,10 @@ if(NOT date)
   math(EXPR date "${date} - 1")
 endif()
 
-# rolling window for dates one year. Updates to new CMake version when first release occurs.
-if(date GREATER 20231002)
-  set(version "3.28")
-elseif(date GREATER 20230605)
-  set(version "3.27")
-elseif(date GREATER 20230131)
-  set(version "3.26")
-else()
-  set(version "3.25")
-endif()
-
-set(s "cmake-${version}.${date}")
 
 if(NOT prefix)
-  set(prefix "~/${s}")
+  set(prefix "~/cmake-${date}")
 endif()
-
 file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 
 if(WIN32)
@@ -84,7 +71,7 @@ else()
   set(suffix .zip)
 endif()
 
-set(pat ">(${s}-.*-${os}-${arch}${suffix})</a>")
+set(pat ">(cmake-[1-9]+\.[0-9]+\.${date}-g[a-f0-9]+-${os}-${arch}${suffix})</a>")
 
 message(VERBOSE "${pat}")
 
