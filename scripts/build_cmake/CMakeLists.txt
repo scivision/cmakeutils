@@ -41,7 +41,7 @@ endfunction(full_version)
 full_version()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  get_filename_component(p ~/cmake-${version} ABSOLUTE)
+  get_filename_component(p "~/cmake-${version}" ABSOLUTE)
   set(CMAKE_INSTALL_PREFIX ${p} CACHE PATH "install path" FORCE)
 endif()
 

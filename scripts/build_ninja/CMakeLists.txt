@@ -18,7 +18,7 @@ if(NOT version)
 endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  get_filename_component(p ~ ABSOLUTE)
+  get_filename_component(p "~/ninja-${version}" ABSOLUTE)
   set(CMAKE_INSTALL_PREFIX ${p} CACHE PATH "install path" FORCE)
 endif()
 

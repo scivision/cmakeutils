@@ -12,8 +12,9 @@ if(NOT version)
 endif()
 
 if(NOT prefix)
-  get_filename_component(prefix ~/ninja-${version} ABSOLUTE)
+  set(prefix ~/ninja-${version})
 endif()
+get_filename_component(prefix ${prefix} ABSOLUTE)
 
 string(APPEND host "v${version}/")
 

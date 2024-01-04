@@ -244,8 +244,9 @@ endfunction(cpu_arch)
 full_version()
 
 if(NOT prefix)
-  get_filename_component(prefix ~/cmake-${version} ABSOLUTE)
+  set(prefix ~/cmake-${version})
 endif()
+get_filename_component(prefix ${prefix} ABSOLUTE)
 
 message(STATUS "Using CMake ${CMAKE_VERSION} to install CMake ${version} to ${prefix}")
 
