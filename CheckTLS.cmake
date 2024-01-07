@@ -5,7 +5,7 @@ function(check_tls)
 # this is a publicly-usable service (as per their TOS)
 
 set(url https://www.howsmyssl.com/a/check)
-set(temp ${PROJECT_BINARY_DIR}/check_tls.json)
+set(temp ${CMAKE_BINARY_DIR}/check_tls.json)
 
 message(STATUS "CheckTLS: ${url} => ${temp}")
 file(DOWNLOAD ${url} ${temp} INACTIVITY_TIMEOUT 5 TLS_VERIFY on)
@@ -14,8 +14,12 @@ file(READ ${temp} json)
 string(JSON rating ERROR_VARIABLE e GET ${json} rating)
 
 message(STATUS "CMake ${CMAKE_VERSION} TLS status: ${rating}")
-if(NOT rating STREQUAL "Probably Okay")
-  message(WARNING "TLS seems to be broken. Download will probably fail.  ${rating}")
+if(rating STREQUAL "Probably Okay")
+  message(DEBUG "${json}")
+else()
+  message(WARNING "TLS seems to be broken. Download will probably fail.
+  Rating: ${rating}")
+  message(NOTICE "${json}")
 endif()
 
 endfunction(check_tls)
