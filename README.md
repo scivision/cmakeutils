@@ -1,8 +1,7 @@
 # CMake Utils
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1488084.svg)](https://doi.org/10.5281/zenodo.1488084)
-
-![Actions Status](https://github.com/scivision/cmakeutils/workflows/ci/badge.svg)
+[![ci](https://github.com/scivision/cmakeutils/actions/workflows/ci.yml/badge.svg)](https://github.com/scivision/cmakeutils/actions/workflows/ci.yml)
 
 CMake is a powerful and easy to use build system for a wide variety of languages including:
 
