@@ -45,6 +45,13 @@ Convert the resulting index.html with the SVGs to PDF like:
 cmake -Dhtml=~/myprog/gfx/index.html -P html2pdf.cmake
 ```
 
+## CMake regular expressions
+
+CMake [regular expressions](https://cmake.org/cmake/help/latest/command/string.html#regex-specification)
+have a distinct syntax tied to the origins of CMake syntax in the late 1990s.
+The CMake regex syntax is not the same as Python, Perl, etc.
+We give a few examples under [regex](./regex).
+
 ## Build CMake
 
 To compile CMake from source, for example on BSD or ARM 32-bit using existing CMake:

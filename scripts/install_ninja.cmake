@@ -45,7 +45,6 @@ FetchContent_Populate(ninja
 URL ${url}
 TLS_VERIFY ${CMAKE_TLS_VERIFY}
 UPDATE_DISCONNECTED true
-INACTIVITY_TIMEOUT 60
 SOURCE_DIR ${prefix}
 )
 

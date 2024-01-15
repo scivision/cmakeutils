@@ -11,7 +11,6 @@ set(OUTFN ${CMAKE_CURRENT_BINARY_DIR}/github-mark.svg)
 if(NOT EXISTS ${OUTFN})
   file(DOWNLOAD https://zenodo.org/record/1486184/files/github-mark.zip?download=1 ${ZIPFN}
   EXPECTED_HASH MD5=49f6a914ea33912471512ac9228c6923
-  INACTIVITY_TIMEOUT 60
   )
 
   # this is OS-agnostic
@@ -19,8 +18,8 @@ if(NOT EXISTS ${OUTFN})
 endif()
 
 # -- check extracted (or any other) file
-file(MD5 ${OUTFN} CHKSUM)
+file(MD5 ${OUTFN} c)
 
-if(NOT ${CHKSUM} STREQUAL 07883e93734b98cae0f7b9c55d287250)
+if(NOT ${c} STREQUAL "07883e93734b98cae0f7b9c55d287250")
   message(WARNING "MD5 checksum did not match ${OUTFN}")
 endif()

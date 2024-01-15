@@ -22,7 +22,7 @@ set(archive ${bindir}/${name})
 
 if(NOT EXISTS ${archive})
   message(STATUS "${url} => ${archive}")
-  file(DOWNLOAD ${url} ${archive} INACTIVITY_TIMEOUT 60)
+  file(DOWNLOAD ${url} ${archive})
   file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${bindir})
 endif()
 

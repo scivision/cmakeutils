@@ -74,7 +74,7 @@ set(ninja_url "https://github.com/ninja-build/ninja/releases/download/v1.11.1/${
 set(ninja_zip ${BUILD}/${ninja_file})
 if(NOT EXISTS ${ninja_zip})
   message(STATUS "Did not find Ninja or Make, downloading ${ninja_url} => ${ninja_zip}")
-  file(DOWNLOAD ${ninja_url} ${ninja_zip} TLS_VERIFY true INACTIVITY_TIMEOUT 30 SHOW_PROGRESS)
+  file(DOWNLOAD ${ninja_url} ${ninja_zip} TLS_VERIFY true SHOW_PROGRESS)
 endif()
 
 file(ARCHIVE_EXTRACT INPUT ${ninja_zip} DESTINATION ${BUILD} VERBOSE)

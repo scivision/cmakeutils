@@ -6,6 +6,9 @@ DESCRIPTION "Demonstrate that CMake SSL is installed and working with FetchConte
 )
 
 enable_testing()
+
+option(CMAKE_TLS_VERIFY "Verify SSL certificates" ON)
+
 # --- sub-projects
 include(FetchContent)
 
@@ -13,7 +16,6 @@ FetchContent_Declare(child
 GIT_REPOSITORY https://github.com/scivision/cmake-fetchcontent.git
 GIT_TAG v1.4.0
 GIT_SHALLOW true
-INACTIVITY_TIMEOUT 60
 TLS_VERIFY "${CMAKE_TLS_VERIFY}"
 UPDATE_DISCONNECTED true  # avoid constant rebuild
 )
@@ -30,7 +32,6 @@ add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 FetchContent_Declare(demodata
 URL https://raw.githubusercontent.com/scivision/cmake-fetchcontent/main/Octicons-mark-github.svg
 URL_HASH SHA256=ed5b640553973a1739d5dfddbf9e2c3db64bcd7181f89e99db42e221e295cc3a
-INACTIVITY_TIMEOUT 60
 TLS_VERIFY "${CMAKE_TLS_VERIFY}"
 UPDATE_DISCONNECTED true
 DOWNLOAD_NO_EXTRACT true

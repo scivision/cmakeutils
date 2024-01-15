@@ -8,7 +8,7 @@ set(url https://www.howsmyssl.com/a/check)
 set(temp ${CMAKE_BINARY_DIR}/check_tls.json)
 
 message(STATUS "CheckTLS: ${url} => ${temp}")
-file(DOWNLOAD ${url} ${temp} INACTIVITY_TIMEOUT 5 TLS_VERIFY on)
+file(DOWNLOAD ${url} ${temp} TLS_VERIFY on)
 
 file(READ ${temp} json)
 string(JSON rating ERROR_VARIABLE e GET ${json} rating)

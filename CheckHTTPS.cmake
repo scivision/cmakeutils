@@ -64,7 +64,6 @@ function(check_url url ok)
 file(DOWNLOAD ${url}
 LOG log
 STATUS stat
-INACTIVITY_TIMEOUT 15
 )
 message(STATUS "${url}  ${stat}")
 

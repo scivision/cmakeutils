@@ -129,7 +129,7 @@ set(hash_url ${url_stem}/${hash_name})
 set(hash_file ${prefix}/${hash_name})
 message(STATUS "CMake ${version} hash: ${hash_url} => ${hash_file}")
 
-file(DOWNLOAD ${hash_url} ${hash_file} INACTIVITY_TIMEOUT 60 STATUS ret LOG log)
+file(DOWNLOAD ${hash_url} ${hash_file} STATUS ret LOG log)
 list(GET ret 0 stat)
 if(NOT stat EQUAL 0)
   list(GET ret 1 err)
@@ -266,7 +266,7 @@ else()
   set(json_url ${url_stem}/cmake-${version}-files-v1.json)
 
   message(STATUS "CMake ${version} metadata: ${json_url} => ${json_file}")
-  file(DOWNLOAD ${json_url} ${json_file} INACTIVITY_TIMEOUT 60 STATUS ret LOG log)
+  file(DOWNLOAD ${json_url} ${json_file} STATUS ret LOG log)
   list(GET ret 0 stat)
   if(NOT stat EQUAL 0)
     list(GET ret 1 err)
@@ -283,7 +283,6 @@ URL ${url_stem}/${archive}
 ${_hash}
 TLS_VERIFY ${CMAKE_TLS_VERIFY}
 UPDATE_DISCONNECTED true
-INACTIVITY_TIMEOUT 60
 SOURCE_DIR ${prefix}
 )
 
