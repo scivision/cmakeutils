@@ -6,9 +6,17 @@ cmake_minimum_required(VERSION 3.12)
 message(STATUS "Extract major.minor version from a version string")
 
 set(x 1.2.3.4 1.2.3 1.2 1)
+
 message(STATUS "before: ${x}")
-list(TRANSFORM x REPLACE "^([0-9]+\\.[0-9]+).*" "\\1")
-message(STATUS "after: ${x}")
+
+list(TRANSFORM x REPLACE "^([0-9]+\\.[0-9]+).*" "\\1" OUTPUT_VARIABLE y)
+message(STATUS "list(TRANSFORM) ${y}")
+
+foreach(z IN LISTS x)
+  string(REGEX REPLACE "^([0-9]+\\.[0-9]+).*" "\\1" z "${z}")
+  message(STATUS "string(REGEX REPLACE) ${z}")
+endforeach()
+
 
 # SELECTOR examples
 
