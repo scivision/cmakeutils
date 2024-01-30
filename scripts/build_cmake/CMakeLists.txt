@@ -4,7 +4,7 @@
 #
 # NOTE: CMake 3.24 needs CMake >= 3.13 to build CMake itself.
 
-cmake_minimum_required(VERSION 3.13...3.28)
+cmake_minimum_required(VERSION 3.13...3.29)
 
 project(cmake LANGUAGES C CXX)
 
@@ -18,7 +18,7 @@ function(full_version)
 
 if(version VERSION_LESS 3.5)
   if(CMAKE_VERSION VERSION_LESS 3.19)
-    set(version 3.27.9)
+    set(version 3.28.2)
   else()
     file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
     string(JSON version GET ${_j} cmake latest)

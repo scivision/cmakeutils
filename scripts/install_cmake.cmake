@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11...3.28)
+cmake_minimum_required(VERSION 3.11...3.29)
 
 include(FetchContent)
 
@@ -8,7 +8,7 @@ function(full_version)
 
 if(CMAKE_VERSION VERSION_LESS 3.19)
   if(version VERSION_LESS 3.6)
-    set(version 3.27.9)
+    set(version 3.28.2)
   endif()
 else()
   file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
