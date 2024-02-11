@@ -16,19 +16,20 @@ option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
 
 function(full_version)
 
-if(version VERSION_LESS 3.5)
+if(version VERSION_LESS 3.6)
   if(CMAKE_VERSION VERSION_LESS 3.19)
-    set(version 3.28.2)
+    message(FATAL_ERROR "please set CMake version to install like
+    cmake -Dversion=\"3.27.9\" -P ${CMAKE_CURRENT_LIST_FILE}")
   else()
     file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
-    string(JSON version GET ${_j} cmake latest)
+    string(JSON version GET ${_j} "cmake" "latest")
   endif()
 endif()
 
 # only major.minor specified -- default to latest release known.
 string(LENGTH ${version} L)
 if (L LESS 5)  # 3.x or 3.xx
-  string(JSON version GET ${_j} cmake ${version})
+  string(JSON version GET ${_j} "cmake" "${version}")
 endif()
 
 set(version ${version} PARENT_SCOPE)

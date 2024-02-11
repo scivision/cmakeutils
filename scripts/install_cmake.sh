@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
 # Download / extract CMake binary archive for CMake >= 3.20
 # On Windows, this works from Git Bash or MSYS2 for native Windows.
+# Example:
+#  ./install_cmake.sh ~/cmake-3.28.3 3.28.3
 
 set -o errexit
 
-if [[ $# -lt 1 ]]; then
-[[ "$OSTYPE" == "msys" ]] && prefix=$USERPROFILE || prefix=$HOME
-else
-prefix=$1
-fi
-[[ -z "${prefix+x}" ]] && { echo "Usage: $0 install_prefix_path" >&2; exit 1; }
+[[ $# -lt 2 ]] && { echo "Usage: $0 install_prefix_path cmake_version" >&2; exit 1; }
 
-[[ $# -lt 2 ]] && version="3.28.2" || version=$2
+prefix=$1
+version=$2
 
 # determine OS and arch
 stub=""
