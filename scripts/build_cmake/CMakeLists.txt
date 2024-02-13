@@ -14,22 +14,19 @@ option(gui "build cmake-gui")
 
 option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
 
-function(full_version)
+function(full_version version_req)
 
-if(version VERSION_LESS 3.6)
+string(LENGTH "${version_req}" L)
+if (L LESS 5)  # 3.x or 3.xx, read latest full version for that minor version
   if(CMAKE_VERSION VERSION_LESS 3.19)
-    message(FATAL_ERROR "please set CMake version to install like
+    message(FATAL_ERROR "When using CMake < 3.19, specify full cmake version to download like:
     cmake -Dversion=\"3.27.9\" -P ${CMAKE_CURRENT_LIST_FILE}")
-  else()
-    file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json _j)
-    string(JSON version GET ${_j} "cmake" "latest")
   endif()
+  file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
+  if(L LESS 1)  # version not specified
+    string(JSON version_req GET ${_j} "cmake" "latest")
 endif()
-
-# only major.minor specified -- default to latest release known.
-string(LENGTH ${version} L)
-if (L LESS 5)  # 3.x or 3.xx
-  string(JSON version GET ${_j} "cmake" "${version}")
+  string(JSON version GET ${_j} "cmake" "${version_req}")
 endif()
 
 set(version ${version} PARENT_SCOPE)
@@ -38,7 +35,7 @@ endfunction(full_version)
 
 # --- main program ---
 
-full_version()
+full_version("${version}")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   get_filename_component(p "~/cmake-${version}" ABSOLUTE)
