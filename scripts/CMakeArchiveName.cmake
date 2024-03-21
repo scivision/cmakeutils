@@ -53,7 +53,7 @@ or use Snap:
 endfunction(unknown_archive)
 
 
-function(cmake_archive_name version file_json arch out)
+function(cmake_archive_name version file_json arch prefix out)
 # CMake >= 3.20 dynamic filename
 
 if(WIN32)
@@ -200,3 +200,30 @@ endif()
 set(${out} cmake-${version}-${file_arch}${suffix} PARENT_SCOPE)
 
 endfunction(cmake_legacy_name)
+
+
+function(cmake_binary_url version arch prefix url_stem)
+
+if(CMAKE_VERSION VERSION_LESS 3.19 OR version VERSION_LESS 3.20)
+  cmake_legacy_name("${arch}" "archive")
+else()
+  set(json_name cmake-${version}-files-v1.json)
+  set(json_file ${prefix}/${json_name})
+  set(json_url ${url_stem}/cmake-${version}-files-v1.json)
+
+  message(STATUS "CMake ${version} metadata: ${json_url} => ${json_file}")
+  file(DOWNLOAD ${json_url} ${json_file} STATUS ret LOG log)
+  list(GET ret 0 stat)
+  if(NOT stat EQUAL 0)
+    list(GET ret 1 err)
+    message(FATAL_ERROR "CMake metadata download failed: ${stat} ${err} ${log}")
+  endif()
+
+  cmake_archive_name(${version} ${json_file} "${arch}" "${prefix}" "archive")
+
+  set(cmake_hash URL_HASH SHA256=${sha256} PARENT_SCOPE)
+endif()
+
+set(archive ${archive} PARENT_SCOPE)
+
+endfunction(cmake_binary_url)
