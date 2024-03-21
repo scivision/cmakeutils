@@ -21,7 +21,11 @@ RESULT_VARIABLE ret
 )
 
 # avoid overloading CPU/RAM with extreme GNU Make --parallel
-cmake_host_system_information(RESULT N QUERY NUMBER_OF_PHYSICAL_CORES)
+if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+  set(N $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+else()
+  cmake_host_system_information(RESULT N QUERY NUMBER_OF_PHYSICAL_CORES)
+endif()
 
 if(ret EQUAL 0)
   message(STATUS "CMake build with ${N} workers")
