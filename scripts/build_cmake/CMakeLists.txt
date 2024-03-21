@@ -3,35 +3,18 @@
 # builds and installs a recent CMake version
 #
 # NOTE: CMake 3.24 needs CMake >= 3.13 to build CMake itself.
+# CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
 
-cmake_minimum_required(VERSION 3.13...3.19)
+cmake_minimum_required(VERSION 3.17)
 
 project(cmake LANGUAGES C CXX)
 
 include(ExternalProject)
+include(${CMAKE_CURRENT_LIST_DIR}/../CMakeArchiveName.cmake)
 
 option(gui "build cmake-gui")
 
 option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
-
-function(full_version version_req)
-
-string(LENGTH "${version_req}" L)
-if (L LESS 5)  # 3.x or 3.xx, read latest full version for that minor version
-  if(CMAKE_VERSION VERSION_LESS 3.19)
-    message(FATAL_ERROR "When using CMake < 3.19, specify full cmake version to download like:
-    cmake -Dversion=\"3.27.9\" -P ${CMAKE_CURRENT_LIST_FILE}")
-  endif()
-  file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
-  if(L LESS 1)  # version not specified
-    string(JSON version_req GET ${_j} "cmake" "latest")
-endif()
-  string(JSON version GET ${_j} "cmake" "${version_req}")
-endif()
-
-set(version ${version} PARENT_SCOPE)
-
-endfunction(full_version)
 
 # --- main program ---
 
