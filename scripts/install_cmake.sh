@@ -2,7 +2,7 @@
 # Download / extract CMake binary archive for CMake >= 3.20
 # On Windows, this works from Git Bash or MSYS2 for native Windows.
 # Example:
-#  ./install_cmake.sh ~/cmake-3.28.3 3.28.3
+#  ./install_cmake.sh ~/cmake-3.28.4 3.28.4
 
 set -o errexit
 

@@ -4,7 +4,7 @@
 #
 # NOTE: CMake 3.24 needs CMake >= 3.13 to build CMake itself.
 
-cmake_minimum_required(VERSION 3.13...3.29)
+cmake_minimum_required(VERSION 3.13...3.19)
 
 project(cmake LANGUAGES C CXX)
 

@@ -6,7 +6,6 @@ if(NOT ret EQUAL 0)
   set(bindir /tmp/build_${r})
 endif()
 
-set(args)
 if(version)
   list(APPEND args -Dversion=${version})
 endif()
