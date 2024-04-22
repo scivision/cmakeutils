@@ -15,7 +15,7 @@ set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)
 option(fortran "build Fortran" ON)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/local CACHE PATH "install path" FORCE)
+  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${PROJECT_BINARY_DIR}/local")
 endif()
 
 # --- auto-ignore build directory
