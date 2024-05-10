@@ -18,9 +18,10 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    env:
+      FC: gfortran-13
+
     steps:
-
-
     - uses: actions/checkout@v4
 
     - name: Install Ninja
@@ -48,18 +49,8 @@ jobs:
 
 
     - name: configure cmake
-      if: runner.os != 'Windows'
       run: cmake -G Ninja --preset default
-      env:
-        FC: gfortran-13
-
-    - name: configure cmake (Windows)
-      if: runner.os == 'Windows'
-      run: cmake -G Ninja --preset default -Dfortran=no
 
     - run: cmake --build --preset release
-      env:
-        FC: gfortran-13
-      # external project needs FC on build step
 
     - run: ctest --preset release

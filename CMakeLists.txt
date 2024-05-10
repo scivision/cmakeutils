@@ -12,10 +12,13 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 option(CMAKE_TLS_VERIFY "Verify TLS certificates" ON)
 set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)
 
-option(fortran "build Fortran" ON)
-
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${PROJECT_BINARY_DIR}/local")
+include(CheckLanguage)
+check_language(Fortran)
+if(CMAKE_Fortran_COMPILER)
+  set(fortran on)
+  enable_language(Fortran)
+else()
+  set(fortran off)
 endif()
 
 # --- auto-ignore build directory
@@ -26,8 +29,7 @@ message(STATUS "CMake ${CMAKE_VERSION}")
 add_subdirectory(autotools)
 
 if(fortran)
-add_subdirectory(fetchContent)
-add_subdirectory(externalProject)
+  add_subdirectory(fetchContent)
 endif()
 
 add_subdirectory(zip)
