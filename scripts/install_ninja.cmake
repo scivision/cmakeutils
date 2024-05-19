@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.19...3.30)
 
 include(FetchContent)
 
@@ -15,6 +15,10 @@ if(NOT prefix)
   set(prefix ~/ninja-${version})
 endif()
 get_filename_component(prefix ${prefix} ABSOLUTE)
+
+file(MAKE_DIRECTORY ${prefix})
+
+message(STATUS "CMake ${CMAKE_VERSION}: prefix ${prefix}")
 
 string(APPEND host "v${version}/")
 
@@ -44,7 +48,6 @@ set(url ${host}${stem}.zip)
 FetchContent_Populate(ninja
 URL ${url}
 TLS_VERIFY ${CMAKE_TLS_VERIFY}
-UPDATE_DISCONNECTED true
 SOURCE_DIR ${prefix}
 )
 
@@ -56,9 +59,6 @@ NO_DEFAULT_PATH
 if(NOT exe)
   message(FATAL_ERROR "failed to download Ninja ${version}")
 endif()
-
-get_filename_component(ninja_filename ${exe} NAME)
-
 
 message(STATUS "installed Ninja ${version} to ${prefix}")
 

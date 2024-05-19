@@ -1,6 +1,7 @@
 // modified from https://gist.github.com/ddemidov/2925717 Denis Demidov @ddemidov
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <string>
 
 #define __CL_ENABLE_EXCEPTIONS

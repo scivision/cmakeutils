@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.19)
 
 execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE ret)
 if(NOT ret EQUAL 0)
@@ -16,21 +16,9 @@ endif()
 execute_process(COMMAND ${CMAKE_COMMAND} ${args}
 -B${bindir}
 -S${CMAKE_CURRENT_LIST_DIR}/build_ninja
-RESULT_VARIABLE ret
+COMMAND_ERROR_IS_FATAL ANY
 )
 
-if(ret EQUAL 0)
-  message(STATUS "Ninja build")
-else()
-  message(FATAL_ERROR "Ninja failed to configure.")
-endif()
-
-execute_process(COMMAND ${CMAKE_COMMAND} --build ${bindir} --parallel
-RESULT_VARIABLE ret
+execute_process(COMMAND ${CMAKE_COMMAND} --build ${bindir}
+COMMAND_ERROR_IS_FATAL ANY
 )
-
-if(ret EQUAL 0)
-  message(STATUS "Ninja install complete.")
-else()
-  message(FATAL_ERROR "Ninja failed to build and install.")
-endif()

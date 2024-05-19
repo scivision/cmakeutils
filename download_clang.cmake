@@ -11,7 +11,7 @@ message(STATUS "CMake ${CMAKE_VERSION}")
 
 set(head clang+llvm)
 
-set(version 18.1.1)
+set(version 18.1.6)
 
 if(NOT prefix)
   set(prefix ~/clang-${version})

@@ -1,6 +1,6 @@
 # CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
 
-cmake_minimum_required(VERSION 3.17...3.29)
+cmake_minimum_required(VERSION 3.17...3.30)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
