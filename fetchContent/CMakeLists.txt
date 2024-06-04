@@ -9,6 +9,8 @@ enable_testing()
 
 option(CMAKE_TLS_VERIFY "Verify SSL certificates" ON)
 
+set(FETCHCONTENT_QUIET OFF)
+
 # --- sub-projects
 include(FetchContent)
 
@@ -29,7 +31,7 @@ target_link_libraries(test_timestwo_fc PRIVATE multiplier)
 add_test(NAME TimesTwoFetch COMMAND test_timestwo_fc)
 
 # -- data
-FetchContent_Declare(demodata
+FetchContent_Populate(demodata
 URL https://raw.githubusercontent.com/scivision/cmake-fetchcontent/main/Octicons-mark-github.svg
 URL_HASH SHA256=ed5b640553973a1739d5dfddbf9e2c3db64bcd7181f89e99db42e221e295cc3a
 TLS_VERIFY "${CMAKE_TLS_VERIFY}"
@@ -37,4 +39,3 @@ UPDATE_DISCONNECTED true
 DOWNLOAD_NO_EXTRACT true
 DOWNLOAD_NAME ${CMAKE_CURRENT_BINARY_DIR}/octocat.svg
 )
-FetchContent_Populate(demodata)
