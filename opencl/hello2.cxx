@@ -5,11 +5,8 @@
 #include <string>
 
 #define __CL_ENABLE_EXCEPTIONS
-#ifdef __APPLE__
-#include <OpenCL/cl.hpp>
-#else
 #include <CL/cl.hpp>
-#endif
+
 // Compute c = a + b.
 static const char source[] =
     "#if defined(cl_khr_fp64)\n"
@@ -32,8 +29,8 @@ static const char source[] =
     "    }\n"
     "}\n";
 
-int main(void) {
-  const size_t N = 1 << 20;
+int main() {
+  constexpr std::vector<double>::size_type N = 1 << 20;
 
   try {
 // Get list of OpenCL platforms.
