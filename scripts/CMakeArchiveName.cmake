@@ -1,3 +1,13 @@
+get_property(cmake_role GLOBAL PROPERTY CMAKE_ROLE)
+if(cmake_role STREQUAL "SCRIPT")
+  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+  # define CMAKE_HOST*, CMAKE_SYSTEM*, etc.
+  include(${CMAKE_ROOT}/Modules/CMakeDetermineSystem.cmake)
+  # set booleans like CYGWIN
+  include(${CMAKE_ROOT}/Modules/CMakeSystemSpecificInitialize.cmake)
+endif()
+
+
 function(full_version version_req)
 
 string(LENGTH "${version_req}" L)
@@ -60,7 +70,7 @@ if(WIN32)
   set(sname "windows")
 elseif(APPLE)
   set(sname "macos")
-else()
+elseif(NOT CYGWIN)
   set(sname "linux")
 endif()
 
@@ -155,7 +165,7 @@ else()
   set(file_arch macos-universal)
 endif()
 
-elseif(UNIX)
+elseif(UNIX AND NOT CYGWIN)
 
 if(version VERSION_LESS 3.20)
   set(file_arch L)

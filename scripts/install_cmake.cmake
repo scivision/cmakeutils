@@ -8,20 +8,12 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
 option(CMAKE_TLS_VERIFY "Verify TLS certs")
 
 
-function(cpu_arch)
-
-if(WIN32)
-  set(arch $ENV{PROCESSOR_ARCHITECTURE})
-elseif(UNIX)
-  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
-
-if(NOT arch)
-  unknown_archive(${version} "unknown")
-endif()
+macro(cpu_arch)
 
 # system arch to arch index
-string(TOLOWER ${arch} arch)
+set(arch ${CMAKE_SYSTEM_PROCESSOR})
+string(TOLOWER "${arch}" arch)
+
 if(WIN32)
   if(arch STREQUAL "x86")
     set(arch "i386")
@@ -30,9 +22,7 @@ if(WIN32)
   endif()
 endif()
 
-set(arch ${arch} PARENT_SCOPE)
-
-endfunction(cpu_arch)
+endmacro(cpu_arch)
 
 # --- main program ---
 
@@ -45,9 +35,7 @@ get_filename_component(prefix ${prefix} ABSOLUTE)
 
 message(STATUS "Using CMake ${CMAKE_VERSION} to install CMake ${version} to ${prefix}")
 
-set(CMAKE_FIND_APPBUNDLE LAST)
-
-set(url_stem https://github.com/Kitware/CMake/releases/download/v${version})
+set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}")
 
 cpu_arch()
 
@@ -69,7 +57,6 @@ NAMES cmake
 HINTS ${prefix}
 PATH_SUFFIXES bin CMake.app/Contents/bin
 NO_DEFAULT_PATH
-NO_CACHE
 )
 if(NOT cmake_exe)
   message(FATAL_ERROR "failed to install CMake ${version} to ${prefix}")
@@ -78,7 +65,6 @@ endif()
 get_filename_component(bindir ${cmake_exe} DIRECTORY)
 message(STATUS "installed CMake ${version} to ${bindir}")
 
-set(ep $ENV{PATH})
-if(NOT ep MATCHES "${bindir}")
+if(NOT "$ENV{PATH}" MATCHES "${bindir}")
   message(STATUS "add to environment variable PATH ${bindir}")
 endif()
