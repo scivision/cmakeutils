@@ -10,16 +10,9 @@ enable_testing()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 option(CMAKE_TLS_VERIFY "Verify TLS certificates" ON)
+option(fortran "Enable Fortran" ON)
 set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)
 
-include(CheckLanguage)
-check_language(Fortran)
-if(CMAKE_Fortran_COMPILER)
-  set(fortran on)
-  enable_language(Fortran)
-else()
-  set(fortran off)
-endif()
 
 # --- auto-ignore build directory
 file(GENERATE OUTPUT .gitignore CONTENT "*")

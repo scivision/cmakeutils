@@ -5,6 +5,13 @@ project(OpenCL-example LANGUAGES C CXX)
 enable_testing()
 
 find_package(OpenCL)
+if(OpenCL_FOUND)
+  find_path(cl_hpp NAMES CL/cl.hpp HINTS ${OpenCL_INCLUDE_DIRS})
+  if(NOT cl_hpp)
+    set(OpenCL_FOUND FALSE)
+  endif()
+endif()
+
 if(NOT OpenCL_FOUND)
   message(STATUS "SKIP: OpenCL")
   return()
