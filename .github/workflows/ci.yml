@@ -15,12 +15,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-24.04, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
-
-    env:
-      FC: gfortran-13
 
     steps:
     - uses: actions/checkout@v4
@@ -48,9 +45,15 @@ jobs:
     - run: cmake --version
     - run: ninja --version
 
-
-    - name: configure cmake
+    - name: configure cmake (w/ Fortran)
+      if: runner.os != 'Windows'
       run: cmake -G Ninja --preset default
+      env:
+        FC: gfortran-13
+
+    - name: configure CMake (w/o Fortran)
+      if: runner.os == 'Windows'
+      run: cmake -G Ninja -Dfortran=no --preset default
 
     - run: cmake --build --preset release
 
