@@ -22,16 +22,23 @@ message(STATUS "CMake ${CMAKE_VERSION}: prefix ${prefix}")
 
 string(APPEND host "v${version}/")
 
-if(APPLE)
+get_property(cmake_role GLOBAL PROPERTY CMAKE_ROLE)
+if(cmake_role STREQUAL "SCRIPT")
+  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+  # define CMAKE_HOST*, CMAKE_SYSTEM*, etc.
+  include(${CMAKE_ROOT}/Modules/CMakeDetermineSystem.cmake)
+  # set booleans like CYGWIN
+  include(${CMAKE_ROOT}/Modules/CMakeSystemSpecificInitialize.cmake)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(stem ninja-mac)
 elseif(WIN32)
   set(stem ninja-win)
-elseif(UNIX)
-  execute_process(COMMAND uname -m
-  OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE
-  COMMAND_ERROR_IS_FATAL ANY
-  )
-  if(arch STREQUAL "x86_64")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  set(arch ${CMAKE_SYSTEM_PROCESSOR})
+  string(TOLOWER "${arch}" arch)
+ if(arch STREQUAL "x86_64")
     set(stem ninja-linux)
   elseif(arch STREQUAL "aarch64")
     set(stem ninja-linux-aarch64)
