@@ -38,19 +38,21 @@ else()
   set(os "linux")
 endif()
 
-
-function(cpu_arch)
-
-if(APPLE)
-  set(arch "universal")
-elseif(WIN32)
-  set(arch $ENV{PROCESSOR_ARCHITECTURE})
-else()
-  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY)
+get_property(cmake_role GLOBAL PROPERTY CMAKE_ROLE)
+if(cmake_role STREQUAL "SCRIPT")
+  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
+  # define CMAKE_HOST*, CMAKE_SYSTEM*, etc.
+  include(${CMAKE_ROOT}/Modules/CMakeDetermineSystem.cmake)
+  # set booleans like CYGWIN
+  include(${CMAKE_ROOT}/Modules/CMakeSystemSpecificInitialize.cmake)
 endif()
 
-if(NOT arch)
-  message(FATAL_ERROR "Unknown arch")
+macro(cpu_arch)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  set(arch "universal")
+else()
+  set(arch ${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
 # system arch to arch index
@@ -63,9 +65,7 @@ if(WIN32)
   endif()
 endif()
 
-set(arch ${arch} PARENT_SCOPE)
-
-endfunction(cpu_arch)
+endmacro(cpu_arch)
 
 cpu_arch()
 
