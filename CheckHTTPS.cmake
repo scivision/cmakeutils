@@ -85,13 +85,7 @@ if(bad)
   message(STATUS "Skipping good URL tests")
 endif()
 
-if(WIN32)
-  set(name "Windows $ENV{PROCESSOR_ARCHITECTURE}")
-else()
-  execute_process(COMMAND uname -ms OUTPUT_VARIABLE name OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
-
-message(STATUS "CMake ${CMAKE_VERSION}  ${name}")
+message(STATUS "CMake ${CMAKE_VERSION}")
 
 
 user_agent()
