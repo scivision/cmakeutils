@@ -17,7 +17,7 @@ if(NOT prefix)
   set(prefix ~/clang-${version})
 endif()
 
-get_filename_component(prefix ${prefix} ABSOLUTE)
+file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 
 if(NOT DEFINED n)
 if(WIN32)

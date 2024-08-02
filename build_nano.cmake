@@ -1,7 +1,7 @@
 # download, build, install nano text editor
 # requires Autotools and GNU Make
 
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.21)
 
 set(CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 
@@ -10,7 +10,7 @@ string(JSON version GET ${_j} "nano")
 
 set(stem nano-${version})
 set(prefix "~/${stem}")
-get_filename_component(prefix ${prefix} ABSOLUTE)
+file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 
 option(CMAKE_TLS_VERIFY "verify certificates" true)
 

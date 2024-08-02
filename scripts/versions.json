@@ -29,5 +29,7 @@
   },
   "ninja": "1.12.1",
   "nano": "8.1",
-  "zstd": "1.5.6"
+  "zstd": "1.5.6",
+  "openmpi": "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.5.tar.bz2",
+  "mpich": "https://www.mpich.org/static/downloads/4.2.2/mpich-4.2.2.tar.gz"
 }

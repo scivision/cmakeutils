@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19...3.30)
+cmake_minimum_required(VERSION 3.21...3.30)
 
 include(FetchContent)
 
@@ -14,7 +14,7 @@ endif()
 if(NOT prefix)
   set(prefix ~/ninja-${version})
 endif()
-get_filename_component(prefix ${prefix} ABSOLUTE)
+file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 
 file(MAKE_DIRECTORY ${prefix})
 

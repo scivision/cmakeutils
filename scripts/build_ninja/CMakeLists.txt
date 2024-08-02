@@ -1,6 +1,6 @@
 # build and install a recent Ninja version
 
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.21)
 
 project(ninja LANGUAGES C CXX)
 
@@ -14,7 +14,7 @@ if(NOT version)
 endif()
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  get_filename_component(p "~/ninja-${version}" ABSOLUTE)
+  file(REAL_PATH "~/ninja-${version}" p EXPAND_TILDE)
   set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${p}")
 endif()
 
