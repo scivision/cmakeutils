@@ -1,8 +1,6 @@
 # get CMake UserAgent (cURL version)
 cmake_minimum_required(VERSION 3.19)
 
-option(CMAKE_TLS_VERIFY "Enable TLS verification" ON)
-
 set(url "https://www.whatsmyua.info/api/v1/ua")
 set(file "${CMAKE_CURRENT_BINARY_DIR}/ua.json")
 

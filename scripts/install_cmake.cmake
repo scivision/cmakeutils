@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 3.17...3.30)
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
 
-option(CMAKE_TLS_VERIFY "Verify TLS certs")
-
 
 macro(cpu_arch)
 
@@ -46,7 +44,6 @@ cmake_binary_url(${version} ${arch} ${prefix} ${url_stem})
 FetchContent_Populate(cmake
 URL ${url_stem}/${archive}
 ${cmake_hash}
-TLS_VERIFY ${CMAKE_TLS_VERIFY}
 UPDATE_DISCONNECTED true
 SOURCE_DIR ${prefix}
 )

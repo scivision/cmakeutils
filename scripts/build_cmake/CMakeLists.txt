@@ -14,8 +14,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/../CMakeArchiveName.cmake)
 
 option(gui "build cmake-gui")
 
-option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
-
 # --- main program ---
 
 full_version("${version}")

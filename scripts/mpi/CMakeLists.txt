@@ -12,8 +12,6 @@ include(ExternalProject)
 
 option(mpich "Build MPICH instead of OpenMPI")
 
-option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
 
 file(GENERATE OUTPUT .gitignore CONTENT "*")

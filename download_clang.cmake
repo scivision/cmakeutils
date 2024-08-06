@@ -1,9 +1,7 @@
 # downloads and extracts Clang LLVM binaries if available
 # not a robust script at all
 
-cmake_minimum_required(VERSION 3.25...3.29)
-
-option(CMAKE_TLS_VERIFY "TLS verification" ON)
+cmake_minimum_required(VERSION 3.25...3.30)
 
 include(FetchContent)
 

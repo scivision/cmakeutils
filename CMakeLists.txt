@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...3.27)
+cmake_minimum_required(VERSION 3.20...3.30)
 
 project(CMakeDemos
 LANGUAGES C CXX
@@ -9,7 +9,6 @@ enable_testing()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-option(CMAKE_TLS_VERIFY "Verify TLS certificates" ON)
 option(fortran "Enable Fortran" ON)
 set_directory_properties(PROPERTIES EP_UPDATE_DISCONNECTED true)
 

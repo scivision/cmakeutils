@@ -13,8 +13,6 @@ cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
 
-option(CMAKE_TLS_VERIFY "Verify TLS certificates" ON)
-
 if(NOT date)
   string(TIMESTAMP date "%Y%m%d")
   math(EXPR date "${date} - 1")

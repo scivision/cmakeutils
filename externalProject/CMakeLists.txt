@@ -12,8 +12,6 @@ DESCRIPTION "Demonstrate ExternalProject in Fortran"
 
 enable_testing()
 
-option(CMAKE_TLS_VERIFY "Verify TLS certificates" ON)
-
 include(ExternalProject)
 include(GNUInstallDirs)
 

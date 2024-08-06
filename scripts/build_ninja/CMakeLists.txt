@@ -6,8 +6,6 @@ project(ninja LANGUAGES C CXX)
 
 include(ExternalProject)
 
-option(CMAKE_TLS_VERIFY "Verify TLS certs" on)
-
 if(NOT version)
   file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
   string(JSON version GET ${_j} ninja)

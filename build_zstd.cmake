@@ -5,8 +5,6 @@ string(JSON zstd_version GET ${_j} zstd)
 
 cmake_path(SET prefix "~/zstd-${zstd_version}")
 
-set(CMAKE_TLS_VERIFY true)
-
 if(DEFINED ENV{TMPDIR})
   cmake_path(SET tmpdir $ENV{TMPDIR})
 elseif(IS_DIRECTORY /var/tmp)

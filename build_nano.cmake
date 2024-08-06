@@ -12,8 +12,6 @@ set(stem nano-${version})
 set(prefix "~/${stem}")
 file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
 
-option(CMAKE_TLS_VERIFY "verify certificates" true)
-
 execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 set(name ${stem}.tar.xz)
