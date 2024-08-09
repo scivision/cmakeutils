@@ -5,7 +5,7 @@
 # NOTE: CMake 3.24 needs CMake >= 3.13 to build CMake itself.
 # CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
 
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.17...3.24)
 
 project(cmake LANGUAGES C CXX)
 
@@ -44,15 +44,12 @@ if(NOT OPENSSL_FOUND)
   endif()
 endif()
 
-set(url https://gitlab.kitware.com/cmake/cmake.git)
-set(tag v${version})
+set(url "https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}.tar.gz")
 
-message(STATUS "install CMake ${tag} => ${CMAKE_INSTALL_PREFIX}/bin")
+message(STATUS "${url} => ${CMAKE_INSTALL_PREFIX}/bin")
 
 ExternalProject_Add(CMAKE
-GIT_REPOSITORY ${url}
-GIT_TAG ${tag}
-GIT_SHALLOW true
+URL ${url}
 CMAKE_ARGS ${cmake_args}
 TEST_COMMAND ""
 UPDATE_DISCONNECTED true
