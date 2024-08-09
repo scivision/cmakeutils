@@ -163,7 +163,11 @@ endfunction(cmake_archive_name)
 function(cmake_legacy_name arch out)
 # CMake < 3.20 static filename
 
-if(APPLE)
+if(arch STREQUAL "source")
+
+set(file_arch)
+
+elseif(APPLE)
 
 if(version VERSION_LESS 3.19)
   set(file_arch Darwin-x86_64)
@@ -203,17 +207,23 @@ endif()
 endif()
 
 
-if(NOT file_arch)
-  unknown_archive(${version} ${arch})
-endif()
-
-if(UNIX)
-  set(suffix .tar.gz)
-else()
+if(WIN32)
   set(suffix .zip)
+else()
+  set(suffix .tar.gz)
 endif()
 
-set(${out} cmake-${version}-${file_arch}${suffix} PARENT_SCOPE)
+
+if(arch STREQUAL "source")
+  set(archive cmake-${version}${suffix})
+elseif(NOT file_arch)
+  unknown_archive(${version} ${arch})
+else()
+  set(archive cmake-${version}-${file_arch}${suffix})
+endif()
+
+
+set(${out} ${archive} PARENT_SCOPE)
 
 endfunction(cmake_legacy_name)
 
