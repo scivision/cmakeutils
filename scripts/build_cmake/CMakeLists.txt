@@ -44,7 +44,11 @@ if(NOT OPENSSL_FOUND)
   endif()
 endif()
 
-set(url "https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}.tar.gz")
+set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}/")
+
+cmake_binary_url(${version} "source" ${CMAKE_INSTALL_PREFIX} ${url_stem})
+
+set(url ${url_stem}/${archive})
 
 message(STATUS "${url} => ${CMAKE_INSTALL_PREFIX}/bin")
 

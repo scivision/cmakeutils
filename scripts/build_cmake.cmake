@@ -10,13 +10,16 @@ set(args)
 if(version)
   list(APPEND args -Dversion=${version})
 endif()
-if(prefix)
-  list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
+
+if(NOT prefix)
+  message(FATAL_ERROR "tell where to install CMake like:
+    cmake -Dprefix=~/cmake-dev -P build_cmake.cmake")
 endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND} ${args}
 -B${bindir}
 -S${CMAKE_CURRENT_LIST_DIR}/build_cmake
+-DCMAKE_INSTALL_PREFIX:PATH=${prefix}
 RESULT_VARIABLE ret
 )
 

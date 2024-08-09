@@ -66,7 +66,9 @@ endfunction(unknown_archive)
 function(cmake_archive_name version file_json arch prefix out)
 # CMake >= 3.20 dynamic filename
 
-if(WIN32)
+if(arch STREQUAL "source")
+  set(sname "source")
+elseif(WIN32)
   set(sname "windows")
 elseif(APPLE)
   set(sname "macos")
@@ -89,11 +91,13 @@ foreach(i RANGE ${L})
   endif()
   # message(DEBUG "os_key: ${os_key}")
 
-  iter_json("${d}" "architecture" "${arch}" "arch_key")
-  if(NOT arch_key)
-    continue()
+  if(NOT arch STREQUAL "source")
+    iter_json("${d}" "architecture" "${arch}" "arch_key")
+    if(NOT arch_key)
+      continue()
+    endif()
+    message(DEBUG "os_key: ${os_key}  arch_key: ${arch_key}")
   endif()
-  message(DEBUG "os_key: ${os_key}  arch_key: ${arch_key}")
 
   string(JSON c GET ${json} "files" ${i} "class")
   if(NOT c STREQUAL "archive")
@@ -104,6 +108,8 @@ foreach(i RANGE ${L})
   break()
 
 endforeach()
+
+message(STATUS "CMake ${version} ${arch} ${filename}")
 
 if(NOT filename)
   unknown_archive(${version} ${arch})
