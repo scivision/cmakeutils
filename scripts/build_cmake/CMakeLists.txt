@@ -18,11 +18,6 @@ option(gui "build cmake-gui")
 
 full_version("${version}")
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  get_filename_component(p "~/cmake-${version}" ABSOLUTE)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${p}")
-endif()
-
 message(STATUS "Using CMake ${CMAKE_VERSION} to build CMake ${version} and install to ${CMAKE_INSTALL_PREFIX}")
 
 set(cmake_args

@@ -91,13 +91,6 @@ else()
   endif()
 endif()
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  file(REAL_PATH "~" home EXPAND_TILDE)
-  cmake_path(GET mpi_url STEM n)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${home}/${n}")
-endif()
-
-
 # Downloading URL instead of Git avoids very long "autogen" step
 ExternalProject_Add(MPI
 URL ${mpi_url}

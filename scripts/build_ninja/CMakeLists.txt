@@ -11,11 +11,6 @@ if(NOT version)
   string(JSON version GET ${_j} ninja)
 endif()
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  file(REAL_PATH "~/ninja-${version}" p EXPAND_TILDE)
-  set_property(CACHE CMAKE_INSTALL_PREFIX PROPERTY VALUE "${p}")
-endif()
-
 set(cmake_args
 -DBUILD_TESTING:BOOL=OFF
 -DCMAKE_BUILD_TYPE=Release
