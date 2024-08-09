@@ -26,38 +26,13 @@ https://expired.badssl.com
 https://wrong.host.badssl.com
 https://self-signed.badssl.com
 https://untrusted-root.badssl.com
-https://revoked.badssl.com
 https://null.badssl.com
+https://revoked.badssl.com
+https://pinning-test.badssl.com
+https://tls-v1-0.badssl.com
 )
 
-# passes with CMake 3.26 due to cURL
-# https://pinning-test.badssl.com
-# https://tls-v1-0.badssl.com
-
-
 # --- helper functions
-
-function(user_agent)
-
-# Get CMake's user agent
-file(DOWNLOAD https://www.whatsmyua.info/api/v1/ua ua.json)
-file(READ ua.json meta)
-string(JSON ua GET ${meta} 0 ua rawUa)
-
-message(STATUS "User agent: ${ua}")
-if(DEFINED ENV{SSL_CERT_FILE})
-  message(STATUS "SSL_CERT_FILE: $ENV{SSL_CERT_FILE}")
-endif()
-
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.25)
-  execute_process(COMMAND ${CMAKE_COMMAND} -E capabilities OUTPUT_VARIABLE cap)
-
-  string(JSON has_tls GET ${cap} "tls")
-  message(STATUS "TLS: ${has_tls}")
-endif()
-
-endfunction()
-
 
 function(check_url url ok)
 
@@ -87,7 +62,7 @@ endif()
 
 message(STATUS "CMake ${CMAKE_VERSION}")
 
-
+include(${CMAKE_CURRENT_LIST_DIR}/UserAgent.cmake)
 user_agent()
 
 foreach(u IN LISTS url_good)

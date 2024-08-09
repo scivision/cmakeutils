@@ -2,14 +2,10 @@ cmake_minimum_required(VERSION 3.19)
 
 set(CMAKE_TLS_VERIFY ON)
 
-# Get CMake's vendored cURL version
-file(DOWNLOAD https://www.whatsmyua.info/api/v1/ua ua.json)
-file(READ ua.json meta)
-string(JSON ua GET ${meta} 0 ua rawUa)
+include(${CMAKE_CURRENT_LIST_DIR}/UserAgent.cmake)
+user_agent()
 
-message(STATUS "CMake ${CMAKE_VERSION}
-cURL version: ${ua}
-TLS_CAINFO: ${CMAKE_TLS_CAINFO}
+message(STATUS "TLS_CAINFO: ${CMAKE_TLS_CAINFO}
 SSL_CERT_DIR: $ENV{SSL_CERT_DIR}
 SSL_CERT_FILE: $ENV{SSL_CERT_FILE}"
 )
