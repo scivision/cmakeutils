@@ -238,6 +238,7 @@ else()
   set(json_url ${url_stem}/cmake-${version}-files-v1.json)
 
   message(STATUS "CMake ${version} metadata: ${json_url} => ${json_file}")
+  file(MAKE_DIRECTORY ${prefix})
   file(DOWNLOAD ${json_url} ${json_file} STATUS ret LOG log)
   list(GET ret 0 stat)
   if(NOT stat EQUAL 0)
