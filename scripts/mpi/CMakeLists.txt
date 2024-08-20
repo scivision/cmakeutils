@@ -48,13 +48,8 @@ endiF()
 
 # help OpenMPI/MPICH by hinting compilers, particularly on MacOS
 # assume whatever the C compiler is, the C++ and Fortran compilers are the same vendor
-if(CMAKE_C_COMPILER_ID MATCHES "GNU|$Intel")
-  # OpenMPI / MPICH needs full path to oneAPI compilers
-  list(APPEND mpi_flags CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} FC=${CMAKE_Fortran_COMPILER})
-elseif(CMAKE_C_COMPILER_ID MATCHES "Clang$")
-  # until Flang is ready, use Gfortran
-  list(APPEND mpi_flags CC=clang CXX=clang++ FC=gfortran)
-endif()
+# OpenMPI / MPICH needs full path to oneAPI compilers
+list(APPEND mpi_flags CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} FC=${CMAKE_Fortran_COMPILER})
 
 # OpenMPI/MPICH have trouble finding -lm on MacOS especially
 find_library(math NAMES m REQUIRED)
