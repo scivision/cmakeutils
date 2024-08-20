@@ -39,15 +39,7 @@ endif()
 
 set(mpi_flags --prefix=${CMAKE_INSTALL_PREFIX})
 
-# to avoid ABI problems and confusing build or runtime errors, mandate that C and C++ are same compiler vendor
-if(NOT CMAKE_C_COMPILER_ID STREQUAL CMAKE_CXX_COMPILER_ID)
-  message(FATAL_ERROR "C compiler ${CMAKE_C_COMPILER_ID} and C++ compiler ${CMAKE_CXX_COMPILER_ID} must be the same to avoid ABI build/runtime errors.
-Set environment variables CC and CXX to the same compiler by prepending the command line:
-  CC=gcc-13 CXX=g++-13")
-endiF()
-
 # help OpenMPI/MPICH by hinting compilers, particularly on MacOS
-# assume whatever the C compiler is, the C++ and Fortran compilers are the same vendor
 # OpenMPI / MPICH needs full path to oneAPI compilers
 list(APPEND mpi_flags CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER} FC=${CMAKE_Fortran_COMPILER})
 
