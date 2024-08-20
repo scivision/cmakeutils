@@ -12,6 +12,11 @@ include(ExternalProject)
 
 option(mpich "Build MPICH instead of OpenMPI")
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(FATAL_ERROR "Please specify MPI install location:
+  cmake -DCMAKE_INSTALL_PREFIX=...")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
 
 file(GENERATE OUTPUT .gitignore CONTENT "*")
