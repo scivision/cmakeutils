@@ -6,6 +6,10 @@ if(prefix)
   list(APPEND args -DCMAKE_INSTALL_PREFIX:PATH=${prefix})
 endif()
 
+if(mpi_url)
+  list(APPEND args -Dmpi_url=${mpi_url})
+endif()
+
 if(NOT bindir)
   execute_process(COMMAND mktemp -d
   OUTPUT_VARIABLE bindir

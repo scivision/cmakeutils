@@ -50,7 +50,9 @@ cmake_path(GET math PARENT_PATH math_LIBDIR)
 set(mpi_ldflags "LDFLAGS=${CMAKE_LIBRARY_PATH_FLAG}${math_LIBDIR}")
 
 # --- read JSON with URLs for each library
-file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json json_meta)
+if(NOT mpi_url)
+  file(READ ${CMAKE_CURRENT_SOURCE_DIR}/../versions.json json_meta)
+endif()
 
 if(mpich)
   check_include_file("ISO_Fortran_binding.h" HAVE_ISO_FORTRAN_BINDING_H)
@@ -60,12 +62,16 @@ We suggest GCC compiler. Specify GCC by prepending \"CC=gcc-13\" or similar to y
 Setting \"CC=gcc\" on macOS defaults to Clang, which will fail. MPICH requires ISO_Fortran_binding.h")
   endif()
 
-  string(JSON mpi_url GET ${json_meta} "mpich")
+  if(NOT mpi_url)
+    string(JSON mpi_url GET ${json_meta} "mpich")
+  endif()
 
   list(APPEND mpi_flags --with-device=ch3)
   # MPICH 4.2.0 etc. fails to build without this option
 else()
-  string(JSON mpi_url GET ${json_meta} "openmpi")
+  if(NOT mpi_url)
+    string(JSON mpi_url GET ${json_meta} "openmpi")
+  endif()
 
   # this --with-hwloc breaks OpenMPI 4.1 and 5.0 at least
   # list(APPEND mpi_flags --with-hwloc=internal)
@@ -95,7 +101,6 @@ USES_TERMINAL_UPDATE true
 USES_TERMINAL_CONFIGURE true
 USES_TERMINAL_BUILD true
 USES_TERMINAL_INSTALL true
-USES_TERMINAL_TEST true
 CONFIGURE_HANDLED_BY_BUILD ON
 )
 
