@@ -30,15 +30,21 @@ jobs:
 
     - name: CMake path (linux)
       if: runner.os == 'Linux'
-      run: echo "$HOME/ninja:$HOME/cmake/bin" >> $GITHUB_PATH
+      run: |
+        echo "$HOME/cmake/bin" >> $GITHUB_PATH
+        echo "CMAKE_PROGRAM_PATH=$HOME/ninja" >> $GITHUB_ENV
 
     - name: CMake path (macOS)
       if: runner.os == 'macOS'
-      run: echo "$HOME/ninja:$HOME/cmake/CMake.app/Contents/bin" >> $GITHUB_PATH
+      run: |
+        echo "$HOME/cmake/CMake.app/Contents/bin" >> $GITHUB_PATH
+        echo "CMAKE_PROGRAM_PATH=$HOME/ninja" >> $GITHUB_ENV
 
     - name: CMake path (Windows)
       if: runner.os == 'Windows'
-      run: echo "$env:userprofile/ninja;$env:userprofile/cmake/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+      run: |
+        echo "$env:userprofile/cmake/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        echo "CMAKE_PROGRAM_PATH=$env:userprofile/ninja" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - run: echo $PATH
 

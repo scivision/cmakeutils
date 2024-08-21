@@ -68,5 +68,5 @@ message(STATUS "installed Ninja ${version} to ${prefix}")
 
 set(ep $ENV{PATH})
 if(NOT ep MATCHES "${prefix}")
-  message(STATUS "add to environment variable PATH ${prefix}")
+  message(STATUS "add to environment variable CMAKE_PROGRAM_PATH ${prefix}")
 endif()
