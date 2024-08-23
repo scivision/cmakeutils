@@ -44,6 +44,7 @@ url=https://github.com/Kitware/CMake/releases/download/v${version}/${archive}
 
 # download and extract CMake
 echo "${url} => ${archive_path}"
+mkdir -p ${prefix}
 if curl --fail --location --output ${archive_path} ${url}; then
 :
 else
