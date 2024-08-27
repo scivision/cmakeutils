@@ -49,13 +49,12 @@ jobs:
     - run: echo $PATH
 
     - run: cmake --version
-    - run: ninja --version
 
     - name: configure cmake (w/ Fortran)
       if: runner.os != 'Windows'
       run: cmake -G Ninja --preset default
       env:
-        FC: gfortran-13
+        FC: gfortran-14
 
     - name: configure CMake (w/o Fortran)
       if: runner.os == 'Windows'
