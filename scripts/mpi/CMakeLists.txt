@@ -12,9 +12,14 @@ include(ExternalProject)
 
 option(mpich "Build MPICH instead of OpenMPI")
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  message(FATAL_ERROR "Please specify MPI install location:
-  cmake -DCMAKE_INSTALL_PREFIX=...")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX})
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.29)
+  if(NOT IS_WRITABLE ${CMAKE_INSTALL_PREFIX})
+    message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is not writable: ${CMAKE_INSTALL_PREFIX}")
+  endif()
+else()
+  file(TOUCH ${CMAKE_INSTALL_PREFIX}/.cmake_writable "")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
