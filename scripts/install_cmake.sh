@@ -2,7 +2,7 @@
 # Download / extract CMake binary archive for CMake >= 3.20
 #
 # Example:
-#    bash install_cmake.sh ~/cmake-3.30.2 3.30.2
+#    bash install_cmake.sh ~/cmake-3.30.3 3.30.3
 #
 # On Windows, instead do:
 #   winget install Kitware.CMake
