@@ -11,21 +11,63 @@ endif()
 function(full_version version_req)
 
 string(LENGTH "${version_req}" L)
+
 if (L LESS 5)  # 3.x or 3.xx, read latest full version for that minor version
-  if(CMAKE_VERSION VERSION_LESS 3.19)
-    message(FATAL_ERROR "Specify full CMake version to download like:
-    cmake -Dversion=\"3.27.9\" -P ${CMAKE_CURRENT_LIST_FILE}")
+  if(CMAKE_VERSION VERSION_LESS 3.19 OR L LESS 1)
+    github_latest_release()
+  else()
+    file(READ ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/versions.json _j)
+    string(JSON version GET ${_j} "cmake" "${version_req}")
   endif()
-  file(READ ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/versions.json _j)
-  if(L LESS 1)  # version not specified
-    string(JSON version_req GET ${_j} "cmake" "latest")
-  endif()
-  string(JSON version GET ${_j} "cmake" "${version_req}")
 endif()
 
 set(version ${version} PARENT_SCOPE)
 
 endfunction(full_version)
+
+
+function(download_check msg ret log)
+
+list(GET ret 0 stat)
+if(NOT stat EQUAL 0)
+  list(GET ret 1 err)
+  message(FATAL_ERROR "${msg} download failed: ${stat} ${err} ${log}")
+endif()
+
+endfunction(download_check)
+
+
+function(github_latest_release)
+
+# https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-the-latest-release
+set(url "https://api.github.com/repos/kitware/cmake/releases/latest")
+set(fn ${CMAKE_CURRENT_BINARY_DIR}/cmake_latest_release.json)
+
+if(NOT EXISTS ${fn})
+  file(DOWNLOAD ${url} ${fn}
+  HTTPHEADER "Accept: application/vnd.github+json"
+  HTTPHEADER "X-GitHub-Api-Version: 2022-11-28"
+  STATUS ret LOG log
+  )
+  download_check("GitHub CMake latest release" "${ret}" "${log}")
+endif()
+
+file(READ ${fn} json)
+
+string(JSON tag GET ${json} "tag_name")
+
+if(tag MATCHES "v[0-9]+\\.[0-9]+\\.[0-9]+")
+  # strip leading 'v'
+  string(SUBSTRING ${tag} 1 -1 _r)
+endif()
+
+if(NOT DEFINED _r)
+  message(FATAL_ERROR "failed to find latest CMake version in ${fn} from ${url}")
+endif()
+
+set(version ${_r} PARENT_SCOPE)
+
+endfunction(github_latest_release)
 
 
 function(iter_json json key pat out)
@@ -135,11 +177,7 @@ set(hash_file ${prefix}/${hash_name})
 message(STATUS "CMake ${version} hash: ${hash_url} => ${hash_file}")
 
 file(DOWNLOAD ${hash_url} ${hash_file} STATUS ret LOG log)
-list(GET ret 0 stat)
-if(NOT stat EQUAL 0)
-  list(GET ret 1 err)
-  message(FATAL_ERROR "CMake hash download failed: ${stat} ${err} ${log}")
-endif()
+download_check("CMake ${version} hash" "${ret}" "${log}")
 
 set(pat "([0-9a-f]+)  ${filename}")
 file(STRINGS ${hash_file} sha256
@@ -240,11 +278,7 @@ else()
   message(STATUS "CMake ${version} metadata: ${json_url} => ${json_file}")
   file(MAKE_DIRECTORY ${prefix})
   file(DOWNLOAD ${json_url} ${json_file} STATUS ret LOG log)
-  list(GET ret 0 stat)
-  if(NOT stat EQUAL 0)
-    list(GET ret 1 err)
-    message(FATAL_ERROR "CMake metadata download failed: ${stat} ${err} ${log}")
-  endif()
+  download_check("CMake ${version} metadata" "${ret}" "${log}")
 
   cmake_archive_name(${version} ${json_file} "${arch}" "${prefix}" "archive")
 

@@ -24,7 +24,11 @@ endmacro(cpu_arch)
 
 # --- main program ---
 
-full_version("${version}")
+if(DEFINED version)
+  full_version("${version}")
+else()
+  github_latest_release()
+endif()
 
 if(NOT prefix)
   set(prefix ~/cmake-${version})
