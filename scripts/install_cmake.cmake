@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.17...3.30)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
 
 
 macro(cpu_arch)
@@ -27,7 +28,7 @@ endmacro(cpu_arch)
 if(DEFINED version)
   full_version("${version}")
 else()
-  github_latest_release()
+  github_latest_release(kitware cmake version)
 endif()
 
 if(NOT prefix)

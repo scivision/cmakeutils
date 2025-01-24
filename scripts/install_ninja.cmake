@@ -1,33 +1,24 @@
-cmake_minimum_required(VERSION 3.21...3.30)
+cmake_minimum_required(VERSION 3.20...3.30)
 
 include(FetchContent)
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/GithubRelease.cmake)
 
-set(host https://github.com/ninja-build/ninja/releases/download/)
 
-if(NOT version)
-  file(READ ${CMAKE_CURRENT_LIST_DIR}/versions.json _j)
-  string(JSON version GET ${_j} ninja)
+if(NOT DEFINED version)
+  github_latest_release(ninja-build ninja version)
 endif()
 
 if(NOT prefix)
   set(prefix ~/ninja-${version})
 endif()
-file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
+get_filename_component(prefix ${prefix} ABSOLUTE)
 
 file(MAKE_DIRECTORY ${prefix})
 
-message(STATUS "CMake ${CMAKE_VERSION}: prefix ${prefix}")
+message(STATUS "CMake ${CMAKE_VERSION} installing Ninja ${version} in prefix ${prefix}")
 
-string(APPEND host "v${version}/")
-
-get_property(cmake_role GLOBAL PROPERTY CMAKE_ROLE)
-if(cmake_role STREQUAL "SCRIPT")
-  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
-  # define CMAKE_HOST*, CMAKE_SYSTEM*, etc.
-  include(${CMAKE_ROOT}/Modules/CMakeDetermineSystem.cmake)
-  # set booleans like CYGWIN
-  include(${CMAKE_ROOT}/Modules/CMakeSystemSpecificInitialize.cmake)
-endif()
+set(host "https://github.com/ninja-build/ninja/releases/download/v${version}/")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(stem ninja-mac)

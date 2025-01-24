@@ -10,7 +10,7 @@ string(JSON version GET ${_j} "nano")
 
 set(stem nano-${version})
 set(prefix "~/${stem}")
-file(REAL_PATH ${prefix} prefix EXPAND_TILDE)
+get_filename_component(prefix ${prefix} ABSOLUTE)
 
 execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE)
 
