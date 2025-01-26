@@ -29,7 +29,8 @@ endif()
 
 file(READ ${fn} json)
 
-string(JSON tag GET ${json} "tag_name")
+# must put json in quote to avoid CMake syntax error from semicolon in JSON string
+string(JSON tag GET "${json}" "tag_name")
 
 # assumes project version is vMAJOR.MINOR.PATCH
 if(tag MATCHES "v[0-9]+\\.[0-9]+\\.[0-9]+")

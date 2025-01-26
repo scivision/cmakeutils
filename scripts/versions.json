@@ -29,7 +29,6 @@
     "3.6": "3.6.3"
   },
   "nano": "8.2",
-  "zstd": "1.5.6",
   "openmpi": "https://download.open-mpi.org/release/open-mpi/v5.0/openmpi-5.0.6.tar.bz2",
   "mpich": "https://www.mpich.org/static/downloads/4.2.3/mpich-4.2.3.tar.gz"
 }

@@ -1,27 +1,29 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.20)
 
-file(READ ${CMAKE_CURRENT_LIST_DIR}/scripts/versions.json _j)
-string(JSON zstd_version GET ${_j} zstd)
+include(${CMAKE_CURRENT_LIST_DIR}/GithubRelease.cmake)
 
-cmake_path(SET prefix "~/zstd-${zstd_version}")
+github_latest_release(facebook zstd zstd_version)
+
+set(prefix "~/zstd-${zstd_version}")
+get_filename_component(prefix ${prefix} ABSOLUTE)
 
 if(DEFINED ENV{TMPDIR})
-  cmake_path(SET tmpdir $ENV{TMPDIR})
+  set(tmpdir $ENV{TMPDIR})
 elseif(IS_DIRECTORY /var/tmp)
-  cmake_path(SET tmpdir /var/tmp)
+  set(tmpdir /var/tmp)
 elseif(IS_DIRECTORY /tmp)
-  cmake_path(SET tmpdir /tmp)
+  set(tmpdir /tmp)
 else()
-  cmake_path(SET tmpdir ~/tmp)
+  set(tmpdir ~/tmp)
 endif()
 
-file(REAL_PATH ${tmpdir} tmpdir EXPAND_TILDE)
+get_filename_component(tmpdir ${tmpdir} ABSOLUTE)
 
 set(name zstd-${zstd_version}.tar.gz)
-cmake_path(SET archive ${tmpdir}/${name})
+set(archive ${tmpdir}/${name})
 
-cmake_path(SET src ${tmpdir}/zstd-${zstd_version}/build/cmake)
-cmake_path(SET build ${src}/build)
+set(src ${tmpdir}/zstd-${zstd_version}/build/cmake)
+set(build ${src}/build)
 
 if(NOT IS_DIRECTORY ${src})
   file(DOWNLOAD
