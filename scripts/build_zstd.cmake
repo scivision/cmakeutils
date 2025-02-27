@@ -7,22 +7,10 @@ github_latest_release(facebook zstd zstd_version)
 set(prefix "~/zstd-${zstd_version}")
 get_filename_component(prefix ${prefix} ABSOLUTE)
 
-if(DEFINED ENV{TMPDIR})
-  set(tmpdir $ENV{TMPDIR})
-elseif(IS_DIRECTORY /var/tmp)
-  set(tmpdir /var/tmp)
-elseif(IS_DIRECTORY /tmp)
-  set(tmpdir /tmp)
-else()
-  set(tmpdir ~/tmp)
-endif()
-
-get_filename_component(tmpdir ${tmpdir} ABSOLUTE)
-
 set(name zstd-${zstd_version}.tar.gz)
-set(archive ${tmpdir}/${name})
+set(archive ${prefix}/${name})
 
-set(src ${tmpdir}/zstd-${zstd_version}/build/cmake)
+set(src ${prefix}/zstd-${zstd_version}/build/cmake)
 set(build ${src}/build)
 
 if(NOT IS_DIRECTORY ${src})
@@ -30,7 +18,7 @@ if(NOT IS_DIRECTORY ${src})
   https://github.com/facebook/zstd/releases/download/v${zstd_version}/${name}
   ${archive}
   )
-  file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${tmpdir})
+  file(ARCHIVE_EXTRACT INPUT ${archive} DESTINATION ${prefix})
 endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND} --install-prefix=${prefix} -S ${src} -B ${build}
