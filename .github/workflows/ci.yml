@@ -31,6 +31,7 @@ jobs:
       run: echo "FC=gfortran-14" >> $GITHUB_ENV
 
     - name: configure cmake (w/ Fortran)
+      if: runner.os != 'Windows'
       run: cmake --preset default
 
     - name: configure CMake (w/o Fortran)
