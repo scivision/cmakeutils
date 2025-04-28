@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-include(${CMAKE_CURRENT_LIST_DIR}/GithubRelease.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
 github_latest_release(facebook zstd zstd_version)
 

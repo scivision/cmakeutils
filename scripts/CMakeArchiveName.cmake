@@ -1,4 +1,4 @@
-include(${CMAKE_CURRENT_LIST_DIR}/GithubRelease.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
 
 function(full_version version_req)

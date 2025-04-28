@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20...3.30)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/GithubRelease.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
 
 if(NOT DEFINED version)
