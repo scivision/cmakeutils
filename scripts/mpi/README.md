@@ -15,10 +15,6 @@ cmake -Dmpich=yes
 ```
 
 builds MPICH instead of the default OpenMPI.
-
-Note that MPICH does [not yet work with Clang](https://releases.llvm.org/11.0.0/tools/flang/docs/RuntimeDescriptor.html#interoperability-requirements)
-This is particularly relevant for macOS, where Clang is the default compiler.
-
 A successful MPICH configure step ends like:
 
 ```
