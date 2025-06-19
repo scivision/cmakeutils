@@ -52,12 +52,30 @@ have a distinct syntax tied to the origins of CMake syntax in the late 1990s.
 The CMake regex syntax is not the same as Python, Perl, etc.
 We give a few examples under [regex](./regex).
 
-## Build CMake
+## Using CMake to build Autotools projects
 
-To compile CMake from source, for example on BSD or ARM 32-bit using existing CMake:
+Examples of project using CMake ExternalProject are under [scripts/mpi](./scripts/mpi).
+This project can be invoked to build OpenMPI or MPICH (each are Autotools projects):
 
 ```sh
-cmake -S build_cmake -B build
+cmake -S scripts/mpi -B build --install-prefix=$HOME/openmpi
+
+cmake --build build
+```
+
+or by convenience scripts
+[build_openmpi.cmake](./scripts/build_openmpi.cmake)
+or
+[build_mpich.cmake](./scripts/build_mpich.cmake).
+
+## Build CMake itself
+
+To compile CMake from source:
+
+```sh
+cmake -S scripts/build_cmake -B build
+
+cmake --build build
 ```
 
 Requirements:
