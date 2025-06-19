@@ -9,6 +9,8 @@ project(BuildMPI LANGUAGES C CXX Fortran)
 
 include(CheckIncludeFile)
 include(ExternalProject)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../../functions/GithubRelease.cmake)
+
 
 option(mpich "Build MPICH instead of OpenMPI")
 
@@ -60,15 +62,32 @@ if(NOT mpi_url)
 endif()
 
 if(mpich)
+  find_path(IFB_H NAMES ISO_Fortran_binding.h)
+
+  if(IFB_H)
+    set(CMAKE_REQUIRED_INCLUDES ${IFB_H})
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang$" AND CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")
+    find_path(IFB2_H NAMES ISO_Fortran_binding.h
+    HINTS ${CMAKE_Fortran_COMPILER}/../../include/flang
+    NO_DEFAULT_PATH
+    )
+    if(IFB2_H)
+      set(CMAKE_REQUIRED_INCLUDES ${IFB2_H})
+    endif()
+  endif()
+
   check_include_file("ISO_Fortran_binding.h" HAVE_ISO_FORTRAN_BINDING_H)
   if(NOT HAVE_ISO_FORTRAN_BINDING_H)
-    message(FATAL_ERROR "ISO_Fortran_binding.h not found with ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}  ${CMAKE_C_COMPILER}
+    message(FATAL_ERROR "Compatible ISO_Fortran_binding.h not found with ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}  ${CMAKE_C_COMPILER}
 We suggest GCC compiler. Specify GCC by prepending \"CC=gcc-13\" or similar to your command.
 Setting \"CC=gcc\" on macOS defaults to Clang, which will fail. MPICH requires ISO_Fortran_binding.h")
   endif()
 
   if(NOT mpi_url)
-    string(JSON mpi_url GET ${json_meta} "mpich")
+    if(NOT DEFINED version)
+      github_latest_release(pmodels mpich version)
+    endif()
+    set(mpi_url https://github.com/pmodels/mpich/releases/download/v${version}/mpich-${version}.tar.gz)
   endif()
 
   list(APPEND mpi_flags --with-device=ch3)

@@ -8,6 +8,8 @@ endif()
 
 if(mpi_url)
   list(APPEND args -Dmpi_url=${mpi_url})
+elseif(version)
+  list(APPEND args -Dversion=${version})
 endif()
 
 if(NOT bindir)
