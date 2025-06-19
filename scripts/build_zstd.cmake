@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
-github_latest_release(facebook zstd zstd_version)
+if(NOT version)
+  github_latest_release(facebook zstd zstd_version)
+endif()
 
 set(prefix "~/zstd-${zstd_version}")
 get_filename_component(prefix ${prefix} ABSOLUTE)

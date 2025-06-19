@@ -15,7 +15,10 @@ get_filename_component(prefix ${prefix} ABSOLUTE)
 execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 set(name ${stem}.tar.xz)
+
+# https://nano-editor.org/dist/latest/?C=M;O=D
 set(url https://nano-editor.org/dist/latest/${name})
+
 set(archive ${bindir}/${name})
 
 if(NOT EXISTS ${archive})
