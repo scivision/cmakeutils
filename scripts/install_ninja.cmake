@@ -20,13 +20,17 @@ message(STATUS "CMake ${CMAKE_VERSION} installing Ninja ${version} in prefix ${p
 
 set(host "https://github.com/ninja-build/ninja/releases/download/v${version}/")
 
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(stem ninja-mac)
 elseif(WIN32)
-  set(stem ninja-win)
+  if(arch STREQUAL "x86_64")
+    set(stem ninja-win)
+  elseif(arch STREQUAL "arm64")
+    set(stem ninja-winarm64)
+  endif()
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set(arch ${CMAKE_SYSTEM_PROCESSOR})
-  string(TOLOWER "${arch}" arch)
  if(arch STREQUAL "x86_64")
     set(stem ninja-linux)
   elseif(arch STREQUAL "aarch64")
