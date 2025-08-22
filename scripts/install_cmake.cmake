@@ -10,8 +10,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
 macro(cpu_arch)
 
 # system arch to arch index
-set(arch ${CMAKE_SYSTEM_PROCESSOR})
-string(TOLOWER "${arch}" arch)
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
 
 if(WIN32)
   if(arch STREQUAL "x86")
