@@ -16,8 +16,6 @@ get_filename_component(prefix ${prefix} ABSOLUTE)
 
 file(MAKE_DIRECTORY ${prefix})
 
-message(STATUS "CMake ${CMAKE_VERSION} installing Ninja ${version} in prefix ${prefix}")
-
 set(host "https://github.com/ninja-build/ninja/releases/download/v${version}/")
 
 string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
@@ -44,6 +42,8 @@ if(NOT stem)
 endif()
 
 set(url ${host}${stem}.zip)
+
+message(STATUS "CMake ${CMAKE_VERSION} installing Ninja ${version} for ${arch} in prefix ${prefix} from ${url}")
 
 FetchContent_Populate(ninja
 URL ${url}
