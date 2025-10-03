@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - run: echo $PATH
 
@@ -28,7 +28,7 @@ jobs:
 
     - name: set macOS Gfortran
       if: runner.os == 'macOS'
-      run: echo "FC=gfortran-14" >> $GITHUB_ENV
+      run: echo "FC=gfortran-15" >> $GITHUB_ENV
 
     - name: configure cmake (w/ Fortran)
       if: runner.os != 'Windows'
