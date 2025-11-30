@@ -20,8 +20,6 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.29)
   if(NOT IS_WRITABLE ${CMAKE_INSTALL_PREFIX})
     message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is not writable: ${CMAKE_INSTALL_PREFIX}")
   endif()
-else()
-  file(TOUCH ${CMAKE_INSTALL_PREFIX}/.cmake_writable "")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
@@ -105,6 +103,49 @@ else()
 
   list(APPEND mpi_flags --disable-sphinx)
   # avoids errors with docs build that aren't used anyway
+
+  # find_library(LIBEVENT_LIBRARY NAMES event)
+  # find_path(LIBEVENT_INCLUDE_DIR NAMES event.h)
+  # message(STATUS "LIBEVENT_LIBRARY: ${LIBEVENT_LIBRARY}")
+  # if(LIBEVENT_LIBRARY AND LIBEVENT_INCLUDE_DIR)
+  #   cmake_path(GET LIBEVENT_LIBRARY PARENT_PATH LIBEVENT_LIBDIR)
+  #   list(APPEND mpi_flags --with-libevent-libdir=${LIBEVENT_LIBDIR} --with-libevent-incdir=${LIBEVENT_INCLUDE_DIR})
+  # else()
+  #   message(STATUS "libevent not found, OpenMPI configure may fail")
+  # endif()
+
+  if(APPLE)
+    list(APPEND mpi_flags --with-libevent=internal )
+  endif()
+  # on macOS with AppleClang or GCC, we found --with-libevent=internal avoids configure errors like
+  # ============================================================================
+  # == Event libraries
+  # ============================================================================
+  # checking if static link flag supplied... no
+  # checking for pkg-config... pkg-config
+  # configure: Searching for libevent in default search paths
+  # checking for libevent cppflags...
+  # checking for libevent ldflags...
+  # checking for libevent libs... -levent_core -levent_pthreads
+  # checking for libevent static libs... -levent_core -levent_pthreads
+  # checking for event.h... no
+  # checking for event_getcode4name in -levent... no
+  # checking will libevent support be built... no
+  # checking for libev pkg-config name... libev
+  # checking if libev pkg-config module exists... no
+  # configure: Searching for libev in default search paths
+  # checking for libev cppflags...
+  # checking for libev ldflags...
+  # checking for libev libs... -lev
+  # checking for libev static libs... -lev
+  # checking for event.h... (cached) no
+  # checking will libev support be built... no
+  # configure: WARNING: Either libevent or libev support is required, but neither
+  # configure: WARNING: was found. Please use the configure options to point us
+  # configure: WARNING: to where we can find one or the other library
+  # configure: error: Cannot continue
+  # configure: ===== done with 3rd-party/prrte configure =====
+  # configure: error: PRRTE configuration failed.  Cannot continue.
 
   find_package(ZLIB)
   if(ZLIB_FOUND)
