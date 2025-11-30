@@ -13,15 +13,7 @@ elseif(version)
 endif()
 
 if(NOT bindir)
-  execute_process(COMMAND mktemp -d
-  OUTPUT_VARIABLE bindir
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  RESULT_VARIABLE ret
-  )
-  if(NOT ret EQUAL 0)
-    string(RANDOM LENGTH 6 r)
-    set(bindir /tmp/build_${r})
-  endif()
+  set(bindir /tmp/build_mpi)
 endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND}
