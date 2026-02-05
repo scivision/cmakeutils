@@ -27,22 +27,22 @@ cmake -P scripts/install_ninja.cmake
 
 CMake plots
 [dependency graphs](https://www.scivision.dev/cmake-dependency-graph)
-for programs like:
+with a small [CMake script](https://www.scivision.dev/cmake-dependency-graph/):
 
 ```sh
-cmake -B build --graphviz=gfx/block.dot
+cmake -B build --graphviz=graphviz/block.dot
 ```
 
 Then convert to PNG or SVG like:
 
 ```sh
-python graph.py ~/myprog/gfx
+python cmake_dependency_graph.py ~/myprog/graphviz
 ```
 
 Convert the resulting index.html with the SVGs to PDF like:
 
 ```sh
-cmake -Dhtml=~/myprog/gfx/index.html -P html2pdf.cmake
+cmake -Dhtml=~/myprog/graphviz/index.html -P html2pdf.cmake
 ```
 
 ## CMake regular expressions

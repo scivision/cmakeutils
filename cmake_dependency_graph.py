@@ -2,7 +2,9 @@
 CMake dependency graph.
 Requires graphviz installed.
 
-Requires user to first invoke "cmake -B build --graphviz=gfx/block.dot"
+https://www.scivision.dev/cmake-dependency-graph/
+
+Requires user to first invoke "cmake -B build --graphviz=graphviz/block.dot"
 """
 
 import shutil
@@ -15,11 +17,10 @@ import webbrowser
 p = argparse.ArgumentParser(description="convert .dot graph to SVG or PNG")
 p.add_argument(
     "path",
-    help="Project gfx/ directory from cmake -B build --graphviz=gfx/block.dot",
+    help="Project graphviz/ directory from cmake -B build --graphviz=graphviz/block.dot",
 )
 p.add_argument(
-    "format", help="output format", choices=["svg", "png"],
-    default="svg", nargs="?"
+    "format", help="output format", choices=["svg", "png"], default="svg", nargs="?"
 )
 P = p.parse_args()
 
