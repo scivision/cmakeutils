@@ -23,6 +23,15 @@ Ninja is recommended in general for use with CMake instead of Make:
 cmake -P scripts/install_ninja.cmake
 ```
 
+## Clean CMake build directories under root directory
+
+CMake build directories might take 100s of MBs each for large projects.
+To clean (optionally recursively) all CMake build directories under a root directory use:
+
+```sh
+uv run cmake_clean_build_dirs.py <root_dir> [--recursive] [--dryrun]
+```
+
 ## convert CMake hierarchy .dot to SVG or PNG
 
 CMake plots
