@@ -1,6 +1,7 @@
 # CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
+# CMake 3.19 required for JSON
 
-cmake_minimum_required(VERSION 3.17...4.3)
+cmake_minimum_required(VERSION 3.19...4.3)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)

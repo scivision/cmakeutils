@@ -6,7 +6,7 @@ function(full_version version_req)
 string(LENGTH "${version_req}" L)
 
 if (L LESS 5)  # 3.x or 3.xx, read latest full version for that minor version
-  if(CMAKE_VERSION VERSION_LESS 3.19 OR L LESS 1)
+  if(L LESS 1)
     github_latest_release(kitware cmake version)
   else()
     file(READ ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/versions.json _j)
@@ -217,7 +217,7 @@ endfunction(cmake_legacy_name)
 
 function(cmake_binary_url version arch prefix url_stem)
 
-if(CMAKE_VERSION VERSION_LESS 3.19 OR version VERSION_LESS 3.20)
+if(version VERSION_LESS 3.20)
   cmake_legacy_name("${arch}" "archive")
 else()
   set(json_name cmake-${version}-files-v1.json)
