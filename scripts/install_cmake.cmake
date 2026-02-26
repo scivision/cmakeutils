@@ -1,6 +1,6 @@
 # CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
 
-cmake_minimum_required(VERSION 3.17...3.30)
+cmake_minimum_required(VERSION 3.17...4.3)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
@@ -66,6 +66,12 @@ endif()
 get_filename_component(bindir ${cmake_exe} DIRECTORY)
 message(STATUS "installed CMake ${version} to ${bindir}")
 
-if(NOT "$ENV{PATH}" MATCHES "${bindir}")
-  message(STATUS "add to environment variable PATH ${bindir}")
+if(UNIX)
+  message(STATUS "optionally, make a shell alias like
+    alias cmake${version}=${cmake_exe}")
+elseif(WIN32)
+  message(STATUS "optionally, make a PowerShell alias like
+    Set-Alias cmake${version} \"${cmake_exe}\"")
+else()
+
 endif()

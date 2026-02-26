@@ -57,11 +57,3 @@ echo "Installing CMake $cver to $PREFIX/$stem"
 
 tar -C $PREFIX -xf $fn
 )
-
-
-echo "----------------------------------------------------"
-echo "please add to your PATH (in ~/.bashrc):"
-echo
-echo 'export PATH='$PREFIX/$stem'/bin/:$PATH'
-echo
-echo "then reopen a new terminal to use CMake $cver"

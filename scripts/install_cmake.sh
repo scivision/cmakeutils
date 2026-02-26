@@ -61,18 +61,3 @@ unzip ${archive_path} -d ${prefix};;
 echo "unknown archive type ${ext}" >&2
 exit 1;;
 esac
-
-# prompt user to default shell to this new CMake
-
-case "$SHELL" in
-*/zsh)
-shell="zsh";;
-*/bash)
-shell="bash";;
-*)
-echo "please add to environment variable PATH: ${prefix}/${name}/${stub}bin"
-exit;;
-esac
-
-[[ -z ${shell+x} ]] || echo "please add the following line to file ${prefix}/.${shell}rc"
-echo "export PATH=${prefix}/$name/${stub}bin:\$PATH"

@@ -66,10 +66,3 @@ mkdir -p $PREFIX
 
 make install
 )
-
-echo "----------------------------------------------------"
-echo "please add to ~/.bashrc:"
-echo
-echo "export PATH='$PREFIX'/bin/:$PATH'"
-echo
-echo "then reopen a new terminal to use CMake $cver"
