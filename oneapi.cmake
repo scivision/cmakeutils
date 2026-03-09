@@ -7,11 +7,9 @@
 
 cmake_minimum_required(VERSION 3.20...4.3)
 
-if(DEFINED ENV{ONEAPI_ROOT})
-  message(STATUS "ONEAPI_ROOT: $ENV{ONEAPI_ROOT}")
-  message(STATUS "CMPLR_ROOT: $ENV{CMPLR_ROOT}")
-  return()
-endif()
+message(STATUS "ONEAPI_ROOT: $ENV{ONEAPI_ROOT}")
+message(STATUS "CMPLR_ROOT: $ENV{CMPLR_ROOT}")
+message(STATUS "MKLROOT: $ENV{MKLROOT}")
 
 if(WIN32)
   set(_n oneapi-vars.bat)
@@ -21,18 +19,26 @@ else()
   set(_p /opt/intel/oneapi)
 endif()
 
+if(DEFINED ENV{MKLROOT})
+  file(REAL_PATH "$ENV{MKLROOT}/../.." _m)
+  cmake_path(CONVERT _m TO_CMAKE_PATH_LIST _m)
+endif()
+
 # Unified directory structure
 # works for years 2020-2099
-if(NOT DEFINED ENV{ONEAPI_ROOT})
-  file(GLOB _g "${_p}/20[2-9][0-9].*/${_n}")
-  message(DEBUG "oneAPI glob hints: ${_g}")
-  foreach(_h IN LISTS _g)
-    cmake_path(GET _h PARENT_PATH _h_dir)
-    list(APPEND _oneapi_hint_dirs "${_h_dir}")
-  endforeach()
-
-  list(SORT _oneapi_hint_dirs COMPARE NATURAL ORDER DESCENDING)
+file(GLOB _g "${_p}/20[2-9][0-9].*/${_n}")
+if(DEFINED _m)
+  file(GLOB _gr "${_m}/20[2-9][0-9].*/${_n}")
 endif()
+
+message(DEBUG "oneAPI glob hints: ${_g} ${_gr}")
+foreach(_h IN LISTS _g _gr)
+  cmake_path(GET _h PARENT_PATH _h_dir)
+  list(APPEND _oneapi_hint_dirs "${_h_dir}")
+endforeach()
+
+list(SORT _oneapi_hint_dirs COMPARE NATURAL ORDER DESCENDING)
+
 
 message(DEBUG "oneAPI hint dirs: ${_oneapi_hint_dirs}")
 
@@ -40,6 +46,7 @@ find_file(setvars
 NAMES ${_n}
 HINTS $ENV{ONEAPI_ROOT} ${_oneapi_hint_dirs}
 PATHS ${_p} $ENV{HOME}/intel/oneapi
+NO_DEFAULT_PATH
 REQUIRED
 )
 
