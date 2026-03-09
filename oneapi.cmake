@@ -5,7 +5,7 @@
 # https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2025-0/use-the-setvars-script-with-windows.html
 # https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2025-0/use-the-setvars-and-oneapi-vars-scripts-with-linux.html
 
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.20...4.3)
 
 if(DEFINED ENV{ONEAPI_ROOT})
   message(STATUS "ONEAPI_ROOT: $ENV{ONEAPI_ROOT}")
@@ -27,12 +27,14 @@ if(NOT DEFINED ENV{ONEAPI_ROOT})
   file(GLOB _g "${_p}/20[2-9][0-9].*/${_n}")
   message(DEBUG "oneAPI glob hints: ${_g}")
   foreach(_h IN LISTS _g)
-    get_filename_component(_h "${_h}" DIRECTORY)
-    list(APPEND _oneapi_hint_dirs "${_h}")
+    cmake_path(GET _h PARENT_PATH _h_dir)
+    list(APPEND _oneapi_hint_dirs "${_h_dir}")
   endforeach()
 
   list(SORT _oneapi_hint_dirs COMPARE NATURAL ORDER DESCENDING)
 endif()
+
+message(DEBUG "oneAPI hint dirs: ${_oneapi_hint_dirs}")
 
 find_file(setvars
 NAMES ${_n}
