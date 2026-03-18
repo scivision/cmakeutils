@@ -42,13 +42,22 @@ endfunction(iter_json)
 
 function(unknown_archive version arch)
 
-message(FATAL_ERROR "No CMake ${version} binary download available for system architecture ${arch}.
-Try building CMake from source:
+set(other_options "Optionally, try building CMake from source:
   cmake -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/build_cmake.cmake
 or use Python:
   pip install cmake
 or use Snap:
-  snap install cmake"
+  snap install cmake")
+
+set(alt_arch)
+if(WIN32 AND arch STREQUAL "arm64" AND version VERSION_LESS 3.24)
+  set(alt_arch "CMake < 3.24 does not have Windows ARM64 binaries. Try using x86_64, which will run via Prism emulation.
+  cmake -Darch=x86_64 -Dversion=\"${version}\" -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/install_cmake.cmake")
+endif()
+
+message(FATAL_ERROR "No CMake ${version} binary download available for system architecture ${arch}.
+${alt_arch}
+${other_options}"
 )
 
 endfunction(unknown_archive)

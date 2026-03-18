@@ -40,7 +40,9 @@ message(STATUS "Using CMake ${CMAKE_VERSION} to install CMake ${version} to ${pr
 
 set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}")
 
-cpu_arch()
+if(NOT DEFINED arch)
+  cpu_arch()
+endif()
 
 message(STATUS "Download CMake ${version}  ${arch}")
 
