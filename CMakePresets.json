@@ -3,26 +3,45 @@
 
 "configurePresets": [
 {
-  "name": "multi", "inherits": "default",
-  "displayName": "Ninja Multi-Config",
-  "generator": "Ninja Multi-Config"
+  "name": "default",
+  "binaryDir": "build"
 },
 {
-  "name": "default",
-  "binaryDir": "${sourceDir}/build"
+  "name": "release", "inherits": "default",
+  "cacheVariables": {
+    "CMAKE_BUILD_TYPE": "Release"
+  }
+},
+{
+  "name": "debug", "inherits": "default",
+  "cacheVariables": {
+    "CMAKE_BUILD_TYPE": "Debug"
+  }
+},
+{
+  "name": "nofortran", "inherits": "release",
+  "cacheVariables": {
+    "fortran": "no"
+  }
 }
 ],
 "buildPresets": [
   {
-    "name": "release",
-    "configurePreset": "multi",
+    "name": "default",
+    "configurePreset": "default",
+    "jobs": 0
+  },
+  {
+    "name": "release", "inherits": "default",
+    "configurePreset": "release",
     "configuration": "Release"
   },
   {
-    "name": "debug",
-    "configurePreset": "multi",
+    "name": "debug", "inherits": "default",
+    "configurePreset": "debug",
     "configuration": "Debug"
-  }
+  },
+  { "name": "nofortran", "inherits": "release", "configurePreset": "nofortran" }
 ],
 "testPresets": [
 {
@@ -39,13 +58,50 @@
 },
 {
   "name": "release", "inherits": "default",
-  "configurePreset": "multi",
+  "configurePreset": "release",
   "configuration": "Release"
 },
 {
   "name": "debug", "inherits": "default",
-  "configurePreset": "multi",
+  "configurePreset": "debug",
   "configuration": "Debug"
+},
+{
+  "name": "nofortran", "inherits": "release", "configurePreset": "nofortran"
 }
+],
+"workflowPresets": [
+  {
+    "name": "default",
+    "steps": [
+      { "type": "configure", "name": "default" },
+      { "type": "build", "name": "default" },
+      { "type": "test", "name": "default" }
+    ]
+  },
+  {
+    "name": "debug",
+    "steps": [
+      { "type": "configure", "name": "debug" },
+      { "type": "build", "name": "debug" },
+      { "type": "test", "name": "debug" }
+    ]
+  },
+  {
+    "name": "release",
+    "steps": [
+      { "type": "configure", "name": "release" },
+      { "type": "build", "name": "release" },
+      { "type": "test", "name": "release" }
+    ]
+  },
+  {
+    "name": "nofortran",
+    "steps": [
+      { "type": "configure", "name": "nofortran" },
+      { "type": "build", "name": "nofortran" },
+      { "type": "test", "name": "nofortran" }
+    ]
+  }
 ]
 }

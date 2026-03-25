@@ -6,7 +6,12 @@ on:
       - "**.cmake"
       - "**/CMakeLists.txt"
       - ".github/workflows/ci.yml"
+  workflow_dispatch:
 
+# avoid wasted runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -20,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - run: echo $PATH
 
@@ -32,12 +37,8 @@ jobs:
 
     - name: configure cmake (w/ Fortran)
       if: runner.os != 'Windows'
-      run: cmake --preset default
+      run: cmake --workflow default
 
     - name: configure CMake (w/o Fortran)
       if: runner.os == 'Windows'
-      run: cmake -Dfortran=no --preset default
-
-    - run: cmake --build --preset release
-
-    - run: ctest --preset release
+      run: cmake --workflow nofortran
