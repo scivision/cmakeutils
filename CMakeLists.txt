@@ -24,7 +24,9 @@ if(fortran)
   add_subdirectory(fetchContent)
 endif()
 
-add_subdirectory(zip)
+add_subdirectory(archive_extract)
+
+add_subdirectory(print_target_properties)
 
 add_subdirectory(openmp)
 add_subdirectory(opencl)
@@ -32,10 +34,3 @@ add_subdirectory(opencl)
 add_subdirectory(system)
 
 add_subdirectory(syntax)
-
-# --- demo target echo properties
-# include(echo_target_properties.cmake)
-# find_package(ZLIB)
-# if(ZLIB_FOUND)
-#   echo_target_properties(ZLIB::ZLIB)
-# endif()
