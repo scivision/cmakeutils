@@ -6,9 +6,11 @@ project(ninja LANGUAGES C CXX)
 
 include(ExternalProject)
 
-if(NOT version)
-  file(READ ${CMAKE_CURRENT_LIST_DIR}/../versions.json _j)
-  string(JSON version GET ${_j} ninja)
+include(${CMAKE_CURRENT_LIST_DIR}/../../functions/GithubRelease.cmake)
+
+
+if(NOT DEFINED version)
+  github_latest_release(ninja-build ninja version)
 endif()
 
 set(cmake_args
@@ -30,4 +32,9 @@ CMAKE_ARGS ${cmake_args}
 TEST_COMMAND ""
 UPDATE_DISCONNECTED true
 CONFIGURE_HANDLED_BY_BUILD ON
+USES_TERMINAL_DOWNLOAD true
+USES_TERMINAL_UPDATE true
+USES_TERMINAL_CONFIGURE true
+USES_TERMINAL_BUILD true
+USES_TERMINAL_INSTALL true
 )
