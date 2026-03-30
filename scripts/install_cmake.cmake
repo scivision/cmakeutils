@@ -56,6 +56,8 @@ SOURCE_DIR ${prefix}
 )
 
 # --- verify
+set(CMAKE_FIND_APPBUNDLE LAST)
+
 find_program(cmake_exe
 NAMES cmake
 HINTS ${prefix}
