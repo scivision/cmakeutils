@@ -21,7 +21,7 @@ if(NOT EXISTS ${fn})
 
     file(DOWNLOAD ${url} ${fn}
     HTTPHEADER "Accept: application/vnd.github+json"
-    HTTPHEADER "X-GitHub-Api-Version: 2022-11-28"
+    HTTPHEADER "X-GitHub-Api-Version: 2026-03-10"
     STATUS ret LOG log
     )
     download_check("GitHub ${project} latest release" "${ret}" "${log}")
