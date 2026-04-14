@@ -54,6 +54,7 @@ ${cmake_hash}
 UPDATE_DISCONNECTED true
 SOURCE_DIR ${prefix}
 )
+# setting SUBBUILD_DIR or BINARY_DIR still leaves temp directories under cwd
 
 # --- verify
 set(CMAKE_FIND_APPBUNDLE LAST)
@@ -75,7 +76,7 @@ if(UNIX)
   message(STATUS "optionally, make a shell alias like
     alias cmake${version}=${cmake_exe}")
 elseif(WIN32)
-  message(STATUS "optionally, make a PowerShell alias like
+  message(STATUS "optionally, make a PowerShell alias by adding to $PROFILE the line
     Set-Alias cmake${version} \"${cmake_exe}\"")
 else()
 
