@@ -6,6 +6,10 @@ project(ninja LANGUAGES C CXX)
 
 include(ExternalProject)
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is not set. Please set it to the desired installation directory.")
+endif()
+
 include(${CMAKE_CURRENT_LIST_DIR}/../../functions/GithubRelease.cmake)
 
 
@@ -19,15 +23,12 @@ set(cmake_args
 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
 )
 
-set(url https://github.com/ninja-build/ninja.git)
-set(tag v${version})
+set(url https://github.com/ninja-build/ninja/archive/refs/tags/v${version}.tar.gz)
 
-message(STATUS "installing Ninja ${tag} to ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "installing Ninja ${version} to ${CMAKE_INSTALL_PREFIX}")
 
 ExternalProject_Add(NINJA
-GIT_REPOSITORY ${url}
-GIT_TAG ${tag}
-GIT_SHALLOW true
+URL ${url}
 CMAKE_ARGS ${cmake_args}
 TEST_COMMAND ""
 UPDATE_DISCONNECTED true

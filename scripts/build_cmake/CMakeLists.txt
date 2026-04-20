@@ -10,6 +10,11 @@ cmake_minimum_required(VERSION 3.17...3.24)
 project(cmake LANGUAGES C CXX)
 
 include(ExternalProject)
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(FATAL_ERROR "CMAKE_INSTALL_PREFIX is not set. Please set it to the desired installation directory.")
+endif()
+
 include(${CMAKE_CURRENT_LIST_DIR}/../CMakeArchiveName.cmake)
 
 option(gui "build cmake-gui")
