@@ -44,10 +44,10 @@ function(unknown_archive version arch)
 
 set(other_options "Optionally, try building CMake from source:
   cmake -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/build_cmake.cmake
-or use Python:
-  pip install cmake
-or use Snap:
-  snap install cmake")
+or use Python: pip install cmake")
+if(LINUX)
+  string(APPEND other_options "or use Snap: snap install cmake")
+endif()
 
 set(alt_arch)
 if(WIN32)
