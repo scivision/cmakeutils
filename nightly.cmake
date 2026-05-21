@@ -47,7 +47,7 @@ endif()
 
 macro(cpu_arch)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(arch "universal")
 else()
   set(arch ${CMAKE_SYSTEM_PROCESSOR})

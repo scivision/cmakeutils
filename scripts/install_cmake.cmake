@@ -5,20 +5,22 @@ cmake_minimum_required(VERSION 3.19...4.3)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
 
 
 macro(cpu_arch)
 
-# system arch to arch index
-string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
-
-if(WIN32)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+  string(TOLOWER "$ENV{PROCESSOR_ARCHITECTURE}" arch)
   if(arch STREQUAL "x86")
     set(arch "i386")
   elseif(arch STREQUAL "amd64")
     set(arch "x86_64")
   endif()
+else()
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY
+  )
 endif()
 
 endmacro(cpu_arch)
@@ -36,7 +38,7 @@ if(NOT prefix)
 endif()
 get_filename_component(prefix ${prefix} ABSOLUTE)
 
-message(STATUS "Using CMake ${CMAKE_VERSION} to install CMake ${version} to ${prefix}")
+message(STATUS "${CMAKE_HOST_SYSTEM_NAME} CMake ${CMAKE_VERSION} to install CMake ${version} to ${prefix}")
 
 set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}")
 
@@ -72,12 +74,11 @@ endif()
 get_filename_component(bindir ${cmake_exe} DIRECTORY)
 message(STATUS "installed CMake ${version} to ${bindir}")
 
-if(UNIX)
-  message(STATUS "optionally, make a shell alias like
-    alias cmake${version}=${cmake_exe}")
-elseif(WIN32)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   message(STATUS "optionally, make a PowerShell alias by adding to $PROFILE the line
     Set-Alias cmake${version} \"${cmake_exe}\"")
 else()
 
+  message(STATUS "optionally, make a shell alias like
+    alias cmake${version}=${cmake_exe}")
 endif()

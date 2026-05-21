@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20...3.30)
 
 include(FetchContent)
-include(${CMAKE_CURRENT_LIST_DIR}/CMakeVar.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
 
@@ -18,17 +17,20 @@ file(MAKE_DIRECTORY ${prefix})
 
 set(host "https://github.com/ninja-build/ninja/releases/download/v${version}/")
 
-string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" arch)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(stem ninja-mac)
-elseif(WIN32)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+  string(TOLOWER "$ENV{PROCESSOR_ARCHITECTURE}" arch)
   if(arch STREQUAL "x86_64")
     set(stem ninja-win)
   elseif(arch STREQUAL "arm64")
     set(stem ninja-winarm64)
   endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  execute_process(COMMAND uname -m OUTPUT_VARIABLE arch
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND_ERROR_IS_FATAL ANY
+  )
   # https://stackoverflow.com/questions/45125516/possible-values-for-uname-m
   if(arch STREQUAL "x86_64")
     set(stem ninja-linux)
@@ -53,7 +55,7 @@ SOURCE_DIR ${prefix}
 
 find_program(exe
 NAMES ninja
-HINTS ${ninja_SOURCE_DIR}
+HINTS ${prefix}
 NO_DEFAULT_PATH
 )
 if(NOT exe)

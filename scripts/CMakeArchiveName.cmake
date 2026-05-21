@@ -21,6 +21,9 @@ endfunction(full_version)
 
 function(iter_json json key pat out)
 
+if(pat STREQUAL "")
+  message(FATAL_ERROR "iter_json: pat cannot be empty")
+endif()
 unset(${out} PARENT_SCOPE)
 
 string(JSON L LENGTH ${json} ${key})
@@ -29,10 +32,10 @@ math(EXPR L "${L} - 1")
 
 foreach(i RANGE ${L})
   string(JSON o GET ${json} ${key} ${i})
-  # message(DEBUG "pat: ${pat}   o: ${o}")
+  message(TRACE "pat: ${pat}   o: ${o}")
   if(pat STREQUAL o)
     set(${out} ${o} PARENT_SCOPE)
-    # message(DEBUG "${out}: ${o}")
+    message(TRACE "${out}: ${o}")
     return()
   endif()
 endforeach()
@@ -45,17 +48,17 @@ function(unknown_archive version arch)
 set(other_options "Optionally, try building CMake from source:
   cmake -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/build_cmake.cmake
 or use Python: pip install cmake")
-if(LINUX)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   string(APPEND other_options "or use Snap: snap install cmake")
 endif()
 
 set(alt_arch)
-if(WIN32)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   if(arch STREQUAL "arm64" AND version VERSION_LESS 3.24)
     set(alt_arch "CMake < 3.24 does not have Windows ARM64 binaries. Try using x86_64, which will run via Prism emulation.
     cmake -Darch=x86_64 -Dversion=\"${version}\" -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/install_cmake.cmake")
   endif()
-elseif(LINUX)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   if(arch STREQUAL "aarch64" AND version VERSION_LESS 3.19.3)
     set(alt_arch "CMake < 3.19.3 does not have Linux ARM64 binaries. Choose a CMake >= 3.19.3 version, or look into emulation:
 * box64 https://github.com/ptitSeb/box64
@@ -77,11 +80,11 @@ function(cmake_archive_name version file_json arch prefix out)
 
 if(arch STREQUAL "source")
   set(sname "source")
-elseif(WIN32)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   set(sname "windows")
-elseif(APPLE)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(sname "macos")
-elseif(NOT CYGWIN)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(sname "linux")
 endif()
 
@@ -94,11 +97,11 @@ foreach(i RANGE ${L})
 
   string(JSON d GET ${json} "files" ${i})
 
-  iter_json("${d}" "os" "${sname}" "os_key")
+  iter_json("${d}" os "${sname}" os_key)
   if(NOT os_key)
     continue()
   endif()
-  # message(DEBUG "os_key: ${os_key}")
+  message(DEBUG "os_key: ${os_key}")
 
   if(NOT arch STREQUAL "source")
     iter_json("${d}" "architecture" "${arch}" "arch_key")
@@ -170,30 +173,38 @@ function(cmake_legacy_name arch out)
 
 if(arch STREQUAL "source")
 
-set(file_arch)
+  set(file_arch)
 
-elseif(APPLE)
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
 
-if(version VERSION_LESS 3.19)
-  set(file_arch Darwin-x86_64)
-else()
-  set(file_arch macos-universal)
-endif()
+  if(arch STREQUAL "arm64" AND version VERSION_LESS 3.19.2)
+    cmake_host_system_information(RESULT osr QUERY OS_RELEASE)
+    if(osr VERSION_GREATER_EQUAL 27)
+      message(WARNING "CMake ${version} does not have a macOS ARM64 binary. Rosetta2 emalation may be unavailable on macOS ${osr}.
+Try using CMake >= 3.19.2, which has a universal binary that runs natively on Apple Silicon Macs.")
+    endif()
+  endif()
 
-elseif(UNIX AND NOT CYGWIN)
+  if(version VERSION_LESS 3.19.2)
+    set(file_arch Darwin-x86_64)
+  else()
+    set(file_arch macos-universal)
+  endif()
 
-if(arch STREQUAL "aarch64" AND version VERSION_LESS 3.19.3)
-  unknown_archive(${version} ${arch})
-endif()
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 
-if(version VERSION_LESS 3.20)
-  set(file_arch L)
-else()
-  set(file_arch l)
-endif()
-string(APPEND file_arch inux-${arch})
+  if(arch STREQUAL "aarch64" AND version VERSION_LESS 3.19.3)
+    unknown_archive(${version} ${arch})
+  endif()
 
-elseif(WIN32)
+  if(version VERSION_LESS 3.20)
+    set(file_arch L)
+  else()
+    set(file_arch l)
+  endif()
+  string(APPEND file_arch inux-${arch})
+
+elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 
 if(arch STREQUAL "ARM64")
   if(version VERSION_GREATER_EQUAL 3.24)
@@ -216,7 +227,7 @@ endif()
 endif()
 
 
-if(WIN32)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
   set(suffix .zip)
 else()
   set(suffix .tar.gz)
