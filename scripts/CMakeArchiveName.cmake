@@ -50,9 +50,18 @@ or use Snap:
   snap install cmake")
 
 set(alt_arch)
-if(WIN32 AND arch STREQUAL "arm64" AND version VERSION_LESS 3.24)
-  set(alt_arch "CMake < 3.24 does not have Windows ARM64 binaries. Try using x86_64, which will run via Prism emulation.
-  cmake -Darch=x86_64 -Dversion=\"${version}\" -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/install_cmake.cmake")
+if(WIN32)
+  if(arch STREQUAL "arm64" AND version VERSION_LESS 3.24)
+    set(alt_arch "CMake < 3.24 does not have Windows ARM64 binaries. Try using x86_64, which will run via Prism emulation.
+    cmake -Darch=x86_64 -Dversion=\"${version}\" -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/install_cmake.cmake")
+  endif()
+elseif(LINUX)
+  if(arch STREQUAL "aarch64" AND version VERSION_LESS 3.19.3)
+    set(alt_arch "CMake < 3.19.3 does not have Linux ARM64 binaries. Choose a CMake >= 3.19.3 version, or look into emulation:
+* box64 https://github.com/ptitSeb/box64
+* FEX https://github.com/FEX-Emu/FEX
+* qemu-x86_64 https://wiki.qemu.org")
+  endif()
 endif()
 
 message(FATAL_ERROR "No CMake ${version} binary download available for system architecture ${arch}.
@@ -172,6 +181,10 @@ else()
 endif()
 
 elseif(UNIX AND NOT CYGWIN)
+
+if(arch STREQUAL "aarch64" AND version VERSION_LESS 3.19.3)
+  unknown_archive(${version} ${arch})
+endif()
 
 if(version VERSION_LESS 3.20)
   set(file_arch L)
