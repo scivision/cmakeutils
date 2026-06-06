@@ -18,6 +18,7 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/../CMakeArchiveName.cmake)
 
 option(gui "build cmake-gui")
+option(curses "build cmake-curses")
 
 # --- main program ---
 
@@ -30,6 +31,7 @@ set(cmake_args
 -DCMAKE_BUILD_TYPE=Release
 -DCMAKE_USE_OPENSSL:BOOL=ON
 -DBUILD_QtDialog:BOOL=${gui}
+-DBUILD_CursesDialog:BOOL=${curses}
 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
 )
 
