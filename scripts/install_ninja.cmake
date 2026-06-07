@@ -48,10 +48,7 @@ set(url ${host}${stem}.zip)
 
 message(STATUS "CMake ${CMAKE_VERSION} installing Ninja ${version} for ${arch} in prefix ${prefix} from ${url}")
 
-FetchContent_Populate(ninja
-URL ${url}
-SOURCE_DIR ${prefix}
-)
+FetchContent_Populate(ninja URL ${url} SOURCE_DIR ${prefix})
 
 find_program(exe
 NAMES ninja

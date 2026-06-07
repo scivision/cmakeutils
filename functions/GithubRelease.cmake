@@ -1,3 +1,18 @@
+function(expanduser path out)
+
+if(WIN32)
+  string(REPLACE "~" "$ENV{USERPROFILE}" path "${path}")
+else()
+  string(REPLACE "~" "$ENV{HOME}" path "${path}")
+endif()
+
+ cmake_path(CONVERT ${path} TO_CMAKE_PATH_LIST path)
+
+set(${out} "${path}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(download_check msg ret log)
 
 list(GET ret 0 stat)
