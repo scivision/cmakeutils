@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.20)
 
+include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
 
 if(NOT prefix)
@@ -9,19 +10,32 @@ endif()
 
 expanduser(${prefix} prefix)
 
-set(bindir ${prefix}/build-cmake)
+option(gui "build cmake-gui")
+option(curses "build cmake-curses")
 
-set(args)
-if(version)
-  list(APPEND args -Dversion=${version})
-endif()
+full_version("${version}")
 
-execute_process(COMMAND ${CMAKE_COMMAND} ${args}
--B${bindir}
--S${CMAKE_CURRENT_LIST_DIR}/build_cmake
+set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}")
+
+cmake_binary_url(${version} "source" ${prefix} ${url_stem})
+
+set(url ${url_stem}/${archive})
+
+FetchContent_Populate(CMAKE URL ${url} SOURCE_DIR ${prefix})
+
+message(STATUS "Using CMake ${CMAKE_VERSION} to build CMake ${version} and install to ${prefix}")
+
+set(cmake_args
+-DBUILD_TESTING:BOOL=OFF
+-DCMAKE_BUILD_TYPE=Release
+-DCMAKE_USE_OPENSSL:BOOL=ON
+-DBUILD_QtDialog:BOOL=${gui}
+-DBUILD_CursesDialog:BOOL=${curses}
+-DCMAKE_BUILD_LTO:BOOL=ON
 -DCMAKE_INSTALL_PREFIX:PATH=${prefix}
-RESULT_VARIABLE ret
 )
+
+set(builddir ${cmake_SOURCE_DIR}/build-cmake)
 
 # avoid overloading CPU/RAM with extreme GNU Make --parallel
 if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})
@@ -29,19 +43,16 @@ if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})
 else()
   cmake_host_system_information(RESULT N QUERY NUMBER_OF_PHYSICAL_CORES)
 endif()
+message(STATUS "CMake build with ${N} workers")
 
-if(ret EQUAL 0)
-  message(STATUS "CMake build with ${N} workers")
-else()
-  message(FATAL_ERROR "CMake failed to configure.")
-endif()
-
-execute_process(COMMAND ${CMAKE_COMMAND} --build ${bindir} --parallel ${N}
-RESULT_VARIABLE ret
+execute_process(COMMAND ${CMAKE_COMMAND} ${cmake_args} -B${builddir} -S${cmake_SOURCE_DIR}
+COMMAND_ERROR_IS_FATAL ANY
 )
 
-if(ret EQUAL 0)
-  message(STATUS "CMake install complete.")
-else()
-  message(FATAL_ERROR "CMake failed to build and install.")
-endif()
+execute_process(COMMAND ${CMAKE_COMMAND} --build ${builddir} --parallel ${N}
+COMMAND_ERROR_IS_FATAL ANY
+)
+
+execute_process(COMMAND ${CMAKE_COMMAND} --install ${builddir}
+COMMAND_ERROR_IS_FATAL ANY
+)

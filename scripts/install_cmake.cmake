@@ -1,7 +1,8 @@
 # CMake 3.17 required for CMAKE_CURRENT_FUNCTION_LIST_DIR in CMakeArchiveName.cmake
 # CMake 3.19 required for JSON
+# Cmake 3.20 required for cmake_path()
 
-cmake_minimum_required(VERSION 3.19...4.3)
+cmake_minimum_required(VERSION 3.20...4.4)
 
 include(FetchContent)
 include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
@@ -71,7 +72,7 @@ if(NOT cmake_exe)
   message(FATAL_ERROR "failed to install CMake ${version} to ${prefix}")
 endif()
 
-get_filename_component(bindir ${cmake_exe} DIRECTORY)
+cmake_path(GET cmake_exe PARENT_PATH bindir)
 message(STATUS "installed CMake ${version} to ${bindir}")
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
