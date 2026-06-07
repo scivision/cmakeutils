@@ -36,7 +36,7 @@ endif()
 if(NOT prefix)
   set(prefix ~/cmake-${version})
 endif()
-get_filename_component(prefix ${prefix} ABSOLUTE)
+expanduser(${prefix} prefix)
 
 message(STATUS "${CMAKE_HOST_SYSTEM_NAME} CMake ${CMAKE_VERSION} to install CMake ${version} to ${prefix}")
 

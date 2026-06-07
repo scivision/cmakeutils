@@ -1,6 +1,19 @@
 include(${CMAKE_CURRENT_LIST_DIR}/../functions/GithubRelease.cmake)
 
 
+function(expanduser path out)
+
+if(WIN32)
+  string(REPLACE "~" "$ENV{USERPROFILE}" path "${path}")
+else()
+  string(REPLACE "~" "$ENV{HOME}" path "${path}")
+endif()
+
+set(${out} "${path}" PARENT_SCOPE)
+
+endfunction()
+
+
 function(full_version version_req)
 
 string(LENGTH "${version_req}" L)
@@ -16,7 +29,7 @@ endif()
 
 set(version ${version} PARENT_SCOPE)
 
-endfunction(full_version)
+endfunction()
 
 
 function(iter_json json key pat out)

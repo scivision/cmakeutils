@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 
-execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE ret)
-if(NOT ret EQUAL 0)
-  string(RANDOM LENGTH 6 r)
-  set(bindir /tmp/build_${r})
-endif()
+set(bindir ${prefix}/build-ninja)
 
 if(version)
   list(APPEND args -Dversion=${version})

@@ -1,19 +1,19 @@
 cmake_minimum_required(VERSION 3.17)
 
-execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE RESULT_VARIABLE ret)
-if(NOT ret EQUAL 0)
-  string(RANDOM LENGTH 6 r)
-  set(bindir /tmp/build_${r})
-endif()
-
-set(args)
-if(version)
-  list(APPEND args -Dversion=${version})
-endif()
+include(${CMAKE_CURRENT_LIST_DIR}/CMakeArchiveName.cmake)
 
 if(NOT prefix)
   message(FATAL_ERROR "tell where to install CMake like:
     cmake -Dprefix=~/cmake-dev -P build_cmake.cmake")
+endif()
+
+expanduser(${prefix} prefix)
+
+set(bindir ${prefix}/build-cmake)
+
+set(args)
+if(version)
+  list(APPEND args -Dversion=${version})
 endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND} ${args}

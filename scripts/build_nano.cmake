@@ -12,7 +12,7 @@ set(stem nano-${version})
 set(prefix "~/${stem}")
 get_filename_component(prefix ${prefix} ABSOLUTE)
 
-execute_process(COMMAND mktemp -d OUTPUT_VARIABLE bindir OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(bindir ${prefix}/build)
 
 set(name ${stem}.tar.xz)
 

@@ -36,6 +36,7 @@ set(cmake_args
 -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
 )
 
+if(APPLE)
 find_package(OpenSSL)
 if(NOT OPENSSL_FOUND)
   find_program(brew NAMES brew)
@@ -47,9 +48,10 @@ if(NOT OPENSSL_FOUND)
     TIMEOUT 5
     )
     if(ret EQUAL 0)
-      list(APPEND cmake_args -DOPENSSL_ROOT_DIR=${out})
+      list(APPEND cmake_args -DOPENSSL_ROOT_DIR:PATH=${out})
     endif()
   endif()
+endif()
 endif()
 
 set(url_stem "https://github.com/Kitware/CMake/releases/download/v${version}")
