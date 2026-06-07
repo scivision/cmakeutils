@@ -11,7 +11,7 @@ endif()
 if(NOT prefix)
   set(prefix ~/ninja-${version})
 endif()
-get_filename_component(prefix ${prefix} ABSOLUTE)
+expanduser(${prefix} prefix)
 
 file(MAKE_DIRECTORY ${prefix})
 
