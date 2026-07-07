@@ -1,13 +1,17 @@
 # Pipe | and semicolon ; are not possible to use in CMake for paths due to
 # implicit meanings to build tools (| pipe) or CMake (; lists)
 
-set(spec "`'~!@#$%^&()_-+={}[] ,.c")
+file(READ "${CMAKE_CURRENT_LIST_DIR}/windows.txt" spec)
+string(STRIP "${spec}" spec) # Remove trailing newline in input files
 if(NOT WIN32)
-  string(APPEND spec "*:\"<>?")
+  file(READ "${CMAKE_CURRENT_LIST_DIR}/unix.txt" spec2)
+  string(STRIP "${spec2}" spec2)
+  string(APPEND spec "${spec2}")
 endif()
 
 set(test "${CMAKE_CURRENT_BINARY_DIR}/${spec}")
 
+message(STATUS "Testing path with special characters: ${test}")
 file(TOUCH "${test}")
 
 if(NOT EXISTS "${test}")
