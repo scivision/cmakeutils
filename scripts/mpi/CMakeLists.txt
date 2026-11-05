@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21...3.28)
+cmake_minimum_required(VERSION 3.21...3.30)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "Use out of source build like
@@ -9,7 +9,6 @@ project(BuildMPI LANGUAGES C CXX Fortran)
 
 include(CheckIncludeFile)
 include(ExternalProject)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../../functions/GithubRelease.cmake)
 
 
 option(mpich "Build MPICH instead of OpenMPI")
@@ -83,6 +82,7 @@ Setting \"CC=gcc\" on macOS defaults to Clang, which will fail. MPICH requires I
 
   if(NOT mpi_url)
     if(NOT DEFINED version)
+      include(${CMAKE_CURRENT_SOURCE_DIR}/../../functions/GithubRelease.cmake)
       github_latest_release(pmodels mpich version)
     endif()
     set(mpi_url https://github.com/pmodels/mpich/releases/download/v${version}/mpich-${version}.tar.gz)
@@ -92,7 +92,14 @@ Setting \"CC=gcc\" on macOS defaults to Clang, which will fail. MPICH requires I
   # MPICH 4.2.0 etc. fails to build without this option
 else()
   if(NOT mpi_url)
-    string(JSON mpi_url GET ${json_meta} "openmpi")
+    string(JSON mpi_json_url GET ${json_meta} "openmpi")
+    set(mpi_json_file ${CMAKE_CURRENT_BINARY_DIR}/openmpi_releases.json)
+    file(DOWNLOAD ${mpi_json_url} ${mpi_json_file})
+    file(READ ${mpi_json_file} _json)
+    string(JSON mpi_release GET ${_json} "latest_release")
+    # could do this programatically by looping over the JSON array
+    string(REGEX MATCH "([0-9]+\\.[0-9]+)" mpi_major ${mpi_release})
+    set(mpi_url https://download.open-mpi.org/release/open-mpi/v${CMAKE_MATCH_1}/openmpi-${mpi_release}.tar.bz2)
   endif()
 
   # this --with-hwloc breaks OpenMPI 4.1 and 5.0 at least
@@ -115,7 +122,7 @@ else()
   # endif()
 
   if(APPLE)
-    list(APPEND mpi_flags --with-libevent=internal )
+    list(APPEND mpi_flags --with-libevent=internal)
   endif()
   # on macOS with AppleClang or GCC, we found --with-libevent=internal avoids configure errors like
   # ============================================================================

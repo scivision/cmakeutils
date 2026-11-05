@@ -30,5 +30,5 @@
     "3.10": "3.10.3"
   },
   "nano": "9.0",
-  "openmpi": "https://github.com/open-mpi/ompi/archive/refs/tags/v5.0.11.tar.gz"
+  "openmpi": "https://www.open-mpi.org/software/ompi/v5.0/downloads/releases.json"
 }
